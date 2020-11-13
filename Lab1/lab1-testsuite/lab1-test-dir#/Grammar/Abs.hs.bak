@@ -3,7 +3,7 @@
 
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
-module AbsGrammar where
+module Grammar.Abs where
 
 import Prelude (Char, Double, Integer, String)
 import qualified Prelude as C (Eq, Ord, Show, Read)
@@ -57,8 +57,6 @@ data Exp
     | EAnd Exp Exp
     | EOr Exp Exp
     | EAss Exp Exp
-    | ELl Exp Exp
-    | EGg Exp Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Type = Tbool | Tdouble | Tint | Tstring | Tvoid

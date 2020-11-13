@@ -58,8 +58,6 @@ transExp x = case x of
   AbsGrammar.EAnd exp1 exp2 -> failure x
   AbsGrammar.EOr exp1 exp2 -> failure x
   AbsGrammar.EAss exp1 exp2 -> failure x
-  AbsGrammar.ELl exp1 exp2 -> failure x
-  AbsGrammar.EGg exp1 exp2 -> failure x
 transType :: AbsGrammar.Type -> Result
 transType x = case x of
   AbsGrammar.Tbool -> failure x

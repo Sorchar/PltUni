@@ -46,7 +46,7 @@ The symbols used in Grammar are the following:
   | -- | - | * | /
   | + | < | > | <=
   | >= | == | != | &&
-  | || | << | >> |
+  | || |  |  |
 
 ===Comments===
 Single-line comments begin with //, #.Multiple-line comments are  enclosed with /* and */.
@@ -109,14 +109,12 @@ All other symbols are terminals.
   |  |  **|**  | //Exp4//
   | //Exp2// | -> | //Exp3// ``=`` //Exp2//
   |  |  **|**  | //Exp3//
-  | //Exp10// | -> | //Exp10// ``<<`` //Exp11//
-  |  |  **|**  | //Exp10// ``>>`` //Exp11//
-  |  |  **|**  | //Exp11//
   | //Exp// | -> | //Exp1//
   | //Exp1// | -> | //Exp2//
   | //Exp5// | -> | //Exp6//
   | //Exp6// | -> | //Exp7//
   | //Exp7// | -> | //Exp8//
+  | //Exp10// | -> | //Exp11//
   | //[Exp]// | -> | **eps**
   |  |  **|**  | //Exp//
   |  |  **|**  | //Exp// ``,`` //[Exp]//

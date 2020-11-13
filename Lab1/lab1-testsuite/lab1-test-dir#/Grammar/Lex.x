@@ -3,7 +3,7 @@
 {
 {-# OPTIONS -fno-warn-incomplete-patterns #-}
 {-# OPTIONS_GHC -w #-}
-module LexGrammar where
+module Grammar.Lex where
 
 import qualified Data.Bits
 import Data.Word (Word8)
