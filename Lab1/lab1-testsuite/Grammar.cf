@@ -48,10 +48,10 @@ EOr.		Exp3    ::= Exp3  "||" Exp4 ;
 EAss.		Exp2    ::= Exp3  "="  Exp2 ;
 
 ELl.		Exp10	::= Exp10 "<<" Exp10 ;
-EGg.		Exp10	::= Exp10 ">>" Exp10 ;
+EGg.		Exp10	::= Exp10 ">>" Id ;
 
 ELib.       Exp10     ::=  Id "::" Id;
-ELit.       Exp10   ::= "\"" "\"";
+ETerm.       Exp10   ::= "\"" "\"";
 
 coercions Exp 15  ;
 separator Exp "," ;
@@ -61,6 +61,7 @@ Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
 Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
+TLit.    Type ::= Id "::" Type;
 
 token Id (letter (letter | digit | '_')*) ;
 
