@@ -9,26 +9,35 @@ separator nonempty Decl ","   ;
 terminator  Stm ""			  ;
 
 DNameSpace. Def     ::= "using " Exp10 ";";
+DDecl. 		Def		::= Type Decl ";" ;
+DDecls. 	Def		::= Type [Decl] ";" ;
+DTypeDefId. Stm     ::= "typedef" Type Id ";";
 
 ADecl. 	    Arg     ::= Type Id ;
-SDecl. 		Def		::= Type [Decl] ";" ;
+SDecl. 		Stm		::= Type Decl ";" ;
+SDecls. 	Stm		::= Type [Decl] ";" ;
 SDeclId.    Decl    ::= Id;
 SInit. 		Stm		::= Type Id "=" Exp ";" ;
 SEexp.		Stm		::= Exp ";" ;
 SReturn. 	Stm		::= "return" Exp ";" ;
 SWhile. 	Stm		::= "while" "(" Exp ")" Stm;
 SBlock. 	Stm 	::= "{" [Stm] "}" ;
-SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm "else" Stm ;
+SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ;
+SEElse.     Else    ::= "";
+SElse.     Else     ::= "else" Stm;
+SBlock.     Stm     ::= "{" [Stm] "}";
 
 
 EInt. 		Exp15 	::= Integer ;
 EDouble. 	Exp15 	::= Double  ;
-EString. 	Exp15   ::= String 	;
+EString. 	Exp15   ::= StringList;
 ETrue. 		Exp15 	::= "true"  ;
 EFalse.		Exp15 	::= "false" ;
 EId.		Exp15   ::= Id 		;
 
-ECall.		Exp15   ::= Id 	"(" [Exp] ")" ;
+EIndex.		Exp15   ::= Exp15 	"[" Exp "]" ;
+ECall.		Exp15   ::= Exp15 	"(" [Exp] ")" ;
+EFun.		Exp15   ::= Exp15 "." Exp14;
 EPIncr.		Exp14	::= Exp15 "++" ;
 EPDcecr.	Exp14	::= Exp15 "--" ;
 
@@ -38,6 +47,7 @@ ENeg.		Exp13   ::= "-"  Exp14 ;
 
 EMul.		Exp12   ::= Exp12 "*" Exp13 ;
 EDiv. 		Exp12 	::= Exp12 "/" Exp13 ;
+EMod. 		Exp12 	::= Exp12 "%" Exp13 ;
 EAdd.		Exp11   ::= Exp11 "+" Exp12 ;
 ESub.		Exp11	::= Exp11 "-" Exp12 ;
 ELt.		Exp9 	::= Exp9  "<" Exp10 ;
@@ -52,14 +62,15 @@ EAss.		Exp2    ::= Exp3  "="  Exp2 ;
 EThrowE.	Exp2 	::= "throw"    Exp2 ;
 EQstnmrk.	Exp2    ::= Exp2 "?" Exp3 ":" Exp3 ;
 
-ELl.		Exp10	::= Exp10 "<<" Exp10 ;
-EGg.		Exp10	::= Exp10 ">>" Id ;
+ELl.		Exp15	::= Exp15 "<<" Exp15 ;
+EGg.		Exp15	::= Exp15 ">>" Id ;
 
-ELib.       Exp10   ::=  Id "::" Id;
-ELibType.   Exp10   ::=  Id "::" Type;
-ETerm.      Exp10   ::= "\"" "\"";
+ELibs.      Exp15   ::=  Id "::" Exp10;
+ELib.       Exp15   ::=  Id "::" Id;
+ELibType.   Exp15   ::=  Id "::" Type;
+ETerm.      Exp15   ::= "\"" "\"";
 
-coercions Exp 15  ;
+coercions Exp 16  ;
 separator Exp "," ;
 
 Tbool. 	 Type ::= "bool"   ;
@@ -67,7 +78,11 @@ Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
 Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
+Tnew.	 Type ::= Id;
 TLit.    Type ::= Id "::" Type;
+
+StringList. StringList ::= [String];
+separator nonempty String "";
 
 token Id (letter (letter | digit | '_')*) ;
 
