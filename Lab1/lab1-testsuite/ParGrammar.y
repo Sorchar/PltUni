@@ -36,39 +36,44 @@ import LexGrammar
 %tokentype {Token}
 %token
   '!=' { PT _ (TS _ 1) }
-  '&&' { PT _ (TS _ 2) }
-  '(' { PT _ (TS _ 3) }
-  ')' { PT _ (TS _ 4) }
-  '*' { PT _ (TS _ 5) }
-  '+' { PT _ (TS _ 6) }
-  '++' { PT _ (TS _ 7) }
-  ',' { PT _ (TS _ 8) }
-  '-' { PT _ (TS _ 9) }
-  '--' { PT _ (TS _ 10) }
-  '/' { PT _ (TS _ 11) }
-  ';' { PT _ (TS _ 12) }
-  '<' { PT _ (TS _ 13) }
-  '<<' { PT _ (TS _ 14) }
-  '<=' { PT _ (TS _ 15) }
-  '=' { PT _ (TS _ 16) }
-  '==' { PT _ (TS _ 17) }
-  '>' { PT _ (TS _ 18) }
-  '>=' { PT _ (TS _ 19) }
-  '>>' { PT _ (TS _ 20) }
-  'bool' { PT _ (TS _ 21) }
-  'double' { PT _ (TS _ 22) }
-  'else' { PT _ (TS _ 23) }
-  'false' { PT _ (TS _ 24) }
-  'if' { PT _ (TS _ 25) }
-  'int' { PT _ (TS _ 26) }
-  'return' { PT _ (TS _ 27) }
-  'string' { PT _ (TS _ 28) }
-  'true' { PT _ (TS _ 29) }
-  'void' { PT _ (TS _ 30) }
-  'while' { PT _ (TS _ 31) }
-  '{' { PT _ (TS _ 32) }
-  '||' { PT _ (TS _ 33) }
-  '}' { PT _ (TS _ 34) }
+  '\"' { PT _ (TS _ 2) }
+  '&&' { PT _ (TS _ 3) }
+  '(' { PT _ (TS _ 4) }
+  ')' { PT _ (TS _ 5) }
+  '*' { PT _ (TS _ 6) }
+  '+' { PT _ (TS _ 7) }
+  '++' { PT _ (TS _ 8) }
+  ',' { PT _ (TS _ 9) }
+  '-' { PT _ (TS _ 10) }
+  '--' { PT _ (TS _ 11) }
+  '/' { PT _ (TS _ 12) }
+  ':' { PT _ (TS _ 13) }
+  '::' { PT _ (TS _ 14) }
+  ';' { PT _ (TS _ 15) }
+  '<' { PT _ (TS _ 16) }
+  '<<' { PT _ (TS _ 17) }
+  '<=' { PT _ (TS _ 18) }
+  '=' { PT _ (TS _ 19) }
+  '==' { PT _ (TS _ 20) }
+  '>' { PT _ (TS _ 21) }
+  '>=' { PT _ (TS _ 22) }
+  '>>' { PT _ (TS _ 23) }
+  '?' { PT _ (TS _ 24) }
+  'bool' { PT _ (TS _ 25) }
+  'double' { PT _ (TS _ 26) }
+  'else' { PT _ (TS _ 27) }
+  'false' { PT _ (TS _ 28) }
+  'if' { PT _ (TS _ 29) }
+  'int' { PT _ (TS _ 30) }
+  'return' { PT _ (TS _ 31) }
+  'string' { PT _ (TS _ 32) }
+  'throw' { PT _ (TS _ 33) }
+  'true' { PT _ (TS _ 34) }
+  'void' { PT _ (TS _ 35) }
+  'while' { PT _ (TS _ 36) }
+  '{' { PT _ (TS _ 37) }
+  '||' { PT _ (TS _ 38) }
+  '}' { PT _ (TS _ 39) }
   L_integ  { PT _ (TI $$) }
   L_doubl  { PT _ (TD $$) }
   L_quoted { PT _ (TL $$) }
@@ -167,11 +172,16 @@ Exp3 :: { AbsGrammar.Exp }
 Exp3 : Exp3 '||' Exp4 { AbsGrammar.EOr $1 $3 } | Exp4 { $1 }
 
 Exp2 :: { AbsGrammar.Exp }
-Exp2 : Exp3 '=' Exp2 { AbsGrammar.EAss $1 $3 } | Exp3 { $1 }
+Exp2 : Exp3 '=' Exp2 { AbsGrammar.EAss $1 $3 }
+     | 'throw' Exp2 { AbsGrammar.EThrowE $2 }
+     | Exp2 '?' Exp3 ':' Exp3 { AbsGrammar.EQstnmrk $1 $3 $5 }
+     | Exp3 { $1 }
 
 Exp10 :: { AbsGrammar.Exp }
-Exp10 : Exp10 '<<' Exp11 { AbsGrammar.ELl $1 $3 }
-      | Exp10 '>>' Exp11 { AbsGrammar.EGg $1 $3 }
+Exp10 : Exp10 '<<' Exp10 { AbsGrammar.ELl $1 $3 }
+      | Exp10 '>>' Id { AbsGrammar.EGg $1 $3 }
+      | Id '::' Id { AbsGrammar.ELib $1 $3 }
+      | '\"' '\"' { AbsGrammar.ETerm }
       | Exp11 { $1 }
 
 Exp :: { AbsGrammar.Exp }
@@ -200,6 +210,7 @@ Type : 'bool' { AbsGrammar.Tbool }
      | 'int' { AbsGrammar.Tint }
      | 'string' { AbsGrammar.Tstring }
      | 'void' { AbsGrammar.Tvoid }
+     | Id '::' Type { AbsGrammar.TLit $1 $3 }
 {
 
 happyError :: [Token] -> Either String a

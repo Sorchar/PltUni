@@ -165,8 +165,12 @@ instance Print Grammar.Abs.Exp where
     Grammar.Abs.EAnd exp1 exp2 -> prPrec i 4 (concatD [prt 4 exp1, doc (showString "&&"), prt 5 exp2])
     Grammar.Abs.EOr exp1 exp2 -> prPrec i 3 (concatD [prt 3 exp1, doc (showString "||"), prt 4 exp2])
     Grammar.Abs.EAss exp1 exp2 -> prPrec i 2 (concatD [prt 3 exp1, doc (showString "="), prt 2 exp2])
-    Grammar.Abs.ELl exp1 exp2 -> prPrec i 10 (concatD [prt 10 exp1, doc (showString "<<"), prt 11 exp2])
-    Grammar.Abs.EGg exp1 exp2 -> prPrec i 10 (concatD [prt 10 exp1, doc (showString ">>"), prt 11 exp2])
+    Grammar.Abs.EThrowE exp -> prPrec i 2 (concatD [doc (showString "throw"), prt 2 exp])
+    Grammar.Abs.EQstnmrk exp1 exp2 exp3 -> prPrec i 2 (concatD [prt 2 exp1, doc (showString "?"), prt 3 exp2, doc (showString ":"), prt 3 exp3])
+    Grammar.Abs.ELl exp1 exp2 -> prPrec i 10 (concatD [prt 10 exp1, doc (showString "<<"), prt 10 exp2])
+    Grammar.Abs.EGg exp id -> prPrec i 10 (concatD [prt 10 exp, doc (showString ">>"), prt 0 id])
+    Grammar.Abs.ELib id1 id2 -> prPrec i 10 (concatD [prt 0 id1, doc (showString "::"), prt 0 id2])
+    Grammar.Abs.ETerm -> prPrec i 10 (concatD [doc (showString "\""), doc (showString "\"")])
   prtList _ [] = concatD []
   prtList _ [x] = concatD [prt 0 x]
   prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
@@ -181,4 +185,5 @@ instance Print Grammar.Abs.Type where
     Grammar.Abs.Tint -> prPrec i 0 (concatD [doc (showString "int")])
     Grammar.Abs.Tstring -> prPrec i 0 (concatD [doc (showString "string")])
     Grammar.Abs.Tvoid -> prPrec i 0 (concatD [doc (showString "void")])
+    Grammar.Abs.TLit id type_ -> prPrec i 0 (concatD [prt 0 id, doc (showString "::"), prt 0 type_])
 

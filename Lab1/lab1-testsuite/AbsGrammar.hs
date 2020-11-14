@@ -57,10 +57,14 @@ data Exp
     | EAnd Exp Exp
     | EOr Exp Exp
     | EAss Exp Exp
+    | EThrowE Exp
+    | EQstnmrk Exp Exp Exp
     | ELl Exp Exp
-    | EGg Exp Exp
+    | EGg Exp Id
+    | ELib Id Id
+    | ETerm
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Type = Tbool | Tdouble | Tint | Tstring | Tvoid
+data Type = Tbool | Tdouble | Tint | Tstring | Tvoid | TLit Id Type
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 

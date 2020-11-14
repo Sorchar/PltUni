@@ -46,9 +46,14 @@ ENEq.		Exp8	::= Exp8  "!=" Exp9 ;
 EAnd.		Exp4 	::= Exp4  "&&" Exp5 ;
 EOr.		Exp3    ::= Exp3  "||" Exp4 ;
 EAss.		Exp2    ::= Exp3  "="  Exp2 ;
+EThrowE.	Exp2 	::= "throw"    Exp2 ;
+EQstnmrk.	Exp2    ::= Exp2 "?" Exp3 ":" Exp3 ;
 
-ELl.		Exp10	::= Exp10 "<<" Exp11 ;
-EGg.		Exp10	::= Exp10 ">>" Exp11 ;
+ELl.		Exp10	::= Exp10 "<<" Exp10 ;
+EGg.		Exp10	::= Exp10 ">>" Id ;
+
+ELib.       Exp10     ::=  Id "::" Id;
+ETerm.       Exp10   ::= "\"" "\"";
 
 coercions Exp 15  ;
 separator Exp "," ;
@@ -58,6 +63,7 @@ Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
 Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
+TLit.    Type ::= Id "::" Type;
 
 token Id (letter (letter | digit | '_')*) ;
 

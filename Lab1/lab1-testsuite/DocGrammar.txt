@@ -38,7 +38,7 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 The reserved words used in Grammar are the following:
   | ``bool`` | ``double`` | ``else`` | ``false``
   | ``if`` | ``int`` | ``return`` | ``string``
-  | ``true`` | ``void`` | ``while`` |
+  | ``throw`` | ``true`` | ``void`` | ``while``
 
 The symbols used in Grammar are the following:
   | ( | ) | { | }
@@ -46,7 +46,8 @@ The symbols used in Grammar are the following:
   | -- | - | * | /
   | + | < | > | <=
   | >= | == | != | &&
-  | || | << | >> |
+  | || | ? | : | <<
+  | >> | :: | " |
 
 ===Comments===
 Single-line comments begin with //, #.Multiple-line comments are  enclosed with /* and */.
@@ -108,9 +109,13 @@ All other symbols are terminals.
   | //Exp3// | -> | //Exp3// ``||`` //Exp4//
   |  |  **|**  | //Exp4//
   | //Exp2// | -> | //Exp3// ``=`` //Exp2//
+  |  |  **|**  | ``throw`` //Exp2//
+  |  |  **|**  | //Exp2// ``?`` //Exp3// ``:`` //Exp3//
   |  |  **|**  | //Exp3//
-  | //Exp10// | -> | //Exp10// ``<<`` //Exp11//
-  |  |  **|**  | //Exp10// ``>>`` //Exp11//
+  | //Exp10// | -> | //Exp10// ``<<`` //Exp10//
+  |  |  **|**  | //Exp10// ``>>`` //Id//
+  |  |  **|**  | //Id// ``::`` //Id//
+  |  |  **|**  | ``"`` ``"``
   |  |  **|**  | //Exp11//
   | //Exp// | -> | //Exp1//
   | //Exp1// | -> | //Exp2//
@@ -125,5 +130,6 @@ All other symbols are terminals.
   |  |  **|**  | ``int``
   |  |  **|**  | ``string``
   |  |  **|**  | ``void``
+  |  |  **|**  | //Id// ``::`` //Type//
 
 

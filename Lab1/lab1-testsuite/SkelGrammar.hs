@@ -58,8 +58,12 @@ transExp x = case x of
   AbsGrammar.EAnd exp1 exp2 -> failure x
   AbsGrammar.EOr exp1 exp2 -> failure x
   AbsGrammar.EAss exp1 exp2 -> failure x
+  AbsGrammar.EThrowE exp -> failure x
+  AbsGrammar.EQstnmrk exp1 exp2 exp3 -> failure x
   AbsGrammar.ELl exp1 exp2 -> failure x
-  AbsGrammar.EGg exp1 exp2 -> failure x
+  AbsGrammar.EGg exp id -> failure x
+  AbsGrammar.ELib id1 id2 -> failure x
+  AbsGrammar.ETerm -> failure x
 transType :: AbsGrammar.Type -> Result
 transType x = case x of
   AbsGrammar.Tbool -> failure x
@@ -67,4 +71,5 @@ transType x = case x of
   AbsGrammar.Tint -> failure x
   AbsGrammar.Tstring -> failure x
   AbsGrammar.Tvoid -> failure x
+  AbsGrammar.TLit id type_ -> failure x
 

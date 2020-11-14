@@ -165,6 +165,11 @@ instance Print AbsGrammar.Exp where
     AbsGrammar.EAnd exp1 exp2 -> prPrec i 4 (concatD [prt 4 exp1, doc (showString "&&"), prt 5 exp2])
     AbsGrammar.EOr exp1 exp2 -> prPrec i 3 (concatD [prt 3 exp1, doc (showString "||"), prt 4 exp2])
     AbsGrammar.EAss exp1 exp2 -> prPrec i 2 (concatD [prt 3 exp1, doc (showString "="), prt 2 exp2])
+    AbsGrammar.EThrowE exp -> prPrec i 2 (concatD [doc (showString "throw"), prt 2 exp])
+    AbsGrammar.ELl exp1 exp2 -> prPrec i 10 (concatD [prt 10 exp1, doc (showString "<<"), prt 10 exp2])
+    AbsGrammar.EGg exp id -> prPrec i 10 (concatD [prt 10 exp, doc (showString ">>"), prt 0 id])
+    AbsGrammar.ELib id1 id2 -> prPrec i 10 (concatD [prt 0 id1, doc (showString "::"), prt 0 id2])
+    AbsGrammar.ETerm -> prPrec i 10 (concatD [doc (showString "\""), doc (showString "\"")])
   prtList _ [] = concatD []
   prtList _ [x] = concatD [prt 0 x]
   prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
@@ -179,4 +184,5 @@ instance Print AbsGrammar.Type where
     AbsGrammar.Tint -> prPrec i 0 (concatD [doc (showString "int")])
     AbsGrammar.Tstring -> prPrec i 0 (concatD [doc (showString "string")])
     AbsGrammar.Tvoid -> prPrec i 0 (concatD [doc (showString "void")])
+    AbsGrammar.TLit id type_ -> prPrec i 0 (concatD [prt 0 id, doc (showString "::"), prt 0 type_])
 
