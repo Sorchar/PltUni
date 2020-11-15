@@ -42,20 +42,19 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 The reserved words used in Grammar are the following:
   | ``bool`` | ``const`` | ``do`` | ``double``
   | ``else`` | ``false`` | ``for`` | ``if``
-  | ``int`` | ``return`` | ``string`` | ``throw``
-  | ``true`` | ``typedef`` | ``using`` | ``void``
-  | ``while`` |  |  |
+  | ``int`` | ``return`` | ``throw`` | ``true``
+  | ``typedef`` | ``using`` | ``void`` | ``while``
 
 The symbols used in Grammar are the following:
   | ( | ) | { | }
-  | ; | , | = | &
+  | ; | , | & | =
   | [ | ] | . | ++
   | -- | * | ! | -
   | -> | / | % | +
   | < | > | <= | >=
   | == | != | && | ||
-  | ? | : | << | >>
-  | :: | " |  |
+  | -= | += | ? | :
+  | << | >> | :: |
 
 ===Comments===
 Single-line comments begin with //, #.Multiple-line comments are  enclosed with /* and */.
@@ -71,10 +70,11 @@ All other symbols are terminals.
   |  |  **|**  | //Def// //[Def]//
   | //Def// | -> | //Type// //Id// ``(`` //[Arg]// ``)`` ``{`` //[Stm]// ``}``
   |  |  **|**  | //Type// //Id// ``(`` //[Arg]// ``)`` ``;``
-  |  |  **|**  | ``using`` //Exp// ``;``
-  |  |  **|**  | //Type// //Decl// ``;``
+  |  |  **|**  | ``using`` //QConsts// ``;``
+  |  |  **|**  | //Type// //Id// ``;``
   |  |  **|**  | //Type// //[Decl]// ``;``
   |  |  **|**  | ``typedef`` //Type// //Id// ``;``
+  |  |  **|**  | //Type// //Id// ``=`` //Exp// ``;``
   | //[Arg]// | -> | **eps**
   |  |  **|**  | //Arg//
   |  |  **|**  | //Arg// ``,`` //[Arg]//
@@ -83,7 +83,7 @@ All other symbols are terminals.
   | //[Stm]// | -> | **eps**
   |  |  **|**  | //Stm// //[Stm]//
   | //Stm// | -> | ``typedef`` //Type// //Id// ``;``
-  |  |  **|**  | //Type// //Decl// ``;``
+  |  |  **|**  | //Type// //Id// ``;``
   |  |  **|**  | //Type// //[Decl]// ``;``
   |  |  **|**  | //Type// //Id// ``=`` //Exp// ``;``
   |  |  **|**  | //Exp// ``;``
@@ -92,9 +92,9 @@ All other symbols are terminals.
   |  |  **|**  | ``while`` ``(`` //Exp// ``)`` ``;``
   |  |  **|**  | ``{`` //[Stm]// ``}``
   |  |  **|**  | ``if`` ``(`` //Exp// ``)`` //Stm// //Else//
-  |  |  **|**  | ``{`` //[Stm]// ``}``
   |  |  **|**  | ``const`` //Type// ``&`` //Id// ``=`` //Exp// ``;``
   |  |  **|**  | ``for`` ``(`` //Type// //Id// ``=`` //Exp// ``;`` //Exp// ``;`` //Exp// ``)`` //Stm//
+  |  |  **|**  | ``for`` ``(`` //Type// //Id// ``;`` //Exp// ``;`` //Exp// ``)`` //Stm//
   |  |  **|**  | ``const`` //Type// //Id// ``=`` //Exp// ``;``
   |  |  **|**  | ``do`` //Stm// ``while`` ``(`` //Exp// ``)`` ``;``
   | //Arg// | -> | //Type//
@@ -104,6 +104,7 @@ All other symbols are terminals.
   |  |  **|**  | ``const`` //Type// ``&``
   |  |  **|**  | //Type// ``&``
   | //Decl// | -> | //Id//
+  |  |  **|**  | ``&`` //Id// ``=`` //Id//
   | //Else// | -> | **eps**
   |  |  **|**  | ``else`` //Stm//
   | //Exp15// | -> | //Char//
@@ -112,19 +113,14 @@ All other symbols are terminals.
   |  |  **|**  | //StringList//
   |  |  **|**  | ``true``
   |  |  **|**  | ``false``
-  |  |  **|**  | //Id//
-  |  |  **|**  | //Exp15// ``[`` //Exp// ``]``
-  |  |  **|**  | //Exp15// ``(`` //[Exp]// ``)``
-  |  |  **|**  | //Exp15// ``.`` //Exp14//
+  |  |  **|**  | //QConsts//
   |  |  **|**  | ``*`` //Exp15//
-  |  |  **|**  | //Exp15// ``<<`` //Exp14//
-  |  |  **|**  | //Exp15// ``>>`` //Id//
-  |  |  **|**  | //Type//
-  |  |  **|**  | //Id// ``::`` //Exp16//
-  |  |  **|**  | ``"`` ``"``
   |  |  **|**  | //Exp16//
-  | //Exp14// | -> | //Exp15// ``++``
-  |  |  **|**  | //Exp15// ``--``
+  | //Exp14// | -> | //Exp14// ``[`` //Exp// ``]``
+  |  |  **|**  | //Exp14// ``(`` //[Exp]// ``)``
+  |  |  **|**  | //Exp14// ``.`` //Exp15//
+  |  |  **|**  | //Exp14// ``++``
+  |  |  **|**  | //Exp14// ``--``
   |  |  **|**  | //Exp15//
   | //Exp13// | -> | ``!`` //Exp14//
   |  |  **|**  | ``++`` //Exp14//
@@ -152,15 +148,19 @@ All other symbols are terminals.
   | //Exp3// | -> | //Exp3// ``||`` //Exp4//
   |  |  **|**  | //Exp4//
   | //Exp2// | -> | //Exp3// ``=`` //Exp2//
+  |  |  **|**  | //Exp3// ``-=`` //Exp2//
+  |  |  **|**  | //Exp3// ``+=`` //Exp2//
   |  |  **|**  | ``throw`` //Exp2//
   |  |  **|**  | //Exp3// ``?`` //Exp2// ``:`` //Exp2//
   |  |  **|**  | //Exp3//
+  | //Exp10// | -> | //Exp10// ``<<`` //Exp11//
+  |  |  **|**  | //Exp10// ``>>`` //Exp11//
+  |  |  **|**  | //Exp11//
   | //Exp// | -> | //Exp1//
   | //Exp1// | -> | //Exp2//
   | //Exp5// | -> | //Exp6//
   | //Exp6// | -> | //Exp7//
   | //Exp7// | -> | //Exp8//
-  | //Exp10// | -> | //Exp11//
   | //Exp16// | -> | ``(`` //Exp// ``)``
   | //[Exp]// | -> | **eps**
   |  |  **|**  | //Exp//
@@ -168,10 +168,12 @@ All other symbols are terminals.
   | //Type// | -> | ``bool``
   |  |  **|**  | ``double``
   |  |  **|**  | ``int``
-  |  |  **|**  | ``string``
   |  |  **|**  | ``void``
-  |  |  **|**  | //Id//
-  |  |  **|**  | //Id// ``::`` //Type//
+  |  |  **|**  | //QConsts//
+  | //QConst// | -> | //Id//
+  | //QConsts// | -> | //[QConst]//
+  | //[QConst]// | -> | //QConst//
+  |  |  **|**  | //QConst// ``::`` //[QConst]//
   | //StringList// | -> | //[String]//
   | //[String]// | -> | //String//
   |  |  **|**  | //String// //[String]//

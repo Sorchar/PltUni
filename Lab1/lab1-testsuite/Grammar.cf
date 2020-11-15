@@ -10,16 +10,19 @@ separator nonempty Decl ","   ;
 terminator  Stm ""			  ;
 
 DNameSpace. Def     ::= "using" QConsts ";";
-DDecl. 		Def		::= Type Decl ";" ; -- 1 shift conflict
+DDecl. 		Def		::= Type Id ";" ; -- 1 shift conflict
 DDecls. 	Def		::= Type [Decl] ";" ; -- 1 shift conflict
 STypeDefId. Stm     ::= "typedef" Type Id ";"; -- 1 or 2 reduce reduce
 DTypeDefId. Def     ::= "typedef" Type Id ";";
 
 ADecl. 	    Arg     ::= Type ;
 ADeclId. 	Arg     ::= Type Id ;
-SDecl. 		Stm		::= Type Decl ";" ;
+SDecl. 		Stm		::= Type Id ";" ;
 SDecls. 	Stm		::= Type [Decl] ";" ;
-SDeclId.    Decl    ::= Id;
+DId.        Decl    ::= Id;
+DeclInit.   Decl    ::= Id "=" Exp;
+SRefInit. 	Decl	::= "&" Id "=" Id ;
+DInit. 		Def		::= Type Id "=" Exp ";" ;
 SInit. 		Stm		::= Type Id "=" Exp ";" ;
 SEexp.		Stm		::= Exp ";" ;
 SReturn. 	Stm		::= "return" Exp ";" ;
@@ -30,12 +33,17 @@ SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ; -- 1 shift 2 reduce
 SEElse.     Else    ::= "";
 SElse.      Else    ::= "else" Stm; -- 1 shift 1 reduce
 SConstRefInit.  Stm	::= "const" Type "&" Id "=" Exp ";" ;
-SFor.           Stm ::= "for" "(" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ; -- 1 reduce too
-SConstInitId.     Stm  ::= "const" Type Id "=" Exp ";" ;
-SDo.		Stm	    ::=	"do" Stm "while" "("Exp")" ";" ; -- 1 reduce conflict
+SConstRef.  Stm	::= "const" Type "&" Id ";" ;
+SFor.           Stm ::= "for" "(" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ;
+SFor2.          Stm ::= "for" "(" Type Id ";" Exp ";" Exp ")" Stm ;
+SFor3.           Stm ::= "for" "(" "const" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ;
+SConstInitId.   Stm ::= "const" Type Id "=" Exp ";" ;
+SConstId.   Stm ::= "const" Type Id";" ;
+SDo.		    Stm	::=	"do" Stm "while" "("Exp")" ";" ; -- 1 reduce conflict
 
 
 AConstRefTypeId. Arg ::= "const" Type "&" Id;
+AConstTypeId.    Arg ::= "const" Type Id;
 ARefId.          Arg ::= Type "&" Id ;
 AConstRefType.   Arg ::= "const" Type "&";
 ARefType.        Arg ::=  Type "&";
@@ -49,7 +57,6 @@ EDouble. 	Exp15 	::= Double  ;
 EString. 	Exp15   ::= StringList;
 ETrue. 		Exp15 	::= "true"  ;
 EFalse.		Exp15 	::= "false" ;
-EId.		Exp15   ::= Id 		;
 EConst.		Exp15   ::= QConsts ;
 
 EIndex.		Exp14   ::= Exp14 	"[" Exp "]" ; -- 2 shift and 2 reduce reduce
@@ -60,9 +67,9 @@ EPDcecr.	Exp14	::= Exp14 "--" ;
 
 
 EDeref. 	Exp15   ::= "*"  Exp15 ;
-ENot. 		Exp13   ::= "!"  Exp14 ;
-EIncr. 		Exp13   ::= "++" Exp14 ;
-EDecr.		Exp13 	::= "--" Exp14 ;
+ENot. 		Exp13   ::= "!"  Exp13 ;
+EIncr. 		Exp13   ::= "++" Exp13 ;
+EDecr.		Exp13 	::= "--" Exp13 ;
 ENeg.		Exp13   ::= "-"  Exp14 ;
 
 EArrow.	    Exp13	::= Exp13 "->" Exp14;
@@ -80,6 +87,8 @@ ENEq.		Exp8	::= Exp8  "!=" Exp9 ;
 EAnd.		Exp4 	::= Exp4  "&&" Exp5 ;
 EOr.		Exp3    ::= Exp3  "||" Exp4 ;
 EAss.		Exp2    ::= Exp3  "="  Exp2 ;
+EAss2.		Exp2    ::= Exp3  "-="  Exp2 ;
+EAss3.		Exp2    ::= Exp3  "+="  Exp2 ;
 EThrowE.	Exp2 	::= "throw"    Exp2 ; -- shift conflict
 EQstnmrk.	Exp2    ::= Exp3 "?" Exp2 ":" Exp2 ;
 

@@ -18,15 +18,16 @@ data Program = PDefs [Def]
 data Def
     = DFun Type Id [Arg] [Stm]
     | DFunCall Type Id [Arg]
-    | DNameSpace Exp
-    | DDecl Type Decl
+    | DNameSpace QConsts
+    | DDecl Type Id
     | DDecls Type [Decl]
     | DTypeDefId Type Id
+    | DInit Type Id Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Stm
     = STypeDefId Type Id
-    | SDecl Type Decl
+    | SDecl Type Id
     | SDecls Type [Decl]
     | SInit Type Id Exp
     | SEexp Exp
@@ -37,6 +38,7 @@ data Stm
     | SIfElse Exp Stm Else
     | SConstRefInit Type Id Exp
     | SFor Type Id Exp Exp Exp Stm
+    | SFor2 Type Id Exp Exp Stm
     | SConstInitId Type Id Exp
     | SDo Stm Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
@@ -50,7 +52,7 @@ data Arg
     | ARefType Type
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Decl = SDeclId Id
+data Decl = DId Id | SRefInit Id Id
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Else = SEElse | SElse Stm
@@ -63,7 +65,7 @@ data Exp
     | EString StringList
     | ETrue
     | EFalse
-    | EId Id
+    | EConst QConsts
     | EIndex Exp Exp
     | ECall Exp [Exp]
     | EFun Exp Exp
@@ -89,19 +91,23 @@ data Exp
     | EAnd Exp Exp
     | EOr Exp Exp
     | EAss Exp Exp
+    | EAss2 Exp Exp
+    | EAss3 Exp Exp
     | EThrowE Exp
     | EQstnmrk Exp Exp Exp
     | ELl Exp Exp
-    | EGg Exp Id
-    | ELib Type
-    | ELibs Id Exp
-    | ETerm
+    | EGg Exp Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Type
-    = Tbool | Tdouble | Tint | Tstring | Tvoid | Tnew Id | TLit Id Type
+data Type = Tbool | Tdouble | Tint | Tvoid | TQConst QConsts
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data StringList = StringList [String]
+data QConst = QCnst Id
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data QConsts = QCnsts [QConst]
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data StringList = StrList [String]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 

@@ -26,15 +26,18 @@ import Grammar.Lex
 %name pExp4 Exp4
 %name pExp3 Exp3
 %name pExp2 Exp2
+%name pExp10 Exp10
 %name pExp Exp
 %name pExp1 Exp1
 %name pExp5 Exp5
 %name pExp6 Exp6
 %name pExp7 Exp7
-%name pExp10 Exp10
 %name pExp16 Exp16
 %name pListExp ListExp
 %name pType Type
+%name pQConst QConst
+%name pQConsts QConsts
+%name pListQConst ListQConst
 %name pStringList StringList
 %name pListString ListString
 -- no lexer declaration
@@ -43,46 +46,46 @@ import Grammar.Lex
 %token
   '!' { PT _ (TS _ 1) }
   '!=' { PT _ (TS _ 2) }
-  '\"' { PT _ (TS _ 3) }
-  '%' { PT _ (TS _ 4) }
-  '&' { PT _ (TS _ 5) }
-  '&&' { PT _ (TS _ 6) }
-  '(' { PT _ (TS _ 7) }
-  ')' { PT _ (TS _ 8) }
-  '*' { PT _ (TS _ 9) }
-  '+' { PT _ (TS _ 10) }
-  '++' { PT _ (TS _ 11) }
+  '%' { PT _ (TS _ 3) }
+  '&' { PT _ (TS _ 4) }
+  '&&' { PT _ (TS _ 5) }
+  '(' { PT _ (TS _ 6) }
+  ')' { PT _ (TS _ 7) }
+  '*' { PT _ (TS _ 8) }
+  '+' { PT _ (TS _ 9) }
+  '++' { PT _ (TS _ 10) }
+  '+=' { PT _ (TS _ 11) }
   ',' { PT _ (TS _ 12) }
   '-' { PT _ (TS _ 13) }
   '--' { PT _ (TS _ 14) }
-  '->' { PT _ (TS _ 15) }
-  '.' { PT _ (TS _ 16) }
-  '/' { PT _ (TS _ 17) }
-  ':' { PT _ (TS _ 18) }
-  '::' { PT _ (TS _ 19) }
-  ';' { PT _ (TS _ 20) }
-  '<' { PT _ (TS _ 21) }
-  '<<' { PT _ (TS _ 22) }
-  '<=' { PT _ (TS _ 23) }
-  '=' { PT _ (TS _ 24) }
-  '==' { PT _ (TS _ 25) }
-  '>' { PT _ (TS _ 26) }
-  '>=' { PT _ (TS _ 27) }
-  '>>' { PT _ (TS _ 28) }
-  '?' { PT _ (TS _ 29) }
-  '[' { PT _ (TS _ 30) }
-  ']' { PT _ (TS _ 31) }
-  'bool' { PT _ (TS _ 32) }
-  'const' { PT _ (TS _ 33) }
-  'do' { PT _ (TS _ 34) }
-  'double' { PT _ (TS _ 35) }
-  'else' { PT _ (TS _ 36) }
-  'false' { PT _ (TS _ 37) }
-  'for' { PT _ (TS _ 38) }
-  'if' { PT _ (TS _ 39) }
-  'int' { PT _ (TS _ 40) }
-  'return' { PT _ (TS _ 41) }
-  'string' { PT _ (TS _ 42) }
+  '-=' { PT _ (TS _ 15) }
+  '->' { PT _ (TS _ 16) }
+  '.' { PT _ (TS _ 17) }
+  '/' { PT _ (TS _ 18) }
+  ':' { PT _ (TS _ 19) }
+  '::' { PT _ (TS _ 20) }
+  ';' { PT _ (TS _ 21) }
+  '<' { PT _ (TS _ 22) }
+  '<<' { PT _ (TS _ 23) }
+  '<=' { PT _ (TS _ 24) }
+  '=' { PT _ (TS _ 25) }
+  '==' { PT _ (TS _ 26) }
+  '>' { PT _ (TS _ 27) }
+  '>=' { PT _ (TS _ 28) }
+  '>>' { PT _ (TS _ 29) }
+  '?' { PT _ (TS _ 30) }
+  '[' { PT _ (TS _ 31) }
+  ']' { PT _ (TS _ 32) }
+  'bool' { PT _ (TS _ 33) }
+  'const' { PT _ (TS _ 34) }
+  'do' { PT _ (TS _ 35) }
+  'double' { PT _ (TS _ 36) }
+  'else' { PT _ (TS _ 37) }
+  'false' { PT _ (TS _ 38) }
+  'for' { PT _ (TS _ 39) }
+  'if' { PT _ (TS _ 40) }
+  'int' { PT _ (TS _ 41) }
+  'return' { PT _ (TS _ 42) }
   'throw' { PT _ (TS _ 43) }
   'true' { PT _ (TS _ 44) }
   'typedef' { PT _ (TS _ 45) }
@@ -124,10 +127,11 @@ ListDef : {- empty -} { [] } | Def ListDef { (:) $1 $2 }
 Def :: { Grammar.Abs.Def }
 Def : Type Id '(' ListArg ')' '{' ListStm '}' { Grammar.Abs.DFun $1 $2 $4 $7 }
     | Type Id '(' ListArg ')' ';' { Grammar.Abs.DFunCall $1 $2 $4 }
-    | 'using' Exp ';' { Grammar.Abs.DNameSpace $2 }
-    | Type Decl ';' { Grammar.Abs.DDecl $1 $2 }
+    | 'using' QConsts ';' { Grammar.Abs.DNameSpace $2 }
+    | Type Id ';' { Grammar.Abs.DDecl $1 $2 }
     | Type ListDecl ';' { Grammar.Abs.DDecls $1 $2 }
     | 'typedef' Type Id ';' { Grammar.Abs.DTypeDefId $2 $3 }
+    | Type Id '=' Exp ';' { Grammar.Abs.DInit $1 $2 $4 }
 
 ListArg :: { [Grammar.Abs.Arg] }
 ListArg : {- empty -} { [] }
@@ -142,7 +146,7 @@ ListStm : {- empty -} { [] } | Stm ListStm { (:) $1 $2 }
 
 Stm :: { Grammar.Abs.Stm }
 Stm : 'typedef' Type Id ';' { Grammar.Abs.STypeDefId $2 $3 }
-    | Type Decl ';' { Grammar.Abs.SDecl $1 $2 }
+    | Type Id ';' { Grammar.Abs.SDecl $1 $2 }
     | Type ListDecl ';' { Grammar.Abs.SDecls $1 $2 }
     | Type Id '=' Exp ';' { Grammar.Abs.SInit $1 $2 $4 }
     | Exp ';' { Grammar.Abs.SEexp $1 }
@@ -151,9 +155,9 @@ Stm : 'typedef' Type Id ';' { Grammar.Abs.STypeDefId $2 $3 }
     | 'while' '(' Exp ')' ';' { Grammar.Abs.SEWhile $3 }
     | '{' ListStm '}' { Grammar.Abs.SBlock $2 }
     | 'if' '(' Exp ')' Stm Else { Grammar.Abs.SIfElse $3 $5 $6 }
-    | '{' ListStm '}' { Grammar.Abs.SBlock $2 }
     | 'const' Type '&' Id '=' Exp ';' { Grammar.Abs.SConstRefInit $2 $4 $6 }
     | 'for' '(' Type Id '=' Exp ';' Exp ';' Exp ')' Stm { Grammar.Abs.SFor $3 $4 $6 $8 $10 $12 }
+    | 'for' '(' Type Id ';' Exp ';' Exp ')' Stm { Grammar.Abs.SFor2 $3 $4 $6 $8 $10 }
     | 'const' Type Id '=' Exp ';' { Grammar.Abs.SConstInitId $2 $3 $5 }
     | 'do' Stm 'while' '(' Exp ')' ';' { Grammar.Abs.SDo $2 $5 }
 
@@ -166,7 +170,8 @@ Arg : Type { Grammar.Abs.ADecl $1 }
     | Type '&' { Grammar.Abs.ARefType $1 }
 
 Decl :: { Grammar.Abs.Decl }
-Decl : Id { Grammar.Abs.SDeclId $1 }
+Decl : Id { Grammar.Abs.DId $1 }
+     | '&' Id '=' Id { Grammar.Abs.SRefInit $2 $4 }
 
 Else :: { Grammar.Abs.Else }
 Else : {- empty -} { Grammar.Abs.SEElse }
@@ -179,21 +184,16 @@ Exp15 : Char { Grammar.Abs.EChar $1 }
       | StringList { Grammar.Abs.EString $1 }
       | 'true' { Grammar.Abs.ETrue }
       | 'false' { Grammar.Abs.EFalse }
-      | Id { Grammar.Abs.EId $1 }
-      | Exp15 '[' Exp ']' { Grammar.Abs.EIndex $1 $3 }
-      | Exp15 '(' ListExp ')' { Grammar.Abs.ECall $1 $3 }
-      | Exp15 '.' Exp14 { Grammar.Abs.EFun $1 $3 }
+      | QConsts { Grammar.Abs.EConst $1 }
       | '*' Exp15 { Grammar.Abs.EDeref $2 }
-      | Exp15 '<<' Exp14 { Grammar.Abs.ELl $1 $3 }
-      | Exp15 '>>' Id { Grammar.Abs.EGg $1 $3 }
-      | Type { Grammar.Abs.ELib $1 }
-      | Id '::' Exp16 { Grammar.Abs.ELibs $1 $3 }
-      | '\"' '\"' { Grammar.Abs.ETerm }
       | Exp16 { $1 }
 
 Exp14 :: { Grammar.Abs.Exp }
-Exp14 : Exp15 '++' { Grammar.Abs.EPIncr $1 }
-      | Exp15 '--' { Grammar.Abs.EPDcecr $1 }
+Exp14 : Exp14 '[' Exp ']' { Grammar.Abs.EIndex $1 $3 }
+      | Exp14 '(' ListExp ')' { Grammar.Abs.ECall $1 $3 }
+      | Exp14 '.' Exp15 { Grammar.Abs.EFun $1 $3 }
+      | Exp14 '++' { Grammar.Abs.EPIncr $1 }
+      | Exp14 '--' { Grammar.Abs.EPDcecr $1 }
       | Exp15 { $1 }
 
 Exp13 :: { Grammar.Abs.Exp }
@@ -235,9 +235,16 @@ Exp3 : Exp3 '||' Exp4 { Grammar.Abs.EOr $1 $3 } | Exp4 { $1 }
 
 Exp2 :: { Grammar.Abs.Exp }
 Exp2 : Exp3 '=' Exp2 { Grammar.Abs.EAss $1 $3 }
+     | Exp3 '-=' Exp2 { Grammar.Abs.EAss2 $1 $3 }
+     | Exp3 '+=' Exp2 { Grammar.Abs.EAss3 $1 $3 }
      | 'throw' Exp2 { Grammar.Abs.EThrowE $2 }
      | Exp3 '?' Exp2 ':' Exp2 { Grammar.Abs.EQstnmrk $1 $3 $5 }
      | Exp3 { $1 }
+
+Exp10 :: { Grammar.Abs.Exp }
+Exp10 : Exp10 '<<' Exp11 { Grammar.Abs.ELl $1 $3 }
+      | Exp10 '>>' Exp11 { Grammar.Abs.EGg $1 $3 }
+      | Exp11 { $1 }
 
 Exp :: { Grammar.Abs.Exp }
 Exp : Exp1 { $1 }
@@ -254,9 +261,6 @@ Exp6 : Exp7 { $1 }
 Exp7 :: { Grammar.Abs.Exp }
 Exp7 : Exp8 { $1 }
 
-Exp10 :: { Grammar.Abs.Exp }
-Exp10 : Exp11 { $1 }
-
 Exp16 :: { Grammar.Abs.Exp }
 Exp16 : '(' Exp ')' { $2 }
 
@@ -269,13 +273,21 @@ Type :: { Grammar.Abs.Type }
 Type : 'bool' { Grammar.Abs.Tbool }
      | 'double' { Grammar.Abs.Tdouble }
      | 'int' { Grammar.Abs.Tint }
-     | 'string' { Grammar.Abs.Tstring }
      | 'void' { Grammar.Abs.Tvoid }
-     | Id { Grammar.Abs.Tnew $1 }
-     | Id '::' Type { Grammar.Abs.TLit $1 $3 }
+     | QConsts { Grammar.Abs.TQConst $1 }
+
+QConst :: { Grammar.Abs.QConst }
+QConst : Id { Grammar.Abs.QCnst $1 }
+
+QConsts :: { Grammar.Abs.QConsts }
+QConsts : ListQConst { Grammar.Abs.QCnsts $1 }
+
+ListQConst :: { [Grammar.Abs.QConst] }
+ListQConst : QConst { (:[]) $1 }
+           | QConst '::' ListQConst { (:) $1 $3 }
 
 StringList :: { Grammar.Abs.StringList }
-StringList : ListString { Grammar.Abs.StringList $1 }
+StringList : ListString { Grammar.Abs.StrList $1 }
 
 ListString :: { [String] }
 ListString : String { (:[]) $1 } | String ListString { (:) $1 $2 }
