@@ -29,7 +29,6 @@ SBlock. 	Stm 	::= "{" [Stm] "}" ;
 SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ; -- 1 shift 2 reduce
 SEElse.     Else    ::= "";
 SElse.      Else    ::= "else" Stm; -- 1 shift 1 reduce
-SBlock.     Stm     ::= "{" [Stm] "}";
 SConstRefInit.  Stm	::= "const" Type "&" Id "=" Exp ";" ;
 SFor.           Stm ::= "for" "(" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ; -- 1 reduce too
 SConstInitId.     Stm  ::= "const" Type Id "=" Exp ";" ;
@@ -99,11 +98,11 @@ Tvoid.	 Type ::= "void"   ;
 TQConst. Type ::= QConsts  ;
 
 
-Qconst.  QConst  ::= Id;
-QConsts. QConsts ::= [QConst];
+QCnst.  QConst  ::= Id;
+QCnsts. QConsts ::= [QConst];
 separator nonempty  QConst "::";
 
-StringList. StringList ::= [String];
+StrList. StringList ::= [String];
 separator nonempty String "";
 
 token Id (letter (letter | digit | '_')*) ;
