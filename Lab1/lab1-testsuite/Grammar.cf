@@ -21,7 +21,7 @@ SDecl. 		Stm		::= Type Decl ";" ;
 SDecls. 	Stm		::= Type [Decl] ";" ;
 SDeclId.    Decl    ::= Id;
 SInit. 		Stm		::= Type Id "=" Exp ";" ;
-SEexp.		Stm		::= Exp ";" ; --HERE
+SEexp.		Stm		::= Exp ";" ;
 SReturn. 	Stm		::= "return" Exp ";" ;
 SWhile. 	Stm		::= "while" "(" Exp ")" Stm;
 SEWhile. 	Stm		::= "while" "(" Exp ")" ";";
@@ -85,9 +85,8 @@ EQstnmrk.	Exp2    ::= Exp2 "?" Exp3 ":" Exp3 ;
 ELl.		Exp15	::= Exp15 "<<" Exp15 ;
 EGg.		Exp15	::= Exp15 ">>" Id ;
 
+ELib.       Exp15   ::=  Type;
 ELibs.      Exp15   ::=  Id "::" Exp10;
-ELib.       Exp15   ::=  Id "::" Id;
-ELibType.   Exp15   ::=  Id "::" Type;
 ETerm.      Exp15   ::= "\"" "\"";
 
 coercions Exp 16  ;
