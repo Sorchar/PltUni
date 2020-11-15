@@ -6,12 +6,12 @@
 
 # Default goal.
 
-all : TestGrammar
+all : Grammar/Test
 
 # Rules for building the parser.
 
-ErrM.hs LexGrammar.x PrintGrammar.hs ParGrammar.y TestGrammar.hs : Grammar.cf
-	bnfc --haskell Grammar.cf
+Grammar/ErrM.hs Grammar/Lex.x Grammar/Print.hs Grammar/Par.y Grammar/Test.hs : Grammar.cf
+	bnfc --haskell -d Grammar.cf
 
 %.hs : %.y
 	happy --ghc --coerce --array --info $<
@@ -19,16 +19,16 @@ ErrM.hs LexGrammar.x PrintGrammar.hs ParGrammar.y TestGrammar.hs : Grammar.cf
 %.hs : %.x
 	alex --ghc $<
 
-TestGrammar : TestGrammar.hs ErrM.hs LexGrammar.hs ParGrammar.hs PrintGrammar.hs
+Grammar/Test : Grammar/Test.hs Grammar/ErrM.hs Grammar/Lex.hs Grammar/Par.hs Grammar/Print.hs
 	ghc --make $< -o $@
 
 # Rules for cleaning generated files.
 
 clean :
-	-rm -f *.hi *.o *.log *.aux *.dvi
+	-rm -f Grammar/*.hi Grammar/*.o Grammar/*.log Grammar/*.aux Grammar/*.dvi
 
 distclean : clean
-	-rm -f AbsGrammar.hs AbsGrammar.hs.bak ComposOp.hs ComposOp.hs.bak DocGrammar.txt DocGrammar.txt.bak ErrM.hs ErrM.hs.bak LayoutGrammar.hs LayoutGrammar.hs.bak LexGrammar.x LexGrammar.x.bak ParGrammar.y ParGrammar.y.bak PrintGrammar.hs PrintGrammar.hs.bak SharedString.hs SharedString.hs.bak SkelGrammar.hs SkelGrammar.hs.bak TestGrammar.hs TestGrammar.hs.bak XMLGrammar.hs XMLGrammar.hs.bak ASTGrammar.agda ASTGrammar.agda.bak ParserGrammar.agda ParserGrammar.agda.bak IOLib.agda IOLib.agda.bak Main.agda Main.agda.bak Grammar.dtd Grammar.dtd.bak TestGrammar LexGrammar.hs ParGrammar.hs ParGrammar.info ParDataGrammar.hs Makefile
-
+	-rm -f Grammar/Abs.hs Grammar/Abs.hs.bak Grammar/ComposOp.hs Grammar/ComposOp.hs.bak Grammar/Doc.txt Grammar/Doc.txt.bak Grammar/ErrM.hs Grammar/ErrM.hs.bak Grammar/Layout.hs Grammar/Layout.hs.bak Grammar/Lex.x Grammar/Lex.x.bak Grammar/Par.y Grammar/Par.y.bak Grammar/Print.hs Grammar/Print.hs.bak Grammar/SharedString.hs Grammar/SharedString.hs.bak Grammar/Skel.hs Grammar/Skel.hs.bak Grammar/Test.hs Grammar/Test.hs.bak Grammar/XML.hs Grammar/XML.hs.bak Grammar/AST.agda Grammar/AST.agda.bak Grammar/Parser.agda Grammar/Parser.agda.bak Grammar/IOLib.agda Grammar/IOLib.agda.bak Grammar/Main.agda Grammar/Main.agda.bak Grammar/Grammar.dtd Grammar/Grammar.dtd.bak Grammar/Test Grammar/Lex.hs Grammar/Par.hs Grammar/Par.info Grammar/ParData.hs Makefile
+	-rmdir -p Grammar/
 
 # EOF

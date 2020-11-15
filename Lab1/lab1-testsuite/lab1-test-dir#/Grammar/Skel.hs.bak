@@ -18,75 +18,62 @@ transProgram x = case x of
   Grammar.Abs.PDefs defs -> failure x
 transDef :: Grammar.Abs.Def -> Result
 transDef x = case x of
-  Grammar.Abs.DFun type_ id args stms -> failure x
-  Grammar.Abs.DFunCall type_ id args -> failure x
-  Grammar.Abs.DNameSpace qconsts -> failure x
-  Grammar.Abs.DDecl type_ id -> failure x
-  Grammar.Abs.DDecls type_ decls -> failure x
-  Grammar.Abs.DTypeDefId type_ id -> failure x
-  Grammar.Abs.DInit type_ id exp -> failure x
-transStm :: Grammar.Abs.Stm -> Result
-transStm x = case x of
-  Grammar.Abs.STypeDefId type_ id -> failure x
-  Grammar.Abs.SDecl type_ id -> failure x
-  Grammar.Abs.SDecls type_ decls -> failure x
-  Grammar.Abs.SInit type_ id exp -> failure x
-  Grammar.Abs.SEexp exp -> failure x
-  Grammar.Abs.SReturn exp -> failure x
-  Grammar.Abs.SWhile exp stm -> failure x
-  Grammar.Abs.SEWhile exp -> failure x
-  Grammar.Abs.SBlock stms -> failure x
-  Grammar.Abs.SIfElse exp stm else_ -> failure x
-  Grammar.Abs.SConstRefInit type_ id exp -> failure x
-  Grammar.Abs.SFor type_ id exp1 exp2 exp3 stm -> failure x
-  Grammar.Abs.SFor2 type_ id exp1 exp2 stm -> failure x
-  Grammar.Abs.SConstInitId type_ id exp -> failure x
-  Grammar.Abs.SDo stm exp -> failure x
+  Grammar.Abs.DefFun typec id args body -> failure x
+  Grammar.Abs.DefFun3 typec asss -> failure x
+  Grammar.Abs.DefUsing qconst -> failure x
+  Grammar.Abs.DefTypedef typec id -> failure x
 transArg :: Grammar.Abs.Arg -> Result
 transArg x = case x of
-  Grammar.Abs.ADecl type_ -> failure x
-  Grammar.Abs.ADeclId type_ id -> failure x
-  Grammar.Abs.AConstRefTypeId type_ id -> failure x
-  Grammar.Abs.ARefId type_ id -> failure x
-  Grammar.Abs.AConstRefType type_ -> failure x
-  Grammar.Abs.ARefType type_ -> failure x
-transDecl :: Grammar.Abs.Decl -> Result
-transDecl x = case x of
-  Grammar.Abs.DId id -> failure x
-  Grammar.Abs.SRefInit id1 id2 -> failure x
-transElse :: Grammar.Abs.Else -> Result
-transElse x = case x of
-  Grammar.Abs.SEElse -> failure x
-  Grammar.Abs.SElse stm -> failure x
+  Grammar.Abs.ADel typec -> failure x
+  Grammar.Abs.ADecl typec id -> failure x
+  Grammar.Abs.Aref id -> failure x
+transStm :: Grammar.Abs.Stm -> Result
+transStm x = case x of
+  Grammar.Abs.SInit typec asss -> failure x
+  Grammar.Abs.SReturn exp -> failure x
+  Grammar.Abs.SWhile exp stm -> failure x
+  Grammar.Abs.SWhile2 exp -> failure x
+  Grammar.Abs.SBlock stms -> failure x
+  Grammar.Abs.SIf exp stm -> failure x
+  Grammar.Abs.SIfElse exp stm1 stm2 -> failure x
+  Grammar.Abs.SFor typec ass exp1 exp2 stm -> failure x
+  Grammar.Abs.SDowh stm exp -> failure x
+  Grammar.Abs.STypeDef typec id -> failure x
+  Grammar.Abs.SExp exp -> failure x
+transBody :: Grammar.Abs.Body -> Result
+transBody x = case x of
+  Grammar.Abs.BBlock stms -> failure x
+  Grammar.Abs.BEmpty -> failure x
 transExp :: Grammar.Abs.Exp -> Result
 transExp x = case x of
-  Grammar.Abs.EChar char -> failure x
   Grammar.Abs.EInt integer -> failure x
   Grammar.Abs.EDouble double -> failure x
-  Grammar.Abs.EString stringlist -> failure x
+  Grammar.Abs.EString strings -> failure x
+  Grammar.Abs.EChar char -> failure x
   Grammar.Abs.ETrue -> failure x
   Grammar.Abs.EFalse -> failure x
-  Grammar.Abs.EConst qconsts -> failure x
+  Grammar.Abs.EQConst qconst -> failure x
+  Grammar.Abs.EApp exp exps -> failure x
   Grammar.Abs.EIndex exp1 exp2 -> failure x
-  Grammar.Abs.ECall exp exps -> failure x
-  Grammar.Abs.EFun exp1 exp2 -> failure x
+  Grammar.Abs.EProj exp1 exp2 -> failure x
+  Grammar.Abs.EProj2 exp1 exp2 -> failure x
   Grammar.Abs.EPIncr exp -> failure x
-  Grammar.Abs.EPDcecr exp -> failure x
-  Grammar.Abs.EDeref exp -> failure x
-  Grammar.Abs.ENot exp -> failure x
+  Grammar.Abs.EPDecr exp -> failure x
   Grammar.Abs.EIncr exp -> failure x
   Grammar.Abs.EDecr exp -> failure x
-  Grammar.Abs.ENeg exp -> failure x
-  Grammar.Abs.EArrow exp1 exp2 -> failure x
-  Grammar.Abs.EMul exp1 exp2 -> failure x
+  Grammar.Abs.EPoint exp -> failure x
+  Grammar.Abs.ENot exp -> failure x
+  Grammar.Abs.ERem exp1 exp2 -> failure x
+  Grammar.Abs.ETimes exp1 exp2 -> failure x
   Grammar.Abs.EDiv exp1 exp2 -> failure x
-  Grammar.Abs.EMod exp1 exp2 -> failure x
-  Grammar.Abs.EAdd exp1 exp2 -> failure x
-  Grammar.Abs.ESub exp1 exp2 -> failure x
+  Grammar.Abs.EPlus exp1 exp2 -> failure x
+  Grammar.Abs.EMinus exp1 exp2 -> failure x
+  Grammar.Abs.ELShift exp1 exp2 -> failure x
+  Grammar.Abs.ERShift exp1 exp2 -> failure x
   Grammar.Abs.ELt exp1 exp2 -> failure x
   Grammar.Abs.EGt exp1 exp2 -> failure x
-  Grammar.Abs.ELEq exp1 exp2 -> failure x
-  Grammar.Abs.EGEq exp1 exp2 -> failure x
+  Grammar.Abs.ELtEq exp1 exp2 -> failure x
+  Grammar.Abs.EGtWq exp1 exp2 -> failure x
   Grammar.Abs.EEq exp1 exp2 -> failure x
   Grammar.Abs.ENEq exp1 exp2 -> failure x
   Grammar.Abs.EAnd exp1 exp2 -> failure x
@@ -94,24 +81,30 @@ transExp x = case x of
   Grammar.Abs.EAss exp1 exp2 -> failure x
   Grammar.Abs.EAss2 exp1 exp2 -> failure x
   Grammar.Abs.EAss3 exp1 exp2 -> failure x
-  Grammar.Abs.EThrowE exp -> failure x
-  Grammar.Abs.EQstnmrk exp1 exp2 exp3 -> failure x
-  Grammar.Abs.ELl exp1 exp2 -> failure x
-  Grammar.Abs.EGg exp1 exp2 -> failure x
+  Grammar.Abs.ECon exp1 exp2 exp3 -> failure x
+  Grammar.Abs.EThrow exp -> failure x
+transQConst :: Grammar.Abs.QConst -> Result
+transQConst x = case x of
+  Grammar.Abs.QCon consts -> failure x
+transConst :: Grammar.Abs.Const -> Result
+transConst x = case x of
+  Grammar.Abs.CId id -> failure x
 transType :: Grammar.Abs.Type -> Result
 transType x = case x of
   Grammar.Abs.Tbool -> failure x
   Grammar.Abs.Tdouble -> failure x
   Grammar.Abs.Tint -> failure x
   Grammar.Abs.Tvoid -> failure x
-  Grammar.Abs.TQConst qconsts -> failure x
-transQConst :: Grammar.Abs.QConst -> Result
-transQConst x = case x of
-  Grammar.Abs.QCnst id -> failure x
-transQConsts :: Grammar.Abs.QConsts -> Result
-transQConsts x = case x of
-  Grammar.Abs.QCnsts qconsts -> failure x
-transStringList :: Grammar.Abs.StringList -> Result
-transStringList x = case x of
-  Grammar.Abs.StrList strings -> failure x
+  Grammar.Abs.Tchar -> failure x
+  Grammar.Abs.TQconst qconst -> failure x
+transTypeC :: Grammar.Abs.TypeC -> Result
+transTypeC x = case x of
+  Grammar.Abs.Tref type_ -> failure x
+  Grammar.Abs.Tconst1 type_ -> failure x
+  Grammar.Abs.Tconst2 type_ -> failure x
+  Grammar.Abs.Tref1 type_ -> failure x
+transAss :: Grammar.Abs.Ass -> Result
+transAss x = case x of
+  Grammar.Abs.Hint id -> failure x
+  Grammar.Abs.Hintstm id exp -> failure x
 

@@ -26,12 +26,12 @@ import Grammar.Lex
 %name pExp4 Exp4
 %name pExp3 Exp3
 %name pExp2 Exp2
-%name pExp Exp
 %name pExp1 Exp1
+%name pExp10 Exp10
+%name pExp Exp
 %name pExp5 Exp5
 %name pExp6 Exp6
 %name pExp7 Exp7
-%name pExp10 Exp10
 %name pExp16 Exp16
 %name pListExp ListExp
 %name pType Type
@@ -184,8 +184,7 @@ Exp15 : Char { Grammar.Abs.EChar $1 }
       | Exp15 '(' ListExp ')' { Grammar.Abs.ECall $1 $3 }
       | Exp15 '.' Exp14 { Grammar.Abs.EFun $1 $3 }
       | '*' Exp15 { Grammar.Abs.EDeref $2 }
-      | Exp15 '<<' Exp14 { Grammar.Abs.ELl $1 $3 }
-      | Exp15 '>>' Id { Grammar.Abs.EGg $1 $3 }
+      | Type { Grammar.Abs.ELib $1 }
       | Id '::' Exp16 { Grammar.Abs.ELibs $1 $3 }
       | '\"' '\"' { Grammar.Abs.ETerm }
       | Exp16 { $1 }
@@ -234,15 +233,19 @@ Exp3 : Exp3 '||' Exp4 { Grammar.Abs.EOr $1 $3 } | Exp4 { $1 }
 
 Exp2 :: { Grammar.Abs.Exp }
 Exp2 : Exp3 '=' Exp2 { Grammar.Abs.EAss $1 $3 }
-     | 'throw' Exp2 { Grammar.Abs.EThrowE $2 }
      | Exp3 '?' Exp2 ':' Exp2 { Grammar.Abs.EQstnmrk $1 $3 $5 }
      | Exp3 { $1 }
 
+Exp1 :: { Grammar.Abs.Exp }
+Exp1 : 'throw' Exp1 { Grammar.Abs.EThrowE $2 } | Exp2 { $1 }
+
+Exp10 :: { Grammar.Abs.Exp }
+Exp10 : Exp10 '<<' Exp11 { Grammar.Abs.ELl $1 $3 }
+      | Exp10 '>>' Exp11 { Grammar.Abs.EGg $1 $3 }
+      | Exp11 { $1 }
+
 Exp :: { Grammar.Abs.Exp }
 Exp : Exp1 { $1 }
-
-Exp1 :: { Grammar.Abs.Exp }
-Exp1 : Exp2 { $1 }
 
 Exp5 :: { Grammar.Abs.Exp }
 Exp5 : Exp6 { $1 }
@@ -252,9 +255,6 @@ Exp6 : Exp7 { $1 }
 
 Exp7 :: { Grammar.Abs.Exp }
 Exp7 : Exp8 { $1 }
-
-Exp10 :: { Grammar.Abs.Exp }
-Exp10 : Exp11 { $1 }
 
 Exp16 :: { Grammar.Abs.Exp }
 Exp16 : '(' Exp ')' { $2 }
@@ -270,7 +270,7 @@ Type : 'bool' { Grammar.Abs.Tbool }
      | 'int' { Grammar.Abs.Tint }
      | 'string' { Grammar.Abs.Tstring }
      | 'void' { Grammar.Abs.Tvoid }
-     | Id { Grammar.Abs.Tnew $1 }
+     | Id { Grammar.Abs.Cnew $1 }
      | Id '::' Type { Grammar.Abs.TLit $1 $3 }
 
 StringList :: { Grammar.Abs.StringList }
