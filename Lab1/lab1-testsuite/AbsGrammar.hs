@@ -93,14 +93,12 @@ data Exp
     | EQstnmrk Exp Exp Exp
     | ELl Exp Exp
     | EGg Exp Id
+    | ELib Type
     | ELibs Id Exp
-    | ELib Id Id
-    | ELibType Id Type
     | ETerm
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Type
-    = Tbool | Tdouble | Tint | Tstring | Tvoid | Tnew Id | TLit Id Type
+data Type = Tbool | Tdouble | Tint | Tstring | Tvoid | TLit Id Type
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data StringList = StringList [String]

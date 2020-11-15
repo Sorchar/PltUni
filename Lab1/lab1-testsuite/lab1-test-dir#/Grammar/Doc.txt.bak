@@ -40,10 +40,11 @@ Id literals are recognized by the regular expression
 The set of reserved words is the set of terminals appearing in the grammar. Those reserved words that consist of non-letter characters are called symbols, and they are treated in a different way from those that are similar to identifiers. The lexer follows rules familiar from languages like Haskell, C, and Java, including longest match and spacing conventions.
 
 The reserved words used in Grammar are the following:
-  | ``bool`` | ``const`` | ``double`` | ``else``
-  | ``false`` | ``for`` | ``if`` | ``int``
-  | ``return`` | ``string`` | ``throw`` | ``true``
-  | ``typedef`` | ``using`` | ``void`` | ``while``
+  | ``bool`` | ``const`` | ``do`` | ``double``
+  | ``else`` | ``false`` | ``for`` | ``if``
+  | ``int`` | ``return`` | ``string`` | ``throw``
+  | ``true`` | ``typedef`` | ``using`` | ``void``
+  | ``while`` |  |  |
 
 The symbols used in Grammar are the following:
   | ( | ) | { | }
@@ -95,6 +96,7 @@ All other symbols are terminals.
   |  |  **|**  | ``const`` //Type// ``&`` //Id// ``=`` //Exp// ``;``
   |  |  **|**  | ``for`` ``(`` //Type// //Id// ``=`` //Exp// ``;`` //Exp// ``;`` //Exp// ``)`` //Stm//
   |  |  **|**  | ``const`` //Type// //Id// ``=`` //Exp// ``;``
+  |  |  **|**  | ``do`` //Stm// ``while`` ``(`` //Exp// ``)`` ``;``
   | //Arg// | -> | //Type//
   |  |  **|**  | //Type// //Id//
   |  |  **|**  | ``const`` //Type// ``&`` //Id//
@@ -115,18 +117,17 @@ All other symbols are terminals.
   |  |  **|**  | //Exp15// ``(`` //[Exp]// ``)``
   |  |  **|**  | //Exp15// ``.`` //Exp14//
   |  |  **|**  | ``*`` //Exp15//
-  |  |  **|**  | //Exp15// ``<<`` //Exp15//
+  |  |  **|**  | //Exp15// ``<<`` //Exp14//
   |  |  **|**  | //Exp15// ``>>`` //Id//
-  |  |  **|**  | //Id// ``::`` //Exp10//
-  |  |  **|**  | //Id// ``::`` //Id//
-  |  |  **|**  | //Id// ``::`` //Type//
+  |  |  **|**  | //Type//
+  |  |  **|**  | //Id// ``::`` //Exp16//
   |  |  **|**  | ``"`` ``"``
   |  |  **|**  | //Exp16//
   | //Exp14// | -> | //Exp15// ``++``
   |  |  **|**  | //Exp15// ``--``
   |  |  **|**  | //Exp15//
   | //Exp13// | -> | ``!`` //Exp14//
-  |  |  **|**  | ``++`` //Exp14//
+  |  |  **|**  | ``++`` //Exp13//
   |  |  **|**  | ``--`` //Exp14//
   |  |  **|**  | ``-`` //Exp14//
   |  |  **|**  | //Exp13// ``->`` //Exp14//
@@ -152,7 +153,7 @@ All other symbols are terminals.
   |  |  **|**  | //Exp4//
   | //Exp2// | -> | //Exp3// ``=`` //Exp2//
   |  |  **|**  | ``throw`` //Exp2//
-  |  |  **|**  | //Exp2// ``?`` //Exp3// ``:`` //Exp3//
+  |  |  **|**  | //Exp3// ``?`` //Exp2// ``:`` //Exp2//
   |  |  **|**  | //Exp3//
   | //Exp// | -> | //Exp1//
   | //Exp1// | -> | //Exp2//

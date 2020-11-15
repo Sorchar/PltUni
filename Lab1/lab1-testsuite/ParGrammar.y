@@ -184,11 +184,10 @@ Exp15 : Char { AbsGrammar.EChar $1 }
       | Exp15 '(' ListExp ')' { AbsGrammar.ECall $1 $3 }
       | Exp15 '.' Exp14 { AbsGrammar.EFun $1 $3 }
       | '*' Exp15 { AbsGrammar.EDeref $2 }
-      | Exp15 '<<' Exp15 { AbsGrammar.ELl $1 $3 }
+      | Exp15 '<<' Exp14 { AbsGrammar.ELl $1 $3 }
       | Exp15 '>>' Id { AbsGrammar.EGg $1 $3 }
-      | Id '::' Exp10 { AbsGrammar.ELibs $1 $3 }
-      | Id '::' Id { AbsGrammar.ELib $1 $3 }
-      | Id '::' Type { AbsGrammar.ELibType $1 $3 }
+      | Type { AbsGrammar.ELib $1 }
+      | Id '::' Exp16 { AbsGrammar.ELibs $1 $3 }
       | '\"' '\"' { AbsGrammar.ETerm }
       | Exp16 { $1 }
 
@@ -237,7 +236,7 @@ Exp3 : Exp3 '||' Exp4 { AbsGrammar.EOr $1 $3 } | Exp4 { $1 }
 Exp2 :: { AbsGrammar.Exp }
 Exp2 : Exp3 '=' Exp2 { AbsGrammar.EAss $1 $3 }
      | 'throw' Exp2 { AbsGrammar.EThrowE $2 }
-     | Exp2 '?' Exp3 ':' Exp3 { AbsGrammar.EQstnmrk $1 $3 $5 }
+     | Exp3 '?' Exp2 ':' Exp2 { AbsGrammar.EQstnmrk $1 $3 $5 }
      | Exp3 { $1 }
 
 Exp :: { AbsGrammar.Exp }
@@ -272,7 +271,6 @@ Type : 'bool' { AbsGrammar.Tbool }
      | 'int' { AbsGrammar.Tint }
      | 'string' { AbsGrammar.Tstring }
      | 'void' { AbsGrammar.Tvoid }
-     | Id { AbsGrammar.Tnew $1 }
      | Id '::' Type { AbsGrammar.TLit $1 $3 }
 
 StringList :: { AbsGrammar.StringList }

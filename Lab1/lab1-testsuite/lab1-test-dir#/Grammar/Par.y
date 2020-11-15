@@ -184,11 +184,10 @@ Exp15 : Char { Grammar.Abs.EChar $1 }
       | Exp15 '(' ListExp ')' { Grammar.Abs.ECall $1 $3 }
       | Exp15 '.' Exp14 { Grammar.Abs.EFun $1 $3 }
       | '*' Exp15 { Grammar.Abs.EDeref $2 }
-      | Exp15 '<<' Exp15 { Grammar.Abs.ELl $1 $3 }
+      | Exp15 '<<' Exp14 { Grammar.Abs.ELl $1 $3 }
       | Exp15 '>>' Id { Grammar.Abs.EGg $1 $3 }
-      | Id '::' Exp10 { Grammar.Abs.ELibs $1 $3 }
-      | Id '::' Id { Grammar.Abs.ELib $1 $3 }
-      | Id '::' Type { Grammar.Abs.ELibType $1 $3 }
+      | Type { Grammar.Abs.ELib $1 }
+      | Id '::' Exp16 { Grammar.Abs.ELibs $1 $3 }
       | '\"' '\"' { Grammar.Abs.ETerm }
       | Exp16 { $1 }
 
@@ -235,9 +234,9 @@ Exp3 :: { Grammar.Abs.Exp }
 Exp3 : Exp3 '||' Exp4 { Grammar.Abs.EOr $1 $3 } | Exp4 { $1 }
 
 Exp2 :: { Grammar.Abs.Exp }
-Exp2 : Exp3 '=' Exp2 { Grammar.Abs.EAss $1 $3 }
+Exp2 : Exp3 '=' Exp4 { Grammar.Abs.EAss $1 $3 }
      | 'throw' Exp2 { Grammar.Abs.EThrowE $2 }
-     | Exp2 '?' Exp3 ':' Exp3 { Grammar.Abs.EQstnmrk $1 $3 $5 }
+     | Exp3 '?' Exp2 ':' Exp2 { Grammar.Abs.EQstnmrk $1 $3 $5 }
      | Exp3 { $1 }
 
 Exp :: { Grammar.Abs.Exp }

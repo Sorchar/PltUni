@@ -10,9 +10,9 @@ separator nonempty Decl ","   ;
 terminator  Stm ""			  ;
 
 DNameSpace. Def     ::= "using " Exp ";";
-DDecl. 		Def		::= Type Decl ";" ;
-DDecls. 	Def		::= Type [Decl] ";" ;
-STypeDefId. Stm     ::= "typedef" Type Id ";";
+DDecl. 		Def		::= Type Decl ";" ; -- 1 shift conflict
+DDecls. 	Def		::= Type [Decl] ";" ; -- 1 shift conflict
+STypeDefId. Stm     ::= "typedef" Type Id ";"; -- 1 or 2 reduce reduce
 DTypeDefId. Def     ::= "typedef" Type Id ";";
 
 ADecl. 	    Arg     ::= Type ;
@@ -52,9 +52,9 @@ ETrue. 		Exp15 	::= "true"  ;
 EFalse.		Exp15 	::= "false" ;
 EId.		Exp15   ::= Id 		;
 
-EIndex.		Exp15   ::= Exp15 	"[" Exp "]" ;
-ECall.		Exp15   ::= Exp15 	"(" [Exp] ")" ;
-EFun.		Exp15   ::= Exp15 "." Exp14;
+EIndex.		Exp15   ::= Exp15 	"[" Exp "]" ; -- 2 shift and 2 reduce reduce
+ECall.		Exp15   ::= Exp15 	"(" [Exp] ")" ; -- 2 shift 1 reduce
+EFun.		Exp15   ::= Exp15 "." Exp14; -- 2 shift 1 reduce
 EPIncr.		Exp14	::= Exp15 "++" ;
 EPDcecr.	Exp14	::= Exp15 "--" ;
 
@@ -79,15 +79,15 @@ EEq.		Exp8 	::= Exp8  "==" Exp9 ;
 ENEq.		Exp8	::= Exp8  "!=" Exp9 ;
 EAnd.		Exp4 	::= Exp4  "&&" Exp5 ;
 EOr.		Exp3    ::= Exp3  "||" Exp4 ;
-EAss.		Exp2    ::= Exp3  "="  Exp2 ;
-EThrowE.	Exp2 	::= "throw"    Exp2 ;
-EQstnmrk.	Exp2    ::= Exp2 "?" Exp3 ":" Exp3 ;
+EAss.		Exp2    ::= Exp3  "="  Exp2 ; -- shift conflict
+EThrowE.	Exp2 	::= "throw"    Exp2 ; -- shift conflict
+EQstnmrk.	Exp2    ::= Exp3 "?" Exp2 ":" Exp2 ;
 
-ELl.		Exp15	::= Exp15 "<<" Exp15 ;
-EGg.		Exp15	::= Exp15 ">>" Id ;
+ELl.		Exp15	::= Exp15 "<<" Exp14 ; 
+EGg.		Exp15	::= Exp15 ">>" Id ; -- exp14 or id?
 
 ELib.       Exp15   ::=  Type;
-ELibs.      Exp15   ::=  Id "::" Exp10;
+ELibs.      Exp15   ::=  Id "::" Exp16;
 ETerm.      Exp15   ::= "\"" "\"";
 
 coercions Exp 16  ;
@@ -98,7 +98,7 @@ Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
 Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
-Tnew.	 Type ::= Id;
+Tnew.	 Type ::= Id; -- about 29 reduce reduce conflicts
 TLit.    Type ::= Id "::" Type;
 
 StringList. StringList ::= [String];
@@ -110,4 +110,4 @@ token Id (letter (letter | digit | '_')*) ;
 
 comment     "//"			  ;
 comment     "/*" "*/"		  ; 
-comment     "#"
+comment     "#"				  ;
