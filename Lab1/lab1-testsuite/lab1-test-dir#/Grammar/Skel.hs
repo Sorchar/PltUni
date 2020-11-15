@@ -93,7 +93,6 @@ transExp x = case x of
   Grammar.Abs.EQstnmrk exp1 exp2 exp3 -> failure x
   Grammar.Abs.ELl exp1 exp2 -> failure x
   Grammar.Abs.EGg exp id -> failure x
-  Grammar.Abs.ELib type_ -> failure x
   Grammar.Abs.ELibs id exp -> failure x
   Grammar.Abs.ETerm -> failure x
 transType :: Grammar.Abs.Type -> Result

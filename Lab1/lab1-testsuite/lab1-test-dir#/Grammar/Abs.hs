@@ -93,7 +93,6 @@ data Exp
     | EQstnmrk Exp Exp Exp
     | ELl Exp Exp
     | EGg Exp Id
-    | ELib Type
     | ELibs Id Exp
     | ETerm
   deriving (C.Eq, C.Ord, C.Show, C.Read)

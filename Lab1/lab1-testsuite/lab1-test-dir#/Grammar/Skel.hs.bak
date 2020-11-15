@@ -24,16 +24,9 @@ transDef x = case x of
   Grammar.Abs.DDecl type_ decl -> failure x
   Grammar.Abs.DDecls type_ decls -> failure x
   Grammar.Abs.DTypeDefId type_ id -> failure x
-transArg :: Grammar.Abs.Arg -> Result
-transArg x = case x of
-  Grammar.Abs.ADecl type_ -> failure x
-  Grammar.Abs.ADeclId type_ id -> failure x
-  Grammar.Abs.AConstRefTypeId type_ id -> failure x
-  Grammar.Abs.ARefId type_ id -> failure x
-  Grammar.Abs.AConstRefType type_ -> failure x
-  Grammar.Abs.ARefType type_ -> failure x
 transStm :: Grammar.Abs.Stm -> Result
 transStm x = case x of
+  Grammar.Abs.STypeDefId type_ id -> failure x
   Grammar.Abs.SDecl type_ decl -> failure x
   Grammar.Abs.SDecls type_ decls -> failure x
   Grammar.Abs.SInit type_ id exp -> failure x
@@ -47,6 +40,14 @@ transStm x = case x of
   Grammar.Abs.SFor type_ id exp1 exp2 exp3 stm -> failure x
   Grammar.Abs.SConstInitId type_ id exp -> failure x
   Grammar.Abs.SDo stm exp -> failure x
+transArg :: Grammar.Abs.Arg -> Result
+transArg x = case x of
+  Grammar.Abs.ADecl type_ -> failure x
+  Grammar.Abs.ADeclId type_ id -> failure x
+  Grammar.Abs.AConstRefTypeId type_ id -> failure x
+  Grammar.Abs.ARefId type_ id -> failure x
+  Grammar.Abs.AConstRefType type_ -> failure x
+  Grammar.Abs.ARefType type_ -> failure x
 transDecl :: Grammar.Abs.Decl -> Result
 transDecl x = case x of
   Grammar.Abs.SDeclId id -> failure x

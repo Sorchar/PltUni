@@ -43,55 +43,54 @@ import LexGrammar
 %token
   '!' { PT _ (TS _ 1) }
   '!=' { PT _ (TS _ 2) }
-  '\"' { PT _ (TS _ 3) }
-  '%' { PT _ (TS _ 4) }
-  '&' { PT _ (TS _ 5) }
-  '&&' { PT _ (TS _ 6) }
-  '(' { PT _ (TS _ 7) }
-  ')' { PT _ (TS _ 8) }
-  '*' { PT _ (TS _ 9) }
-  '+' { PT _ (TS _ 10) }
-  '++' { PT _ (TS _ 11) }
-  ',' { PT _ (TS _ 12) }
-  '-' { PT _ (TS _ 13) }
-  '--' { PT _ (TS _ 14) }
-  '->' { PT _ (TS _ 15) }
-  '.' { PT _ (TS _ 16) }
-  '/' { PT _ (TS _ 17) }
-  ':' { PT _ (TS _ 18) }
-  '::' { PT _ (TS _ 19) }
-  ';' { PT _ (TS _ 20) }
-  '<' { PT _ (TS _ 21) }
-  '<<' { PT _ (TS _ 22) }
-  '<=' { PT _ (TS _ 23) }
-  '=' { PT _ (TS _ 24) }
-  '==' { PT _ (TS _ 25) }
-  '>' { PT _ (TS _ 26) }
-  '>=' { PT _ (TS _ 27) }
-  '>>' { PT _ (TS _ 28) }
-  '?' { PT _ (TS _ 29) }
-  '[' { PT _ (TS _ 30) }
-  ']' { PT _ (TS _ 31) }
-  'bool' { PT _ (TS _ 32) }
-  'const' { PT _ (TS _ 33) }
-  'do' { PT _ (TS _ 34) }
-  'double' { PT _ (TS _ 35) }
-  'else' { PT _ (TS _ 36) }
-  'false' { PT _ (TS _ 37) }
-  'for' { PT _ (TS _ 38) }
-  'if' { PT _ (TS _ 39) }
-  'int' { PT _ (TS _ 40) }
-  'return' { PT _ (TS _ 41) }
-  'string' { PT _ (TS _ 42) }
-  'throw' { PT _ (TS _ 43) }
-  'true' { PT _ (TS _ 44) }
-  'typedef' { PT _ (TS _ 45) }
-  'using' { PT _ (TS _ 46) }
-  'void' { PT _ (TS _ 47) }
-  'while' { PT _ (TS _ 48) }
-  '{' { PT _ (TS _ 49) }
-  '||' { PT _ (TS _ 50) }
-  '}' { PT _ (TS _ 51) }
+  '%' { PT _ (TS _ 3) }
+  '&' { PT _ (TS _ 4) }
+  '&&' { PT _ (TS _ 5) }
+  '(' { PT _ (TS _ 6) }
+  ')' { PT _ (TS _ 7) }
+  '*' { PT _ (TS _ 8) }
+  '+' { PT _ (TS _ 9) }
+  '++' { PT _ (TS _ 10) }
+  ',' { PT _ (TS _ 11) }
+  '-' { PT _ (TS _ 12) }
+  '--' { PT _ (TS _ 13) }
+  '->' { PT _ (TS _ 14) }
+  '.' { PT _ (TS _ 15) }
+  '/' { PT _ (TS _ 16) }
+  ':' { PT _ (TS _ 17) }
+  '::' { PT _ (TS _ 18) }
+  ';' { PT _ (TS _ 19) }
+  '<' { PT _ (TS _ 20) }
+  '<<' { PT _ (TS _ 21) }
+  '<=' { PT _ (TS _ 22) }
+  '=' { PT _ (TS _ 23) }
+  '==' { PT _ (TS _ 24) }
+  '>' { PT _ (TS _ 25) }
+  '>=' { PT _ (TS _ 26) }
+  '>>' { PT _ (TS _ 27) }
+  '?' { PT _ (TS _ 28) }
+  '[' { PT _ (TS _ 29) }
+  ']' { PT _ (TS _ 30) }
+  'bool' { PT _ (TS _ 31) }
+  'const' { PT _ (TS _ 32) }
+  'do' { PT _ (TS _ 33) }
+  'double' { PT _ (TS _ 34) }
+  'else' { PT _ (TS _ 35) }
+  'false' { PT _ (TS _ 36) }
+  'for' { PT _ (TS _ 37) }
+  'if' { PT _ (TS _ 38) }
+  'int' { PT _ (TS _ 39) }
+  'return' { PT _ (TS _ 40) }
+  'string' { PT _ (TS _ 41) }
+  'throw' { PT _ (TS _ 42) }
+  'true' { PT _ (TS _ 43) }
+  'typedef' { PT _ (TS _ 44) }
+  'using' { PT _ (TS _ 45) }
+  'void' { PT _ (TS _ 46) }
+  'while' { PT _ (TS _ 47) }
+  '{' { PT _ (TS _ 48) }
+  '||' { PT _ (TS _ 49) }
+  '}' { PT _ (TS _ 50) }
   L_charac { PT _ (TC $$) }
   L_integ  { PT _ (TI $$) }
   L_doubl  { PT _ (TD $$) }
@@ -188,7 +187,6 @@ Exp15 : Char { AbsGrammar.EChar $1 }
       | Exp15 '>>' Id { AbsGrammar.EGg $1 $3 }
       | Type { AbsGrammar.ELib $1 }
       | Id '::' Exp16 { AbsGrammar.ELibs $1 $3 }
-      | '\"' '\"' { AbsGrammar.ETerm }
       | Exp16 { $1 }
 
 Exp14 :: { AbsGrammar.Exp }
@@ -271,6 +269,7 @@ Type : 'bool' { AbsGrammar.Tbool }
      | 'int' { AbsGrammar.Tint }
      | 'string' { AbsGrammar.Tstring }
      | 'void' { AbsGrammar.Tvoid }
+     | Id { AbsGrammar.Tnew $1 }
      | Id '::' Type { AbsGrammar.TLit $1 $3 }
 
 StringList :: { AbsGrammar.StringList }

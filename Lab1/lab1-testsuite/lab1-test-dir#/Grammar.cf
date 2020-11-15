@@ -26,14 +26,14 @@ SReturn. 	Stm		::= "return" Exp ";" ;
 SWhile. 	Stm		::= "while" "(" Exp ")" Stm;
 SEWhile. 	Stm		::= "while" "(" Exp ")" ";";
 SBlock. 	Stm 	::= "{" [Stm] "}" ;
-SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ;
+SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ; -- 1 shift 2 reduce
 SEElse.     Else    ::= "";
-SElse.      Else    ::= "else" Stm;
+SElse.      Else    ::= "else" Stm; -- 1 shift 1 reduce
 SBlock.     Stm     ::= "{" [Stm] "}";
 SConstRefInit.  Stm	::= "const" Type "&" Id "=" Exp ";" ;
-SFor.           Stm ::= "for" "(" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ;
+SFor.           Stm ::= "for" "(" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ; -- 1 reduce too
 SConstInitId.     Stm  ::= "const" Type Id "=" Exp ";" ;
-SDo.		Stm	    ::=	"do" Stm "while" "("Exp")" ";" ;
+SDo.		Stm	    ::=	"do" Stm "while" "("Exp")" ";" ; -- 1 reduce conflict
 
 
 AConstRefTypeId. Arg ::= "const" Type "&" Id;
@@ -79,14 +79,14 @@ EEq.		Exp8 	::= Exp8  "==" Exp9 ;
 ENEq.		Exp8	::= Exp8  "!=" Exp9 ;
 EAnd.		Exp4 	::= Exp4  "&&" Exp5 ;
 EOr.		Exp3    ::= Exp3  "||" Exp4 ;
-EAss.		Exp2    ::= Exp3  "="  Exp4 ; -- shift conflict
+EAss.		Exp2    ::= Exp3  "="  Exp2 ;
 EThrowE.	Exp2 	::= "throw"    Exp2 ; -- shift conflict
 EQstnmrk.	Exp2    ::= Exp3 "?" Exp2 ":" Exp2 ;
 
 ELl.		Exp15	::= Exp15 "<<" Exp14 ; 
 EGg.		Exp15	::= Exp15 ">>" Id ; -- exp14 or id?
 
-ELib.       Exp15   ::=  Type;
+--ELib.       Exp15   ::=  Type;
 ELibs.      Exp15   ::=  Id "::" Exp16;
 ETerm.      Exp15   ::= "\"" "\"";
 
@@ -98,7 +98,7 @@ Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
 Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
-Tnew.	 Type ::= Id;
+Tnew.	 Type ::= Id; -- about 29 reduce reduce conflicts
 TLit.    Type ::= Id "::" Type;
 
 StringList. StringList ::= [String];

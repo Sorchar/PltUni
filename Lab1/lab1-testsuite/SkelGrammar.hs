@@ -95,7 +95,6 @@ transExp x = case x of
   AbsGrammar.EGg exp id -> failure x
   AbsGrammar.ELib type_ -> failure x
   AbsGrammar.ELibs id exp -> failure x
-  AbsGrammar.ETerm -> failure x
 transType :: AbsGrammar.Type -> Result
 transType x = case x of
   AbsGrammar.Tbool -> failure x
@@ -103,6 +102,7 @@ transType x = case x of
   AbsGrammar.Tint -> failure x
   AbsGrammar.Tstring -> failure x
   AbsGrammar.Tvoid -> failure x
+  AbsGrammar.Tnew id -> failure x
   AbsGrammar.TLit id type_ -> failure x
 transStringList :: AbsGrammar.StringList -> Result
 transStringList x = case x of

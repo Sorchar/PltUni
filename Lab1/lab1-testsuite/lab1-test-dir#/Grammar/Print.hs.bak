@@ -185,7 +185,7 @@ instance Print Grammar.Abs.Exp where
     Grammar.Abs.EPDcecr exp -> prPrec i 14 (concatD [prt 15 exp, doc (showString "--")])
     Grammar.Abs.EDeref exp -> prPrec i 15 (concatD [doc (showString "*"), prt 15 exp])
     Grammar.Abs.ENot exp -> prPrec i 13 (concatD [doc (showString "!"), prt 14 exp])
-    Grammar.Abs.EIncr exp -> prPrec i 13 (concatD [doc (showString "++"), prt 13 exp])
+    Grammar.Abs.EIncr exp -> prPrec i 13 (concatD [doc (showString "++"), prt 14 exp])
     Grammar.Abs.EDecr exp -> prPrec i 13 (concatD [doc (showString "--"), prt 14 exp])
     Grammar.Abs.ENeg exp -> prPrec i 13 (concatD [doc (showString "-"), prt 14 exp])
     Grammar.Abs.EArrow exp1 exp2 -> prPrec i 13 (concatD [prt 13 exp1, doc (showString "->"), prt 14 exp2])

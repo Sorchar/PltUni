@@ -24,17 +24,9 @@ data Def
     | DTypeDefId Type Id
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Arg
-    = ADecl Type
-    | ADeclId Type Id
-    | AConstRefTypeId Type Id
-    | ARefId Type Id
-    | AConstRefType Type
-    | ARefType Type
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
-
 data Stm
-    = SDecl Type Decl
+    = STypeDefId Type Id
+    | SDecl Type Decl
     | SDecls Type [Decl]
     | SInit Type Id Exp
     | SEexp Exp
@@ -47,6 +39,15 @@ data Stm
     | SFor Type Id Exp Exp Exp Stm
     | SConstInitId Type Id Exp
     | SDo Stm Exp
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Arg
+    = ADecl Type
+    | ADeclId Type Id
+    | AConstRefTypeId Type Id
+    | ARefId Type Id
+    | AConstRefType Type
+    | ARefType Type
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Decl = SDeclId Id

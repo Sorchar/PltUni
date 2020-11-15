@@ -209,7 +209,6 @@ instance Print AbsGrammar.Exp where
     AbsGrammar.EGg exp id -> prPrec i 15 (concatD [prt 15 exp, doc (showString ">>"), prt 0 id])
     AbsGrammar.ELib type_ -> prPrec i 15 (concatD [prt 0 type_])
     AbsGrammar.ELibs id exp -> prPrec i 15 (concatD [prt 0 id, doc (showString "::"), prt 16 exp])
-    AbsGrammar.ETerm -> prPrec i 15 (concatD [doc (showString "\""), doc (showString "\"")])
   prtList _ [] = concatD []
   prtList _ [x] = concatD [prt 0 x]
   prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
@@ -224,6 +223,7 @@ instance Print AbsGrammar.Type where
     AbsGrammar.Tint -> prPrec i 0 (concatD [doc (showString "int")])
     AbsGrammar.Tstring -> prPrec i 0 (concatD [doc (showString "string")])
     AbsGrammar.Tvoid -> prPrec i 0 (concatD [doc (showString "void")])
+    AbsGrammar.Tnew id -> prPrec i 0 (concatD [prt 0 id])
     AbsGrammar.TLit id type_ -> prPrec i 0 (concatD [prt 0 id, doc (showString "::"), prt 0 type_])
 
 instance Print AbsGrammar.StringList where

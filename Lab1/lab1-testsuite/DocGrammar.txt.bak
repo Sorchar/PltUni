@@ -55,7 +55,7 @@ The symbols used in Grammar are the following:
   | < | > | <= | >=
   | == | != | && | ||
   | ? | : | << | >>
-  | :: | " |  |
+  | " | :: |  |
 
 ===Comments===
 Single-line comments begin with //, #.Multiple-line comments are  enclosed with /* and */.
@@ -120,7 +120,6 @@ All other symbols are terminals.
   |  |  **|**  | //Exp15// ``<<`` //Exp14//
   |  |  **|**  | //Exp15// ``>>`` //Id//
   |  |  **|**  | //Type//
-  |  |  **|**  | //Id// ``::`` //Exp16//
   |  |  **|**  | ``"`` ``"``
   |  |  **|**  | //Exp16//
   | //Exp14// | -> | //Exp15// ``++``
@@ -171,6 +170,7 @@ All other symbols are terminals.
   |  |  **|**  | ``string``
   |  |  **|**  | ``void``
   |  |  **|**  | //Id//
+  |  |  **|**  | //Id// ``::`` //Type//
   | //StringList// | -> | //[String]//
   | //[String]// | -> | //String//
   |  |  **|**  | //String// //[String]//

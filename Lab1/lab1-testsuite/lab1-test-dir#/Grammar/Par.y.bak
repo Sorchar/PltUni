@@ -198,7 +198,7 @@ Exp14 : Exp15 '++' { Grammar.Abs.EPIncr $1 }
 
 Exp13 :: { Grammar.Abs.Exp }
 Exp13 : '!' Exp14 { Grammar.Abs.ENot $2 }
-      | '++' Exp13 { Grammar.Abs.EIncr $2 }
+      | '++' Exp14 { Grammar.Abs.EIncr $2 }
       | '--' Exp14 { Grammar.Abs.EDecr $2 }
       | '-' Exp14 { Grammar.Abs.ENeg $2 }
       | Exp13 '->' Exp14 { Grammar.Abs.EArrow $1 $3 }
