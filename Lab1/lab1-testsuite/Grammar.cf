@@ -9,7 +9,7 @@ separator nonempty Decl ","   ;
 
 terminator  Stm ""			  ;
 
-DNameSpace. Def     ::= "using " Exp ";";
+DNameSpace. Def     ::= "using" QConsts ";";
 DDecl. 		Def		::= Type Decl ";" ; -- 1 shift conflict
 DDecls. 	Def		::= Type [Decl] ";" ; -- 1 shift conflict
 STypeDefId. Stm     ::= "typedef" Type Id ";"; -- 1 or 2 reduce reduce
@@ -51,12 +51,13 @@ EString. 	Exp15   ::= StringList;
 ETrue. 		Exp15 	::= "true"  ;
 EFalse.		Exp15 	::= "false" ;
 EId.		Exp15   ::= Id 		;
+EConst.		Exp15   ::= QConsts ;
 
-EIndex.		Exp15   ::= Exp15 	"[" Exp "]" ; -- 2 shift and 2 reduce reduce
-ECall.		Exp15   ::= Exp15 	"(" [Exp] ")" ; -- 2 shift 1 reduce
-EFun.		Exp15   ::= Exp15 "." Exp14; -- 2 shift 1 reduce
-EPIncr.		Exp14	::= Exp15 "++" ;
-EPDcecr.	Exp14	::= Exp15 "--" ;
+EIndex.		Exp14   ::= Exp14 	"[" Exp "]" ; -- 2 shift and 2 reduce reduce
+ECall.		Exp14   ::= Exp14 	"(" [Exp] ")" ; -- 2 shift 1 reduce
+EFun.		Exp14   ::= Exp14 "." Exp15; -- 2 shift 1 reduce
+EPIncr.		Exp14	::= Exp14 "++" ;
+EPDcecr.	Exp14	::= Exp14 "--" ;
 
 
 EDeref. 	Exp15   ::= "*"  Exp15 ;
@@ -83,12 +84,10 @@ EAss.		Exp2    ::= Exp3  "="  Exp2 ;
 EThrowE.	Exp2 	::= "throw"    Exp2 ; -- shift conflict
 EQstnmrk.	Exp2    ::= Exp3 "?" Exp2 ":" Exp2 ;
 
-ELl.		Exp15	::= Exp15 "<<" Exp14 ; 
-EGg.		Exp15	::= Exp15 ">>" Id ; -- exp14 or id?
+ELl.		Exp10	::= Exp10 "<<" Exp11 ; 
+EGg.		Exp10	::= Exp10 ">>" Exp11 ;
 
-ELib.       Exp15   ::=  Type; -- about 29 reduce reduce conflicts, also 5 bad tests
-ELibs.      Exp15   ::=  Id "::" Exp16;
-ETerm.      Exp15   ::= "\"" "\""; -- 1 reduce
+
 
 coercions Exp 16  ;
 separator Exp "," ;
@@ -96,10 +95,13 @@ separator Exp "," ;
 Tbool. 	 Type ::= "bool"   ;
 Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
-Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
-Tnew.	 Type ::= Id; -- about 29 reduce reduce conflicts
-TLit.    Type ::= Id "::" Type;
+TQConst. Type ::= QConsts  ;
+
+
+Qconst.  QConst  ::= Id;
+QConsts. QConsts ::= [QConst];
+separator nonempty  QConst "::";
 
 StringList. StringList ::= [String];
 separator nonempty String "";
