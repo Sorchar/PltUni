@@ -2,34 +2,48 @@ PDefs.   	Program ::= [Def] ;
 terminator  Def ""			  ;
 
 DFun.		Def		::= Type Id "(" [Arg] ")" "{" [Stm] "}" ;
+DFunCall.	Def		::= Type Id "(" [Arg] ")" ";" ;
 
 separator   Arg     "," 	  ;
 separator nonempty Decl ","   ;
 
 terminator  Stm ""			  ;
 
-DNameSpace. Def     ::= "using " Exp10 ";";
+DNameSpace. Def     ::= "using " Exp ";";
 DDecl. 		Def		::= Type Decl ";" ;
 DDecls. 	Def		::= Type [Decl] ";" ;
-DTypeDefId. Stm     ::= "typedef" Type Id ";";
+STypeDefId. Stm     ::= "typedef" Type Id ";";
+DTypeDefId. Def     ::= "typedef" Type Id ";";
 
-ADecl. 	    Arg     ::= Type Id ;
+ADecl. 	    Arg     ::= Type ;
+ADeclId. 	Arg     ::= Type Id ;
 SDecl. 		Stm		::= Type Decl ";" ;
 SDecls. 	Stm		::= Type [Decl] ";" ;
 SDeclId.    Decl    ::= Id;
 SInit. 		Stm		::= Type Id "=" Exp ";" ;
-SEexp.		Stm		::= Exp ";" ;
+SEexp.		Stm		::= Exp ";" ; --HERE
 SReturn. 	Stm		::= "return" Exp ";" ;
 SWhile. 	Stm		::= "while" "(" Exp ")" Stm;
+SEWhile. 	Stm		::= "while" "(" Exp ")" ";";
 SBlock. 	Stm 	::= "{" [Stm] "}" ;
 SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ;
 SEElse.     Else    ::= "";
 SElse.      Else    ::= "else" Stm;
 SBlock.     Stm     ::= "{" [Stm] "}";
+SConstRefInit.  Stm	::= "const" Type "&" Id "=" Exp ";" ;
+SFor.           Stm ::= "for" "(" Type Id "=" Exp ";" Exp ";" Exp ")" Stm ;
+SConstInitId.     Stm  ::= "const" Type Id "=" Exp ";" ;
 
-SConstDeclRef. Arg	::= "const" Type "&" Decl ;
+
+AConstRefTypeId. Arg ::= "const" Type "&" Id;
+ARefId.          Arg ::= Type "&" Id ;
+AConstRefType.   Arg ::= "const" Type "&";
+ARefType.        Arg ::=  Type "&";
 
 
+
+
+EChar. 		Exp15 	::= Char ;
 EInt. 		Exp15 	::= Integer ;
 EDouble. 	Exp15 	::= Double  ;
 EString. 	Exp15   ::= StringList;
@@ -43,10 +57,14 @@ EFun.		Exp15   ::= Exp15 "." Exp14;
 EPIncr.		Exp14	::= Exp15 "++" ;
 EPDcecr.	Exp14	::= Exp15 "--" ;
 
+
+EDeref. 	Exp15   ::= "*"  Exp15 ;
+ENot. 		Exp13   ::= "!"  Exp14 ;
 EIncr. 		Exp13   ::= "++" Exp14 ;
 EDecr.		Exp13 	::= "--" Exp14 ;
 ENeg.		Exp13   ::= "-"  Exp14 ;
 
+EArrow.	    Exp13	::= Exp13 "->" Exp14;
 EMul.		Exp12   ::= Exp12 "*" Exp13 ;
 EDiv. 		Exp12 	::= Exp12 "/" Exp13 ;
 EMod. 		Exp12 	::= Exp12 "%" Exp13 ;
