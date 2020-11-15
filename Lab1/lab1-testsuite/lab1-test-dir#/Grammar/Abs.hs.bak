@@ -15,37 +15,68 @@ newtype Id = Id String
 data Program = PDefs [Def]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Def = DFun Type Id [Arg] [Stm]
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
-
-data Arg = ADecl Type Id
+data Def
+    = DFun Type Id [Arg] [Stm]
+    | DFunCall Type Id [Arg]
+    | DNameSpace Exp
+    | DDecl Type Decl
+    | DDecls Type [Decl]
+    | DTypeDefId Type Id
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Stm
-    = SDecl Type Id
+    = STypeDefId Type Id
+    | SDecl Type Decl
+    | SDecls Type [Decl]
     | SInit Type Id Exp
     | SEexp Exp
     | SReturn Exp
     | SWhile Exp Stm
+    | SEWhile Exp
     | SBlock [Stm]
-    | SIfElse Exp Stm Stm
+    | SIfElse Exp Stm Else
+    | SConstRefInit Type Id Exp
+    | SFor Type Id Exp Exp Exp Stm
+    | SConstInitId Type Id Exp
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Arg
+    = ADecl Type
+    | ADeclId Type Id
+    | AConstRefTypeId Type Id
+    | ARefId Type Id
+    | AConstRefType Type
+    | ARefType Type
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Decl = SDeclId Id
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Else = SEElse | SElse Stm
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Exp
-    = EInt Integer
+    = EChar Char
+    | EInt Integer
     | EDouble Double
-    | EString String
+    | EString StringList
     | ETrue
     | EFalse
     | EId Id
-    | ECall Id [Exp]
+    | EIndex Exp Exp
+    | ECall Exp [Exp]
+    | EFun Exp Exp
     | EPIncr Exp
     | EPDcecr Exp
+    | EDeref Exp
+    | ENot Exp
     | EIncr Exp
     | EDecr Exp
     | ENeg Exp
+    | EArrow Exp Exp
     | EMul Exp Exp
     | EDiv Exp Exp
+    | EMod Exp Exp
     | EAdd Exp Exp
     | ESub Exp Exp
     | ELt Exp Exp
@@ -58,12 +89,19 @@ data Exp
     | EOr Exp Exp
     | EAss Exp Exp
     | EThrowE Exp
+    | EQstnmrk Exp Exp Exp
     | ELl Exp Exp
     | EGg Exp Id
+    | ELibs Id Exp
     | ELib Id Id
+    | ELibType Id Type
     | ETerm
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Type = Tbool | Tdouble | Tint | Tstring | Tvoid | TLit Id Type
+data Type
+    = Tbool | Tdouble | Tint | Tstring | Tvoid | Tnew Id | TLit Id Type
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data StringList = StringList [String]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 

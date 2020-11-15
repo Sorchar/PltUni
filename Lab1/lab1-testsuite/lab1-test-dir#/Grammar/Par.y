@@ -10,9 +10,12 @@ import Grammar.Lex
 %name pListDef ListDef
 %name pDef Def
 %name pListArg ListArg
+%name pListDecl ListDecl
 %name pListStm ListStm
-%name pArg Arg
 %name pStm Stm
+%name pArg Arg
+%name pDecl Decl
+%name pElse Else
 %name pExp15 Exp15
 %name pExp14 Exp14
 %name pExp13 Exp13
@@ -23,63 +26,82 @@ import Grammar.Lex
 %name pExp4 Exp4
 %name pExp3 Exp3
 %name pExp2 Exp2
-%name pExp10 Exp10
 %name pExp Exp
 %name pExp1 Exp1
 %name pExp5 Exp5
 %name pExp6 Exp6
 %name pExp7 Exp7
+%name pExp10 Exp10
+%name pExp16 Exp16
 %name pListExp ListExp
 %name pType Type
+%name pStringList StringList
+%name pListString ListString
 -- no lexer declaration
 %monad { Either String } { (>>=) } { return }
 %tokentype {Token}
 %token
-  '!=' { PT _ (TS _ 1) }
-  '\"' { PT _ (TS _ 2) }
-  '&&' { PT _ (TS _ 3) }
-  '(' { PT _ (TS _ 4) }
-  ')' { PT _ (TS _ 5) }
-  '*' { PT _ (TS _ 6) }
-  '+' { PT _ (TS _ 7) }
-  '++' { PT _ (TS _ 8) }
-  ',' { PT _ (TS _ 9) }
-  '-' { PT _ (TS _ 10) }
-  '--' { PT _ (TS _ 11) }
-  '/' { PT _ (TS _ 12) }
-  ':' { PT _ (TS _ 13) }
-  '::' { PT _ (TS _ 14) }
-  ';' { PT _ (TS _ 15) }
-  '<' { PT _ (TS _ 16) }
-  '<<' { PT _ (TS _ 17) }
-  '<=' { PT _ (TS _ 18) }
-  '=' { PT _ (TS _ 19) }
-  '==' { PT _ (TS _ 20) }
-  '>' { PT _ (TS _ 21) }
-  '>=' { PT _ (TS _ 22) }
-  '>>' { PT _ (TS _ 23) }
-  '?' { PT _ (TS _ 24) }
-  'bool' { PT _ (TS _ 25) }
-  'double' { PT _ (TS _ 26) }
-  'else' { PT _ (TS _ 27) }
-  'false' { PT _ (TS _ 28) }
-  'if' { PT _ (TS _ 29) }
-  'int' { PT _ (TS _ 30) }
-  'return' { PT _ (TS _ 31) }
-  'string' { PT _ (TS _ 32) }
-  'throw' { PT _ (TS _ 33) }
-  'true' { PT _ (TS _ 34) }
-  'void' { PT _ (TS _ 35) }
-  'while' { PT _ (TS _ 36) }
-  '{' { PT _ (TS _ 37) }
-  '||' { PT _ (TS _ 38) }
-  '}' { PT _ (TS _ 39) }
+  '!' { PT _ (TS _ 1) }
+  '!=' { PT _ (TS _ 2) }
+  '\"' { PT _ (TS _ 3) }
+  '%' { PT _ (TS _ 4) }
+  '&' { PT _ (TS _ 5) }
+  '&&' { PT _ (TS _ 6) }
+  '(' { PT _ (TS _ 7) }
+  ')' { PT _ (TS _ 8) }
+  '*' { PT _ (TS _ 9) }
+  '+' { PT _ (TS _ 10) }
+  '++' { PT _ (TS _ 11) }
+  ',' { PT _ (TS _ 12) }
+  '-' { PT _ (TS _ 13) }
+  '--' { PT _ (TS _ 14) }
+  '->' { PT _ (TS _ 15) }
+  '.' { PT _ (TS _ 16) }
+  '/' { PT _ (TS _ 17) }
+  ':' { PT _ (TS _ 18) }
+  '::' { PT _ (TS _ 19) }
+  ';' { PT _ (TS _ 20) }
+  '<' { PT _ (TS _ 21) }
+  '<<' { PT _ (TS _ 22) }
+  '<=' { PT _ (TS _ 23) }
+  '=' { PT _ (TS _ 24) }
+  '==' { PT _ (TS _ 25) }
+  '>' { PT _ (TS _ 26) }
+  '>=' { PT _ (TS _ 27) }
+  '>>' { PT _ (TS _ 28) }
+  '?' { PT _ (TS _ 29) }
+  '[' { PT _ (TS _ 30) }
+  ']' { PT _ (TS _ 31) }
+  'bool' { PT _ (TS _ 32) }
+  'const' { PT _ (TS _ 33) }
+  'do' { PT _ (TS _ 34) }
+  'double' { PT _ (TS _ 35) }
+  'else' { PT _ (TS _ 36) }
+  'false' { PT _ (TS _ 37) }
+  'for' { PT _ (TS _ 38) }
+  'if' { PT _ (TS _ 39) }
+  'int' { PT _ (TS _ 40) }
+  'return' { PT _ (TS _ 41) }
+  'string' { PT _ (TS _ 42) }
+  'throw' { PT _ (TS _ 43) }
+  'true' { PT _ (TS _ 44) }
+  'typedef' { PT _ (TS _ 45) }
+  'using' { PT _ (TS _ 46) }
+  'void' { PT _ (TS _ 47) }
+  'while' { PT _ (TS _ 48) }
+  '{' { PT _ (TS _ 49) }
+  '||' { PT _ (TS _ 50) }
+  '}' { PT _ (TS _ 51) }
+  L_charac { PT _ (TC $$) }
   L_integ  { PT _ (TI $$) }
   L_doubl  { PT _ (TD $$) }
   L_quoted { PT _ (TL $$) }
   L_Id { PT _ (T_Id $$) }
 
 %%
+
+Char    :: { Char }
+Char     : L_charac { (read ($1)) :: Char }
 
 Integer :: { Integer }
 Integer  : L_integ  { (read ($1)) :: Integer }
@@ -101,36 +123,74 @@ ListDef : {- empty -} { [] } | Def ListDef { (:) $1 $2 }
 
 Def :: { Grammar.Abs.Def }
 Def : Type Id '(' ListArg ')' '{' ListStm '}' { Grammar.Abs.DFun $1 $2 $4 $7 }
+    | Type Id '(' ListArg ')' ';' { Grammar.Abs.DFunCall $1 $2 $4 }
+    | 'using' Exp ';' { Grammar.Abs.DNameSpace $2 }
+    | Type Decl ';' { Grammar.Abs.DDecl $1 $2 }
+    | Type ListDecl ';' { Grammar.Abs.DDecls $1 $2 }
+    | 'typedef' Type Id ';' { Grammar.Abs.DTypeDefId $2 $3 }
 
 ListArg :: { [Grammar.Abs.Arg] }
 ListArg : {- empty -} { [] }
         | Arg { (:[]) $1 }
         | Arg ',' ListArg { (:) $1 $3 }
 
+ListDecl :: { [Grammar.Abs.Decl] }
+ListDecl : Decl { (:[]) $1 } | Decl ',' ListDecl { (:) $1 $3 }
+
 ListStm :: { [Grammar.Abs.Stm] }
 ListStm : {- empty -} { [] } | Stm ListStm { (:) $1 $2 }
 
-Arg :: { Grammar.Abs.Arg }
-Arg : Type Id { Grammar.Abs.ADecl $1 $2 }
-
 Stm :: { Grammar.Abs.Stm }
-Stm : Type Id ';' { Grammar.Abs.SDecl $1 $2 }
+Stm : 'typedef' Type Id ';' { Grammar.Abs.STypeDefId $2 $3 }
+    | Type Decl ';' { Grammar.Abs.SDecl $1 $2 }
+    | Type ListDecl ';' { Grammar.Abs.SDecls $1 $2 }
     | Type Id '=' Exp ';' { Grammar.Abs.SInit $1 $2 $4 }
     | Exp ';' { Grammar.Abs.SEexp $1 }
     | 'return' Exp ';' { Grammar.Abs.SReturn $2 }
     | 'while' '(' Exp ')' Stm { Grammar.Abs.SWhile $3 $5 }
+    | 'while' '(' Exp ')' ';' { Grammar.Abs.SEWhile $3 }
     | '{' ListStm '}' { Grammar.Abs.SBlock $2 }
-    | 'if' '(' Exp ')' Stm 'else' Stm { Grammar.Abs.SIfElse $3 $5 $7 }
+    | 'if' '(' Exp ')' Stm Else { Grammar.Abs.SIfElse $3 $5 $6 }
+    | '{' ListStm '}' { Grammar.Abs.SBlock $2 }
+    | 'const' Type '&' Id '=' Exp ';' { Grammar.Abs.SConstRefInit $2 $4 $6 }
+    | 'for' '(' Type Id '=' Exp ';' Exp ';' Exp ')' Stm { Grammar.Abs.SFor $3 $4 $6 $8 $10 $12 }
+    | 'const' Type Id '=' Exp ';' { Grammar.Abs.SConstInitId $2 $3 $5 }
+    | 'do' Stm 'while' '(' Exp ')' ';' { Grammar.Abs.SDo $2 $5 }
+
+Arg :: { Grammar.Abs.Arg }
+Arg : Type { Grammar.Abs.ADecl $1 }
+    | Type Id { Grammar.Abs.ADeclId $1 $2 }
+    | 'const' Type '&' Id { Grammar.Abs.AConstRefTypeId $2 $4 }
+    | Type '&' Id { Grammar.Abs.ARefId $1 $3 }
+    | 'const' Type '&' { Grammar.Abs.AConstRefType $2 }
+    | Type '&' { Grammar.Abs.ARefType $1 }
+
+Decl :: { Grammar.Abs.Decl }
+Decl : Id { Grammar.Abs.SDeclId $1 }
+
+Else :: { Grammar.Abs.Else }
+Else : {- empty -} { Grammar.Abs.SEElse }
+     | 'else' Stm { Grammar.Abs.SElse $2 }
 
 Exp15 :: { Grammar.Abs.Exp }
-Exp15 : Integer { Grammar.Abs.EInt $1 }
+Exp15 : Char { Grammar.Abs.EChar $1 }
+      | Integer { Grammar.Abs.EInt $1 }
       | Double { Grammar.Abs.EDouble $1 }
-      | String { Grammar.Abs.EString $1 }
+      | StringList { Grammar.Abs.EString $1 }
       | 'true' { Grammar.Abs.ETrue }
       | 'false' { Grammar.Abs.EFalse }
       | Id { Grammar.Abs.EId $1 }
-      | Id '(' ListExp ')' { Grammar.Abs.ECall $1 $3 }
-      | '(' Exp ')' { $2 }
+      | Exp15 '[' Exp ']' { Grammar.Abs.EIndex $1 $3 }
+      | Exp15 '(' ListExp ')' { Grammar.Abs.ECall $1 $3 }
+      | Exp15 '.' Exp14 { Grammar.Abs.EFun $1 $3 }
+      | '*' Exp15 { Grammar.Abs.EDeref $2 }
+      | Exp15 '<<' Exp15 { Grammar.Abs.ELl $1 $3 }
+      | Exp15 '>>' Id { Grammar.Abs.EGg $1 $3 }
+      | Id '::' Exp10 { Grammar.Abs.ELibs $1 $3 }
+      | Id '::' Id { Grammar.Abs.ELib $1 $3 }
+      | Id '::' Type { Grammar.Abs.ELibType $1 $3 }
+      | '\"' '\"' { Grammar.Abs.ETerm }
+      | Exp16 { $1 }
 
 Exp14 :: { Grammar.Abs.Exp }
 Exp14 : Exp15 '++' { Grammar.Abs.EPIncr $1 }
@@ -138,14 +198,17 @@ Exp14 : Exp15 '++' { Grammar.Abs.EPIncr $1 }
       | Exp15 { $1 }
 
 Exp13 :: { Grammar.Abs.Exp }
-Exp13 : '++' Exp14 { Grammar.Abs.EIncr $2 }
+Exp13 : '!' Exp14 { Grammar.Abs.ENot $2 }
+      | '++' Exp14 { Grammar.Abs.EIncr $2 }
       | '--' Exp14 { Grammar.Abs.EDecr $2 }
       | '-' Exp14 { Grammar.Abs.ENeg $2 }
+      | Exp13 '->' Exp14 { Grammar.Abs.EArrow $1 $3 }
       | Exp14 { $1 }
 
 Exp12 :: { Grammar.Abs.Exp }
 Exp12 : Exp12 '*' Exp13 { Grammar.Abs.EMul $1 $3 }
       | Exp12 '/' Exp13 { Grammar.Abs.EDiv $1 $3 }
+      | Exp12 '%' Exp13 { Grammar.Abs.EMod $1 $3 }
       | Exp13 { $1 }
 
 Exp11 :: { Grammar.Abs.Exp }
@@ -177,13 +240,6 @@ Exp2 : Exp3 '=' Exp2 { Grammar.Abs.EAss $1 $3 }
      | Exp2 '?' Exp3 ':' Exp3 { Grammar.Abs.EQstnmrk $1 $3 $5 }
      | Exp3 { $1 }
 
-Exp10 :: { Grammar.Abs.Exp }
-Exp10 : Exp10 '<<' Exp10 { Grammar.Abs.ELl $1 $3 }
-      | Exp10 '>>' Id { Grammar.Abs.EGg $1 $3 }
-      | Id '::' Id { Grammar.Abs.ELib $1 $3 }
-      | '\"' '\"' { Grammar.Abs.ETerm }
-      | Exp11 { $1 }
-
 Exp :: { Grammar.Abs.Exp }
 Exp : Exp1 { $1 }
 
@@ -199,6 +255,12 @@ Exp6 : Exp7 { $1 }
 Exp7 :: { Grammar.Abs.Exp }
 Exp7 : Exp8 { $1 }
 
+Exp10 :: { Grammar.Abs.Exp }
+Exp10 : Exp11 { $1 }
+
+Exp16 :: { Grammar.Abs.Exp }
+Exp16 : '(' Exp ')' { $2 }
+
 ListExp :: { [Grammar.Abs.Exp] }
 ListExp : {- empty -} { [] }
         | Exp { (:[]) $1 }
@@ -210,7 +272,14 @@ Type : 'bool' { Grammar.Abs.Tbool }
      | 'int' { Grammar.Abs.Tint }
      | 'string' { Grammar.Abs.Tstring }
      | 'void' { Grammar.Abs.Tvoid }
+     | Id { Grammar.Abs.Tnew $1 }
      | Id '::' Type { Grammar.Abs.TLit $1 $3 }
+
+StringList :: { Grammar.Abs.StringList }
+StringList : ListString { Grammar.Abs.StringList $1 }
+
+ListString :: { [String] }
+ListString : String { (:[]) $1 } | String ListString { (:) $1 $2 }
 {
 
 happyError :: [Token] -> Either String a

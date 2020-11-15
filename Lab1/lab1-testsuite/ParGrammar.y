@@ -10,9 +10,12 @@ import LexGrammar
 %name pListDef ListDef
 %name pDef Def
 %name pListArg ListArg
+%name pListDecl ListDecl
 %name pListStm ListStm
-%name pArg Arg
 %name pStm Stm
+%name pArg Arg
+%name pDecl Decl
+%name pElse Else
 %name pExp15 Exp15
 %name pExp14 Exp14
 %name pExp13 Exp13
@@ -23,63 +26,82 @@ import LexGrammar
 %name pExp4 Exp4
 %name pExp3 Exp3
 %name pExp2 Exp2
-%name pExp10 Exp10
 %name pExp Exp
 %name pExp1 Exp1
 %name pExp5 Exp5
 %name pExp6 Exp6
 %name pExp7 Exp7
+%name pExp10 Exp10
+%name pExp16 Exp16
 %name pListExp ListExp
 %name pType Type
+%name pStringList StringList
+%name pListString ListString
 -- no lexer declaration
 %monad { Either String } { (>>=) } { return }
 %tokentype {Token}
 %token
-  '!=' { PT _ (TS _ 1) }
-  '\"' { PT _ (TS _ 2) }
-  '&&' { PT _ (TS _ 3) }
-  '(' { PT _ (TS _ 4) }
-  ')' { PT _ (TS _ 5) }
-  '*' { PT _ (TS _ 6) }
-  '+' { PT _ (TS _ 7) }
-  '++' { PT _ (TS _ 8) }
-  ',' { PT _ (TS _ 9) }
-  '-' { PT _ (TS _ 10) }
-  '--' { PT _ (TS _ 11) }
-  '/' { PT _ (TS _ 12) }
-  ':' { PT _ (TS _ 13) }
-  '::' { PT _ (TS _ 14) }
-  ';' { PT _ (TS _ 15) }
-  '<' { PT _ (TS _ 16) }
-  '<<' { PT _ (TS _ 17) }
-  '<=' { PT _ (TS _ 18) }
-  '=' { PT _ (TS _ 19) }
-  '==' { PT _ (TS _ 20) }
-  '>' { PT _ (TS _ 21) }
-  '>=' { PT _ (TS _ 22) }
-  '>>' { PT _ (TS _ 23) }
-  '?' { PT _ (TS _ 24) }
-  'bool' { PT _ (TS _ 25) }
-  'double' { PT _ (TS _ 26) }
-  'else' { PT _ (TS _ 27) }
-  'false' { PT _ (TS _ 28) }
-  'if' { PT _ (TS _ 29) }
-  'int' { PT _ (TS _ 30) }
-  'return' { PT _ (TS _ 31) }
-  'string' { PT _ (TS _ 32) }
-  'throw' { PT _ (TS _ 33) }
-  'true' { PT _ (TS _ 34) }
-  'void' { PT _ (TS _ 35) }
-  'while' { PT _ (TS _ 36) }
-  '{' { PT _ (TS _ 37) }
-  '||' { PT _ (TS _ 38) }
-  '}' { PT _ (TS _ 39) }
+  '!' { PT _ (TS _ 1) }
+  '!=' { PT _ (TS _ 2) }
+  '\"' { PT _ (TS _ 3) }
+  '%' { PT _ (TS _ 4) }
+  '&' { PT _ (TS _ 5) }
+  '&&' { PT _ (TS _ 6) }
+  '(' { PT _ (TS _ 7) }
+  ')' { PT _ (TS _ 8) }
+  '*' { PT _ (TS _ 9) }
+  '+' { PT _ (TS _ 10) }
+  '++' { PT _ (TS _ 11) }
+  ',' { PT _ (TS _ 12) }
+  '-' { PT _ (TS _ 13) }
+  '--' { PT _ (TS _ 14) }
+  '->' { PT _ (TS _ 15) }
+  '.' { PT _ (TS _ 16) }
+  '/' { PT _ (TS _ 17) }
+  ':' { PT _ (TS _ 18) }
+  '::' { PT _ (TS _ 19) }
+  ';' { PT _ (TS _ 20) }
+  '<' { PT _ (TS _ 21) }
+  '<<' { PT _ (TS _ 22) }
+  '<=' { PT _ (TS _ 23) }
+  '=' { PT _ (TS _ 24) }
+  '==' { PT _ (TS _ 25) }
+  '>' { PT _ (TS _ 26) }
+  '>=' { PT _ (TS _ 27) }
+  '>>' { PT _ (TS _ 28) }
+  '?' { PT _ (TS _ 29) }
+  '[' { PT _ (TS _ 30) }
+  ']' { PT _ (TS _ 31) }
+  'bool' { PT _ (TS _ 32) }
+  'const' { PT _ (TS _ 33) }
+  'do' { PT _ (TS _ 34) }
+  'double' { PT _ (TS _ 35) }
+  'else' { PT _ (TS _ 36) }
+  'false' { PT _ (TS _ 37) }
+  'for' { PT _ (TS _ 38) }
+  'if' { PT _ (TS _ 39) }
+  'int' { PT _ (TS _ 40) }
+  'return' { PT _ (TS _ 41) }
+  'string' { PT _ (TS _ 42) }
+  'throw' { PT _ (TS _ 43) }
+  'true' { PT _ (TS _ 44) }
+  'typedef' { PT _ (TS _ 45) }
+  'using' { PT _ (TS _ 46) }
+  'void' { PT _ (TS _ 47) }
+  'while' { PT _ (TS _ 48) }
+  '{' { PT _ (TS _ 49) }
+  '||' { PT _ (TS _ 50) }
+  '}' { PT _ (TS _ 51) }
+  L_charac { PT _ (TC $$) }
   L_integ  { PT _ (TI $$) }
   L_doubl  { PT _ (TD $$) }
   L_quoted { PT _ (TL $$) }
   L_Id { PT _ (T_Id $$) }
 
 %%
+
+Char    :: { Char }
+Char     : L_charac { (read ($1)) :: Char }
 
 Integer :: { Integer }
 Integer  : L_integ  { (read ($1)) :: Integer }
@@ -101,36 +123,74 @@ ListDef : {- empty -} { [] } | Def ListDef { (:) $1 $2 }
 
 Def :: { AbsGrammar.Def }
 Def : Type Id '(' ListArg ')' '{' ListStm '}' { AbsGrammar.DFun $1 $2 $4 $7 }
+    | Type Id '(' ListArg ')' ';' { AbsGrammar.DFunCall $1 $2 $4 }
+    | 'using' Exp ';' { AbsGrammar.DNameSpace $2 }
+    | Type Decl ';' { AbsGrammar.DDecl $1 $2 }
+    | Type ListDecl ';' { AbsGrammar.DDecls $1 $2 }
+    | 'typedef' Type Id ';' { AbsGrammar.DTypeDefId $2 $3 }
 
 ListArg :: { [AbsGrammar.Arg] }
 ListArg : {- empty -} { [] }
         | Arg { (:[]) $1 }
         | Arg ',' ListArg { (:) $1 $3 }
 
+ListDecl :: { [AbsGrammar.Decl] }
+ListDecl : Decl { (:[]) $1 } | Decl ',' ListDecl { (:) $1 $3 }
+
 ListStm :: { [AbsGrammar.Stm] }
 ListStm : {- empty -} { [] } | Stm ListStm { (:) $1 $2 }
 
-Arg :: { AbsGrammar.Arg }
-Arg : Type Id { AbsGrammar.ADecl $1 $2 }
-
 Stm :: { AbsGrammar.Stm }
-Stm : Type Id ';' { AbsGrammar.SDecl $1 $2 }
+Stm : 'typedef' Type Id ';' { AbsGrammar.STypeDefId $2 $3 }
+    | Type Decl ';' { AbsGrammar.SDecl $1 $2 }
+    | Type ListDecl ';' { AbsGrammar.SDecls $1 $2 }
     | Type Id '=' Exp ';' { AbsGrammar.SInit $1 $2 $4 }
     | Exp ';' { AbsGrammar.SEexp $1 }
     | 'return' Exp ';' { AbsGrammar.SReturn $2 }
     | 'while' '(' Exp ')' Stm { AbsGrammar.SWhile $3 $5 }
+    | 'while' '(' Exp ')' ';' { AbsGrammar.SEWhile $3 }
     | '{' ListStm '}' { AbsGrammar.SBlock $2 }
-    | 'if' '(' Exp ')' Stm 'else' Stm { AbsGrammar.SIfElse $3 $5 $7 }
+    | 'if' '(' Exp ')' Stm Else { AbsGrammar.SIfElse $3 $5 $6 }
+    | '{' ListStm '}' { AbsGrammar.SBlock $2 }
+    | 'const' Type '&' Id '=' Exp ';' { AbsGrammar.SConstRefInit $2 $4 $6 }
+    | 'for' '(' Type Id '=' Exp ';' Exp ';' Exp ')' Stm { AbsGrammar.SFor $3 $4 $6 $8 $10 $12 }
+    | 'const' Type Id '=' Exp ';' { AbsGrammar.SConstInitId $2 $3 $5 }
+    | 'do' Stm 'while' '(' Exp ')' ';' { AbsGrammar.SDo $2 $5 }
+
+Arg :: { AbsGrammar.Arg }
+Arg : Type { AbsGrammar.ADecl $1 }
+    | Type Id { AbsGrammar.ADeclId $1 $2 }
+    | 'const' Type '&' Id { AbsGrammar.AConstRefTypeId $2 $4 }
+    | Type '&' Id { AbsGrammar.ARefId $1 $3 }
+    | 'const' Type '&' { AbsGrammar.AConstRefType $2 }
+    | Type '&' { AbsGrammar.ARefType $1 }
+
+Decl :: { AbsGrammar.Decl }
+Decl : Id { AbsGrammar.SDeclId $1 }
+
+Else :: { AbsGrammar.Else }
+Else : {- empty -} { AbsGrammar.SEElse }
+     | 'else' Stm { AbsGrammar.SElse $2 }
 
 Exp15 :: { AbsGrammar.Exp }
-Exp15 : Integer { AbsGrammar.EInt $1 }
+Exp15 : Char { AbsGrammar.EChar $1 }
+      | Integer { AbsGrammar.EInt $1 }
       | Double { AbsGrammar.EDouble $1 }
-      | String { AbsGrammar.EString $1 }
+      | StringList { AbsGrammar.EString $1 }
       | 'true' { AbsGrammar.ETrue }
       | 'false' { AbsGrammar.EFalse }
       | Id { AbsGrammar.EId $1 }
-      | Id '(' ListExp ')' { AbsGrammar.ECall $1 $3 }
-      | '(' Exp ')' { $2 }
+      | Exp15 '[' Exp ']' { AbsGrammar.EIndex $1 $3 }
+      | Exp15 '(' ListExp ')' { AbsGrammar.ECall $1 $3 }
+      | Exp15 '.' Exp14 { AbsGrammar.EFun $1 $3 }
+      | '*' Exp15 { AbsGrammar.EDeref $2 }
+      | Exp15 '<<' Exp15 { AbsGrammar.ELl $1 $3 }
+      | Exp15 '>>' Id { AbsGrammar.EGg $1 $3 }
+      | Id '::' Exp10 { AbsGrammar.ELibs $1 $3 }
+      | Id '::' Id { AbsGrammar.ELib $1 $3 }
+      | Id '::' Type { AbsGrammar.ELibType $1 $3 }
+      | '\"' '\"' { AbsGrammar.ETerm }
+      | Exp16 { $1 }
 
 Exp14 :: { AbsGrammar.Exp }
 Exp14 : Exp15 '++' { AbsGrammar.EPIncr $1 }
@@ -138,14 +198,17 @@ Exp14 : Exp15 '++' { AbsGrammar.EPIncr $1 }
       | Exp15 { $1 }
 
 Exp13 :: { AbsGrammar.Exp }
-Exp13 : '++' Exp14 { AbsGrammar.EIncr $2 }
+Exp13 : '!' Exp14 { AbsGrammar.ENot $2 }
+      | '++' Exp14 { AbsGrammar.EIncr $2 }
       | '--' Exp14 { AbsGrammar.EDecr $2 }
       | '-' Exp14 { AbsGrammar.ENeg $2 }
+      | Exp13 '->' Exp14 { AbsGrammar.EArrow $1 $3 }
       | Exp14 { $1 }
 
 Exp12 :: { AbsGrammar.Exp }
 Exp12 : Exp12 '*' Exp13 { AbsGrammar.EMul $1 $3 }
       | Exp12 '/' Exp13 { AbsGrammar.EDiv $1 $3 }
+      | Exp12 '%' Exp13 { AbsGrammar.EMod $1 $3 }
       | Exp13 { $1 }
 
 Exp11 :: { AbsGrammar.Exp }
@@ -177,13 +240,6 @@ Exp2 : Exp3 '=' Exp2 { AbsGrammar.EAss $1 $3 }
      | Exp2 '?' Exp3 ':' Exp3 { AbsGrammar.EQstnmrk $1 $3 $5 }
      | Exp3 { $1 }
 
-Exp10 :: { AbsGrammar.Exp }
-Exp10 : Exp10 '<<' Exp10 { AbsGrammar.ELl $1 $3 }
-      | Exp10 '>>' Id { AbsGrammar.EGg $1 $3 }
-      | Id '::' Id { AbsGrammar.ELib $1 $3 }
-      | '\"' '\"' { AbsGrammar.ETerm }
-      | Exp11 { $1 }
-
 Exp :: { AbsGrammar.Exp }
 Exp : Exp1 { $1 }
 
@@ -199,6 +255,12 @@ Exp6 : Exp7 { $1 }
 Exp7 :: { AbsGrammar.Exp }
 Exp7 : Exp8 { $1 }
 
+Exp10 :: { AbsGrammar.Exp }
+Exp10 : Exp11 { $1 }
+
+Exp16 :: { AbsGrammar.Exp }
+Exp16 : '(' Exp ')' { $2 }
+
 ListExp :: { [AbsGrammar.Exp] }
 ListExp : {- empty -} { [] }
         | Exp { (:[]) $1 }
@@ -210,7 +272,14 @@ Type : 'bool' { AbsGrammar.Tbool }
      | 'int' { AbsGrammar.Tint }
      | 'string' { AbsGrammar.Tstring }
      | 'void' { AbsGrammar.Tvoid }
+     | Id { AbsGrammar.Tnew $1 }
      | Id '::' Type { AbsGrammar.TLit $1 $3 }
+
+StringList :: { AbsGrammar.StringList }
+StringList : ListString { AbsGrammar.StringList $1 }
+
+ListString :: { [String] }
+ListString : String { (:[]) $1 } | String ListString { (:) $1 $2 }
 {
 
 happyError :: [Token] -> Either String a

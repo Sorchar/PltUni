@@ -19,34 +19,64 @@ transProgram x = case x of
 transDef :: AbsGrammar.Def -> Result
 transDef x = case x of
   AbsGrammar.DFun type_ id args stms -> failure x
-transArg :: AbsGrammar.Arg -> Result
-transArg x = case x of
-  AbsGrammar.ADecl type_ id -> failure x
+  AbsGrammar.DFunCall type_ id args -> failure x
+  AbsGrammar.DNameSpace exp -> failure x
+  AbsGrammar.DDecl type_ decl -> failure x
+  AbsGrammar.DDecls type_ decls -> failure x
+  AbsGrammar.DTypeDefId type_ id -> failure x
 transStm :: AbsGrammar.Stm -> Result
 transStm x = case x of
-  AbsGrammar.SDecl type_ id -> failure x
+  AbsGrammar.STypeDefId type_ id -> failure x
+  AbsGrammar.SDecl type_ decl -> failure x
+  AbsGrammar.SDecls type_ decls -> failure x
   AbsGrammar.SInit type_ id exp -> failure x
   AbsGrammar.SEexp exp -> failure x
   AbsGrammar.SReturn exp -> failure x
   AbsGrammar.SWhile exp stm -> failure x
+  AbsGrammar.SEWhile exp -> failure x
   AbsGrammar.SBlock stms -> failure x
-  AbsGrammar.SIfElse exp stm1 stm2 -> failure x
+  AbsGrammar.SIfElse exp stm else_ -> failure x
+  AbsGrammar.SConstRefInit type_ id exp -> failure x
+  AbsGrammar.SFor type_ id exp1 exp2 exp3 stm -> failure x
+  AbsGrammar.SConstInitId type_ id exp -> failure x
+transArg :: AbsGrammar.Arg -> Result
+transArg x = case x of
+  AbsGrammar.ADecl type_ -> failure x
+  AbsGrammar.ADeclId type_ id -> failure x
+  AbsGrammar.AConstRefTypeId type_ id -> failure x
+  AbsGrammar.ARefId type_ id -> failure x
+  AbsGrammar.AConstRefType type_ -> failure x
+  AbsGrammar.ARefType type_ -> failure x
+transDecl :: AbsGrammar.Decl -> Result
+transDecl x = case x of
+  AbsGrammar.SDeclId id -> failure x
+transElse :: AbsGrammar.Else -> Result
+transElse x = case x of
+  AbsGrammar.SEElse -> failure x
+  AbsGrammar.SElse stm -> failure x
 transExp :: AbsGrammar.Exp -> Result
 transExp x = case x of
+  AbsGrammar.EChar char -> failure x
   AbsGrammar.EInt integer -> failure x
   AbsGrammar.EDouble double -> failure x
-  AbsGrammar.EString string -> failure x
+  AbsGrammar.EString stringlist -> failure x
   AbsGrammar.ETrue -> failure x
   AbsGrammar.EFalse -> failure x
   AbsGrammar.EId id -> failure x
-  AbsGrammar.ECall id exps -> failure x
+  AbsGrammar.EIndex exp1 exp2 -> failure x
+  AbsGrammar.ECall exp exps -> failure x
+  AbsGrammar.EFun exp1 exp2 -> failure x
   AbsGrammar.EPIncr exp -> failure x
   AbsGrammar.EPDcecr exp -> failure x
+  AbsGrammar.EDeref exp -> failure x
+  AbsGrammar.ENot exp -> failure x
   AbsGrammar.EIncr exp -> failure x
   AbsGrammar.EDecr exp -> failure x
   AbsGrammar.ENeg exp -> failure x
+  AbsGrammar.EArrow exp1 exp2 -> failure x
   AbsGrammar.EMul exp1 exp2 -> failure x
   AbsGrammar.EDiv exp1 exp2 -> failure x
+  AbsGrammar.EMod exp1 exp2 -> failure x
   AbsGrammar.EAdd exp1 exp2 -> failure x
   AbsGrammar.ESub exp1 exp2 -> failure x
   AbsGrammar.ELt exp1 exp2 -> failure x
@@ -59,9 +89,12 @@ transExp x = case x of
   AbsGrammar.EOr exp1 exp2 -> failure x
   AbsGrammar.EAss exp1 exp2 -> failure x
   AbsGrammar.EThrowE exp -> failure x
+  AbsGrammar.EQstnmrk exp1 exp2 exp3 -> failure x
   AbsGrammar.ELl exp1 exp2 -> failure x
   AbsGrammar.EGg exp id -> failure x
+  AbsGrammar.ELibs id exp -> failure x
   AbsGrammar.ELib id1 id2 -> failure x
+  AbsGrammar.ELibType id type_ -> failure x
   AbsGrammar.ETerm -> failure x
 transType :: AbsGrammar.Type -> Result
 transType x = case x of
@@ -70,5 +103,9 @@ transType x = case x of
   AbsGrammar.Tint -> failure x
   AbsGrammar.Tstring -> failure x
   AbsGrammar.Tvoid -> failure x
+  AbsGrammar.Tnew id -> failure x
   AbsGrammar.TLit id type_ -> failure x
+transStringList :: AbsGrammar.StringList -> Result
+transStringList x = case x of
+  AbsGrammar.StringList strings -> failure x
 
