@@ -39,6 +39,7 @@ data Stm
     | SFor Type Id Exp Exp Exp Stm
     | SConstInitId Type Id Exp
     | SDo Stm Exp
+    | ELib Type
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Arg
@@ -93,12 +94,12 @@ data Exp
     | EQstnmrk Exp Exp Exp
     | ELl Exp Exp
     | EGg Exp Id
-    | ELib Type
+    | ELibs Id Exp
     | ETerm
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Type
-    = Tbool | Tdouble | Tint | Tstring | Tvoid | Tnew Id | TLit Id Type
+    = Tbool | Tdouble | Tint | Tstring | Tvoid | Cnew Id | TLit Id Type
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data StringList = StringList [String]

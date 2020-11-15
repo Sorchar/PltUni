@@ -16,92 +16,84 @@ data Program = PDefs [Def]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Def
-    = DFun Type Id [Arg] [Stm]
-    | DFunCall Type Id [Arg]
-    | DNameSpace Exp
-    | DDecl Type Decl
-    | DDecls Type [Decl]
-    | DTypeDefId Type Id
+    = DefFun TypeC Id [Arg] Body
+    | DefFun3 TypeC [Ass]
+    | DefUsing QConst
+    | DefTypedef TypeC Id
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Arg = ADel TypeC | ADecl TypeC Id | Aref Id
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Stm
-    = STypeDefId Type Id
-    | SDecl Type Decl
-    | SDecls Type [Decl]
-    | SInit Type Id Exp
-    | SEexp Exp
+    = SInit TypeC [Ass]
     | SReturn Exp
     | SWhile Exp Stm
-    | SEWhile Exp
+    | SWhile2 Exp
     | SBlock [Stm]
-    | SIfElse Exp Stm Else
-    | SConstRefInit Type Id Exp
-    | SFor Type Id Exp Exp Exp Stm
-    | SConstInitId Type Id Exp
-    | SDo Stm Exp
+    | SIf Exp Stm
+    | SIfElse Exp Stm Stm
+    | SFor TypeC Ass Exp Exp Stm
+    | SDowh Stm Exp
+    | STypeDef TypeC Id
+    | SExp Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Arg
-    = ADecl Type
-    | ADeclId Type Id
-    | AConstRefTypeId Type Id
-    | ARefId Type Id
-    | AConstRefType Type
-    | ARefType Type
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
-
-data Decl = SDeclId Id
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
-
-data Else = SEElse | SElse Stm
+data Body = BBlock [Stm] | BEmpty
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Exp
-    = EChar Char
-    | EInt Integer
+    = EInt Integer
     | EDouble Double
-    | EString StringList
+    | EString [String]
+    | EChar Char
     | ETrue
     | EFalse
-    | EId Id
+    | EQConst QConst
+    | EApp Exp [Exp]
     | EIndex Exp Exp
-    | ECall Exp [Exp]
-    | EFun Exp Exp
+    | EProj Exp Exp
+    | EProj2 Exp Exp
     | EPIncr Exp
-    | EPDcecr Exp
-    | EDeref Exp
-    | ENot Exp
+    | EPDecr Exp
     | EIncr Exp
     | EDecr Exp
-    | ENeg Exp
-    | EArrow Exp Exp
-    | EMul Exp Exp
+    | EPoint Exp
+    | ENot Exp
+    | ERem Exp Exp
+    | ETimes Exp Exp
     | EDiv Exp Exp
-    | EMod Exp Exp
-    | EAdd Exp Exp
-    | ESub Exp Exp
+    | EPlus Exp Exp
+    | EMinus Exp Exp
+    | ELShift Exp Exp
+    | ERShift Exp Exp
     | ELt Exp Exp
     | EGt Exp Exp
-    | ELEq Exp Exp
-    | EGEq Exp Exp
+    | ELtEq Exp Exp
+    | EGtWq Exp Exp
     | EEq Exp Exp
     | ENEq Exp Exp
     | EAnd Exp Exp
     | EOr Exp Exp
     | EAss Exp Exp
-    | EThrowE Exp
-    | EQstnmrk Exp Exp Exp
-    | ELl Exp Exp
-    | EGg Exp Id
-    | ELib Type
-    | ELibs Id Exp
-    | ETerm
+    | EAss2 Exp Exp
+    | EAss3 Exp Exp
+    | ECon Exp Exp Exp
+    | EThrow Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Type
-    = Tbool | Tdouble | Tint | Tstring | Tvoid | Tnew Id | TLit Id Type
+data QConst = QCon [Const]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data StringList = StringList [String]
+data Const = CId Id
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Type = Tbool | Tdouble | Tint | Tvoid | Tchar | TQconst QConst
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data TypeC = Tref Type | Tconst1 Type | Tconst2 Type | Tref1 Type
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Ass = Hint Id | Hintstm Id Exp
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 

@@ -80,15 +80,15 @@ ENEq.		Exp8	::= Exp8  "!=" Exp9 ;
 EAnd.		Exp4 	::= Exp4  "&&" Exp5 ;
 EOr.		Exp3    ::= Exp3  "||" Exp4 ;
 EAss.		Exp2    ::= Exp3  "="  Exp2 ;
-EThrowE.	Exp2 	::= "throw"    Exp2 ; -- shift conflict
 EQstnmrk.	Exp2    ::= Exp3 "?" Exp2 ":" Exp2 ;
+EThrowE.	Exp1 	::= "throw"    Exp1 ; 
 
-ELl.		Exp15	::= Exp15 "<<" Exp14 ; 
-EGg.		Exp15	::= Exp15 ">>" Id ; -- exp14 or id?
+ELl.		Exp10	::= Exp10 "<<" Exp11 ; 
+EGg.		Exp10	::= Exp10 ">>" Exp11 ; -- was id b4?
 
---ELib.       Exp15   ::=  Type;
+ELib.       Exp15   ::=  Type; -- about 29 reduce reduce conflicts, also 5 bad tests
 ELibs.      Exp15   ::=  Id "::" Exp16;
-ETerm.      Exp15   ::= "\"" "\"";
+ETerm.      Exp15   ::= "\"" "\""; -- 1 reduce
 
 coercions Exp 16  ;
 separator Exp "," ;
@@ -98,7 +98,7 @@ Tdouble. Type ::= "double" ;
 Tint.	 Type ::= "int"    ;
 Tstring. Type ::= "string" ;
 Tvoid.	 Type ::= "void"   ;
-Tnew.	 Type ::= Id; -- about 29 reduce reduce conflicts
+Cnew.	 Type ::= Id; -- about 29 reduce reduce conflicts
 TLit.    Type ::= Id "::" Type;
 
 StringList. StringList ::= [String];

@@ -81,8 +81,8 @@ ENEq.		Exp8	::= Exp8  "!=" Exp9 ;
 EAnd.		Exp4 	::= Exp4  "&&" Exp5 ;
 EOr.		Exp3    ::= Exp3  "||" Exp4 ;
 EAss.		Exp2    ::= Exp3  "="  Exp2 ;
-EThrowE.	Exp2 	::= "throw"    Exp2 ; -- shift conflict
 EQstnmrk.	Exp2    ::= Exp3 "?" Exp2 ":" Exp2 ;
+EThrowE.	Exp1 	::= "throw"    Exp1 ; 
 
 ELl.		Exp10	::= Exp10 "<<" Exp11 ; 
 EGg.		Exp10	::= Exp10 ">>" Exp11 ;

@@ -55,7 +55,7 @@ The symbols used in Grammar are the following:
   | < | > | <= | >=
   | == | != | && | ||
   | ? | : | << | >>
-  | :: |  |  |
+  | :: | " |  |
 
 ===Comments===
 Single-line comments begin with //, #.Multiple-line comments are  enclosed with /* and */.
@@ -117,10 +117,9 @@ All other symbols are terminals.
   |  |  **|**  | //Exp15// ``(`` //[Exp]// ``)``
   |  |  **|**  | //Exp15// ``.`` //Exp14//
   |  |  **|**  | ``*`` //Exp15//
-  |  |  **|**  | //Exp15// ``<<`` //Exp14//
-  |  |  **|**  | //Exp15// ``>>`` //Id//
   |  |  **|**  | //Type//
   |  |  **|**  | //Id// ``::`` //Exp16//
+  |  |  **|**  | ``"`` ``"``
   |  |  **|**  | //Exp16//
   | //Exp14// | -> | //Exp15// ``++``
   |  |  **|**  | //Exp15// ``--``
@@ -151,15 +150,17 @@ All other symbols are terminals.
   | //Exp3// | -> | //Exp3// ``||`` //Exp4//
   |  |  **|**  | //Exp4//
   | //Exp2// | -> | //Exp3// ``=`` //Exp2//
-  |  |  **|**  | ``throw`` //Exp2//
   |  |  **|**  | //Exp3// ``?`` //Exp2// ``:`` //Exp2//
   |  |  **|**  | //Exp3//
+  | //Exp1// | -> | ``throw`` //Exp1//
+  |  |  **|**  | //Exp2//
+  | //Exp10// | -> | //Exp10// ``<<`` //Exp11//
+  |  |  **|**  | //Exp10// ``>>`` //Exp11//
+  |  |  **|**  | //Exp11//
   | //Exp// | -> | //Exp1//
-  | //Exp1// | -> | //Exp2//
   | //Exp5// | -> | //Exp6//
   | //Exp6// | -> | //Exp7//
   | //Exp7// | -> | //Exp8//
-  | //Exp10// | -> | //Exp11//
   | //Exp16// | -> | ``(`` //Exp// ``)``
   | //[Exp]// | -> | **eps**
   |  |  **|**  | //Exp//
