@@ -24,8 +24,10 @@ SWhile. 	Stm		::= "while" "(" Exp ")" Stm;
 SBlock. 	Stm 	::= "{" [Stm] "}" ;
 SIfElse. 	Stm 	::= "if" "(" Exp ")" Stm Else ;
 SEElse.     Else    ::= "";
-SElse.     Else     ::= "else" Stm;
+SElse.      Else    ::= "else" Stm;
 SBlock.     Stm     ::= "{" [Stm] "}";
+
+SConstDeclRef. Arg	::= "const" Type "&" Decl ;
 
 
 EInt. 		Exp15 	::= Integer ;
