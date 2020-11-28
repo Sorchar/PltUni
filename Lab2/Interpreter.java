@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class Interpreter {
 
+	public final static Value VNULL = new VNull();
+	
         Scanner scanner = new Scanner(System.in);
         HashMap<String, Func> signature = new HashMap<String, Func>();
         LinkedList<HashMap<String, Value>> context = new LinkedList<HashMap<String, Value>>();
@@ -69,5 +71,66 @@ public class Interpreter {
             argnames.add(arg);
         }
     }
+        // Statement //////////////////////////////////////////////////////////
+
+    public class StmVisitor implements Stm.Visitor<Void, Void> {
+
+        @Override
+        public Void visit(SExp p, Void arg) {
+            p.exp_.accept(new ExpVisitor(), null);
+            return null;
+        }
+
+        @Override
+        public Void visit(SDecls p, Void arg) {
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            return null;
+        }
+
+        @Override
+        public Void visit(SInit p, Void arg) {
+           newVar(p.id_, VNULL);
+           Value v = p.exp_.accept(new ExpVisitor(), null));
+           assignVar(p.id_, v);
+            return null;
+        }
+
+        @Override
+        public Void visit(SReturn p, Void arg) {
+            var type = p.exp_.accept(new ExpVisitor(), arg);
+            typeEquals(returnType, type);
+            return null;
+        }
+
+        @Override
+        public Void visit(SWhile p, Void arg) {
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            return null;
+        }
+
+        @Override
+        public Void visit(SBlock p, Void arg) {
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            return null;
+        }
+
+        @Override
+        public Void visit(SIfElse p, Void arg) {
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            return null;
+        }
+    }
+
+	public void assignVar(String x, Value v){ //values and not a func? 1;36:46
+		for(HashMap<String, Value> m: context){
+			if (m.containsKey(x)){
+				m.put(x,v);
+				return v;
+			}
+		}
+		throw new RunTimeException("Unbound variable " +x);
+		
+	}
+		
 
 }
