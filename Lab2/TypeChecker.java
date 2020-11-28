@@ -1,5 +1,8 @@
+import cmm.PrettyPrinter;
 import cmm.Absyn.*;
 import java.util.*;
+
+import javax.management.RuntimeErrorException;
 
 public class TypeChecker {
 
@@ -111,43 +114,44 @@ public class TypeChecker {
 
         @Override
         public Void visit(SExp p, Void arg) {
-            // TODO Auto-generated method stub
+            p.exp_.accept(new ExpVisitor(), arg);
             return null;
         }
 
         @Override
         public Void visit(SDecls p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Void visit(SInit p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Void visit(SReturn p, Void arg) {
-            // TODO Auto-generated method stub
+            var type = p.exp_.accept(new ExpVisitor(), arg);
+            typeEquals(returnType, type);
             return null;
         }
 
         @Override
         public Void visit(SWhile p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Void visit(SBlock p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Void visit(SIfElse p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
     }
@@ -158,79 +162,92 @@ public class TypeChecker {
 
         @Override
         public Type visit(EBool p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EInt p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
+            return INT;
         }
 
         @Override
         public Type visit(EDouble p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EId p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EApp p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
+            var arity = signature.get(p.id_);
+
+            if(arity == null){
+                throw new TypeException("Undefined function: " + p.id_);
+            }
+
+            if(arity.args.size() != p.listexp_.size()){
+                throw new TypeException("Expected number of arguments: " + arity.args.size() + " provided: " + p.listexp_.size());
+            }
+
+            for(int i = 0; i < p.listexp_.size(); i++){
+                ADecl exceptedParam = (ADecl)arity.args.get(i);
+                var param = p.listexp_.get(i);
+                typeEquals(exceptedParam.type_, param.accept(new ExpVisitor(), arg));
+            }
+            return arity.returnType;
         }
 
         @Override
         public Type visit(EPost p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EPre p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EMul p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EAdd p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(ECmp p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EAnd p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EOr p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
         public Type visit(EAss p, Void arg) {
-            // TODO Auto-generated method stub
+            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
