@@ -1,8 +1,10 @@
 import cmm.Absyn.*;
+import cmm.PrettyPrinter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.management.RuntimeErrorException;
 
 
 public class Interpreter {
@@ -71,41 +73,46 @@ public class Interpreter {
     }
         // Statement //////////////////////////////////////////////////////////
 
-    public class StmVisitor implements Stm.Visitor<Void, Void> { // is this supposed to be a value?
+    public class StmVisitor implements Stm.Visitor<Value, Void> { // is this supposed to be a value?
 
         @Override
-        public Void visit(SExp p, Void arg) {
-            p.exp_.accept(new ExpVisitor(), null);
+        public Value visit(SExp p, Void arg) { // could this be a void?
+            p.exp_.accept(new ExpVisitor(), arg);
             return null;
         }
 
         @Override
-        public Void visit(SDecls p, Void arg) {
+        public Value visit(SDecls p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
-        public Void visit(SInit p, Void arg) {
+        public Value visit(SInit p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
-        public Void visit(SReturn p, Void arg) {
+        public Value visit(SReturn p, Void arg) {
+            return (p.exp_.accept(new ExpVisitor(),arg));
+        }
+
+        @Override
+        public Value visit(SWhile p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
-        public Void visit(SWhile p, Void arg) {
+        public Value visit(SBlock p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
 
         @Override
-        public Void visit(SBlock p, Void arg) {
-            return null;
-        }
-
-        @Override
-        public Void visit(SIfElse p, Void arg) {
+        public Value visit(SIfElse p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
             return null;
         }
     }
@@ -125,7 +132,8 @@ public class Interpreter {
 
 				@Override
 				public Value visit(EBool p, Void arg) {
-						//return new Value(p.boolean_, BOOL);
+						//return new Value(p.boolean_, BOOL)
+						if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
 						return null;
 				}
 
@@ -146,46 +154,63 @@ public class Interpreter {
 
 				@Override
 				public Value visit(EApp p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
 						return null;
 				}
 
 				@Override
 				public Value visit(EPost p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
 				@Override
 				public Value visit(EPre p, Void arg) {
+
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
 						return null;
 				}
 
 				@Override
 				public Value visit(EMul p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
 				@Override
 				public Value visit(EAdd p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
 				@Override
 				public Value visit(ECmp p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
 				@Override
 				public Value visit(EAnd p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
 				@Override
 				public Value visit(EOr p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
 				@Override
 				public Value visit(EAss p, Void arg) {
+					if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+
 						return null;
 				}
 
