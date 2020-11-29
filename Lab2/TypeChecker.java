@@ -46,7 +46,13 @@ public class TypeChecker {
                 d.accept(new DefVisitor(), arg);
             }
 
-            // TODO: Check for main
+            var mainFunction = signature.get("main");
+            if (mainFunction == null)
+                throw new TypeException("Main function is undefined");
+            if (!mainFunction.returnType.equals(INT))
+                throw new TypeException("Main function should return INT");
+            if (!mainFunction.args.isEmpty())
+                throw new TypeException("Main function does not take params");
 
             return null;
         }
@@ -126,7 +132,7 @@ public class TypeChecker {
         @Override
         public Void visit(SInit p, Void arg) {
             var type = p.exp_.accept(new ExpVisitor(), arg);
-            isTypeEquals(p.type_, type);
+            isTypeEquals(p.type_, type, "d");
             addVar(p.id_, p.type_);
             return null;
         }
@@ -134,7 +140,13 @@ public class TypeChecker {
         @Override
         public Void visit(SReturn p, Void arg) {
             var type = p.exp_.accept(new ExpVisitor(), arg);
-            isTypeEquals(returnType, type);
+            if (isNumbericType(type)) {
+                var superType = getSuperType(type, returnType);
+                isTypeEquals(returnType, superType, "c");
+            } else {
+                isTypeEquals(returnType, type, "b");
+            }
+
             return null;
         }
 
@@ -210,7 +222,13 @@ public class TypeChecker {
             for (int i = 0; i < p.listexp_.size(); i++) {
                 ADecl exceptedParam = (ADecl) arity.args.get(i);
                 var param = p.listexp_.get(i);
-                isTypeEquals(exceptedParam.type_, param.accept(new ExpVisitor(), arg));
+                var type = param.accept(new ExpVisitor(), arg);
+                if (isNumbericType(type)) {
+                    var superType = getSuperType(type, exceptedParam.type_);
+                    isTypeEquals(exceptedParam.type_, superType, "f");
+                } else {
+                    isTypeEquals(exceptedParam.type_, type, "e");
+                }
             }
             return arity.returnType;
         }
@@ -234,8 +252,7 @@ public class TypeChecker {
             notVoid(t1);
             getNumbericType(t1);
             getNumbericType(t2);
-            isTypeEquals(t1, t2);
-            return t1;
+            return getSuperType(t1, t2);
         }
 
         @Override
@@ -245,8 +262,7 @@ public class TypeChecker {
             notVoid(t1);
             getNumbericType(t1);
             getNumbericType(t2);
-            isTypeEquals(t1, t2);
-            return t1;
+            return getSuperType(t1, t2);
         }
 
         @Override
@@ -254,7 +270,12 @@ public class TypeChecker {
             var t1 = p.exp_1.accept(new ExpVisitor(), arg);
             var t2 = p.exp_2.accept(new ExpVisitor(), arg);
             notVoid(t1);
-            isTypeEquals(t1, t2);
+            if (isNumbericType(t1)) {
+                var superType = getSuperType(t1, t2);
+                isTypeEquals(superType, superType, "a1");
+            } else {
+                isTypeEquals(t1, t2, "a");
+            }
             return BOOL;
         }
 
@@ -315,7 +336,6 @@ public class TypeChecker {
         throw new TypeException("unbound variable " + x);
     }
 
-
     // Exp & Type shape //////////////////////////////////////////////////////////
 
     public String isVar(Exp e) {
@@ -330,16 +350,31 @@ public class TypeChecker {
             throw new TypeException("Expected type " + t2 + " but found type " + t1);
     }
 
+    public void isTypeEquals(Type t1, Type t2, String a) {
+        if (!t1.equals(t2))
+            throw new TypeException("Expected type " + t2 + " but found type " + t1 + a);
+    }
+
     public Type getNumbericType(Type t) {
         if (!t.equals(INT) && !t.equals(DOUBLE))
             throw new TypeException("Expected expression of numeric type");
         return t;
     }
 
+    public Boolean isNumbericType(Type t) {
+        return (t.equals(INT) || t.equals(DOUBLE));
+    }
+
     public void notVoid(Type t) {
         if (t.equals(VOID)) {
             throw new TypeException(t + " is Void ");
         }
+    }
+
+    public Type getSuperType(Type t1, Type t2) {
+        getNumbericType(t1);
+        getNumbericType(t2);
+        return t1.equals(DOUBLE) ? t1 : t2;
     }
 
 }
