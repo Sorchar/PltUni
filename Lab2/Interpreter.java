@@ -71,7 +71,7 @@ public class Interpreter {
     }
         // Statement //////////////////////////////////////////////////////////
 
-    public class StmVisitor implements Stm.Visitor<Void, Void> {
+    public class StmVisitor implements Stm.Visitor<Void, Void> { // is this supposed to be a value?
 
         @Override
         public Void visit(SExp p, Void arg) {
@@ -125,6 +125,7 @@ public class Interpreter {
 
 				@Override
 				public Value visit(EBool p, Void arg) {
+						//return new Value(p.boolean_, BOOL);
 						return null;
 				}
 
@@ -135,12 +136,12 @@ public class Interpreter {
 
 				@Override
 				public Value visit(EDouble p, Void arg) {
-						return null;
+						return new Value(p.double_, DOUBLE);
 				}
 
 				@Override
 				public Value visit(EId p, Void arg) {
-						return null;
+						return lookupVar(p.id_);
 				}
 
 				@Override
@@ -190,5 +191,15 @@ public class Interpreter {
 
 		}
 
+
+		public Value lookupVar(String x) {
+				for (HashMap<String, Value> m : context) {
+						Value value = m.get(x);
+						if (value != null) {
+								return value;
+						}
+				}
+				throw new TypeException("unbound variable " + x);
+		}
 
 }
