@@ -1,5 +1,6 @@
 import cmm.PrettyPrinter;
 import cmm.Absyn.*;
+
 import java.util.*;
 
 import javax.management.RuntimeErrorException;
@@ -126,7 +127,9 @@ public class TypeChecker {
 
         @Override
         public Void visit(SInit p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            var type = p.exp_.accept(new ExpVisitor(), arg);
+            typeEquals(p.type_, type);
+            addVar(p.id_, p.type_);
             return null;
         }
 
@@ -139,13 +142,19 @@ public class TypeChecker {
 
         @Override
         public Void visit(SWhile p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            var condition = p.exp_.accept(new ExpVisitor(), arg);
+            typeEquals(BOOL, condition);
+            pushBlock();
+            p.stm_.accept(new StmVisitor(), arg);
+            popBlock();
             return null;
         }
 
         @Override
         public Void visit(SBlock p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+            pushBlock();
+            p.liststm_.forEach(s -> s.accept(new StmVisitor(), arg));
+            popBlock();
             return null;
         }
 
@@ -179,8 +188,7 @@ public class TypeChecker {
 
         @Override
         public Type visit(EId p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+            return lookupVar(p.id_);
         }
 
         @Override
@@ -211,26 +219,39 @@ public class TypeChecker {
 
         @Override
         public Type visit(EPre p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+            var type = lookupVar(p.id_);
+            return getNumbericType(type);
         }
 
         @Override
         public Type visit(EMul p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+            var t1 = p.exp_1.accept(new ExpVisitor(), arg);
+            var t2 = p.exp_2.accept(new ExpVisitor(), arg);
+            notVoid(t1);
+            getNumbericType(t1);
+            getNumbericType(t2);
+            typeEquals(t1, t2);
+            return t1;
         }
 
         @Override
         public Type visit(EAdd p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+            var t1 = p.exp_1.accept(new ExpVisitor(), arg);
+            var t2 = p.exp_2.accept(new ExpVisitor(), arg);
+            notVoid(t1);
+            getNumbericType(t1);
+            getNumbericType(t2);
+            typeEquals(t1, t2);
+            return t1;
         }
 
         @Override
         public Type visit(ECmp p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+            var t1 = p.exp_1.accept(new ExpVisitor(), arg);
+            var t2 = p.exp_2.accept(new ExpVisitor(), arg);
+            notVoid(t1);
+            typeEquals(t1, t2);
+            return BOOL;
         }
 
         @Override
@@ -247,8 +268,10 @@ public class TypeChecker {
 
         @Override
         public Type visit(EAss p, Void arg) {
-            if(true) throw new RuntimeException("Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+            var idType = lookupVar(p.id_);
+            var type = p.exp_.accept(new ExpVisitor(), arg);
+            typeEquals(idType, type);
+            return idType;
         }
 
     }
@@ -282,24 +305,72 @@ public class TypeChecker {
         throw new TypeException("unbound variable " + x);
     }
 
+    // Operators //////////////////////////////////////////////////////////
+
+    public class OperatorVisito implements CmpOp.Visitor<Type, Void>{
+
+        @Override
+        public Type visit(OLt p, Void arg) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Type visit(OGt p, Void arg) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Type visit(OLtEq p, Void arg) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Type visit(OGtEq p, Void arg) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Type visit(OEq p, Void arg) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Type visit(ONEq p, Void arg) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+    }
+
     // Exp & Type shape //////////////////////////////////////////////////////////
 
     public String isVar(Exp e) {
         if (e instanceof EId) {
             return ((EId) e).id_;
         } else
-            throw new TypeException("expected variable, found " + e);
+            throw new TypeException("Expected variable but found: " + e);
     }
 
     public void typeEquals(Type t1, Type t2) {
         if (!t1.equals(t2))
-            throw new TypeException("Expected type " + t2 + ", but found type " + t1);
+            throw new TypeException("Expected type " + t2 + " but found type " + t1);
     }
     
-    public Type isTypeNumberic(Type t) {
+    public Type getNumbericType(Type t) {
         if (!t.equals(INT) && !t.equals(DOUBLE))
-        throw new TypeException("expected expression of numeric type");
+        throw new TypeException("Expected expression of numeric type");
         return t;
     }
+
+    public void notVoid(Type t) {
+        if (t.equals(VOID)){
+            throw new TypeException(t + " is Void ");
+        }
+       }
 
 }
