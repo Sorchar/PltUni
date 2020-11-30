@@ -137,9 +137,7 @@ public class Interpreter {
 
         @Override
         public Value visit(SInit p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+						addVar(p.id_, p.exp_.accept(new ExpVisitor(), arg));
             return null;
         }
 
@@ -150,17 +148,21 @@ public class Interpreter {
 
         @Override
         public Value visit(SWhile p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+						Value condition = p.exp_.accept(new ExpVisitor(), arg);
+						while((boolean)(condition.value)){
+							pushBlock();
+							Value value = p.stm_.accept(new StmVisitor(), arg);
+							popBlock();
+							if(value != null){return value;}
+							condition = p.exp_.accept(new ExpVisitor(), arg);
+							//            p.stm_.accept(new StmVisitor(), arg);
+						}
             return null;
         }
 
         @Override
         public Value visit(SBlock p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+						p.liststm_.forEach(s -> s.accept(new StmVisitor(), arg));
             return null;
         }
 
@@ -229,38 +231,37 @@ public class Interpreter {
 
         @Override
         public Value visit(EPost p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-
-            return null;
+					if (true)
+							throw new RuntimeException(
+											"Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+					return null;
         }
 
         @Override
         public Value visit(EPre p, Void arg) {
-
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-            return null;
+						Value value1 = lookupVar(p.id_);
+						Value value2 = null;
+    				value2 = new Value((int)(value2.value) + 1, INT);
+						updateV(p.id_, value2);
+            return value2;
         }
 
         @Override
         public Value visit(EMul p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-
-            return null;
+						Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+						Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+						Value value3 = null;
+						value3 = new Value ((int)(value1.value)*(int)(value2.value),INT);
+            return value3;
         }
 
         @Override
         public Value visit(EAdd p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-
-            return null;
+					Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+					Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+					Value value3 = null;
+					value3 = new Value ((int)(value1.value)+(int)(value2.value),INT);
+					return value3;
         }
 
         @Override
@@ -292,11 +293,9 @@ public class Interpreter {
 
         @Override
         public Value visit(EAss p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-
-            return null;
+						Value value =p.exp_.accept(new ExpVisitor(), arg);
+						updateV(p.id_, value);
+            return value;
         }
 
     }
@@ -336,4 +335,12 @@ public class Interpreter {
         context.get(0).put(id, val);
     }
 
+		public void updateV(String id, Value value){
+			for(HashMap<String, Value> m: context){
+				if(m.containsKey(id)){
+					m.put(id, value);
+					break;
+				}
+			}
+		}
 }
