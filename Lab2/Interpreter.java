@@ -252,7 +252,7 @@ public class Interpreter {
                 }
             }
             updateV(p.id_, value2);
-            return value2;
+            return value1;
         }
 
         @Override
