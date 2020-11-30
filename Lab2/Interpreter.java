@@ -129,7 +129,7 @@ public class Interpreter {
 
         @Override
         public Value visit(SDecls p, Void arg) {
-						p.listid_.forEach(id -> addVar(id, new Value(null, p.type_)));
+            p.listid_.forEach(id -> addVar(id, new Value(null, p.type_)));
             return null;
         }
 
@@ -279,26 +279,26 @@ public class Interpreter {
 
         @Override
         public Value visit(EMul p, Void arg) {
-            //work in progress
+            // work in progress
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
             var operator = p.mulop_;
-            if (operator instanceof OTimes){
-                if (value1.isDouble() && value2.isDouble()){
+            if (operator instanceof OTimes) {
+                if (value1.isDouble() && value2.isDouble()) {
                     value3 = new Value((double) (value1.value) * (double) (value2.value), INT);
-                } else if ( value1.isInt() && value2.isInt()){
+                } else if (value1.isInt() && value2.isInt()) {
                     value3 = new Value((int) (value1.value) * (int) (value2.value), INT);
                 }
-            } else if (operator instanceof ODiv){
-                if (value2.isDouble() && (double) value2.value == 0){
+            } else if (operator instanceof ODiv) {
+                if (value2.isDouble() && (double) value2.value == 0) {
                     throw new RuntimeException("Can not divide by 0");
-                } else if (value2.isInt() && (int) value2.value == 0){
+                } else if (value2.isInt() && (int) value2.value == 0) {
                     throw new RuntimeException("Can not divide by 0");
                 }
-                if (value1.isDouble() && value2.isDouble()){
+                if (value1.isDouble() && value2.isDouble()) {
                     value3 = new Value((double) (value1.value) / (double) (value2.value), INT);
-                } else if ( value1.isInt() && value2.isInt()){
+                } else if (value1.isInt() && value2.isInt()) {
                     value3 = new Value((int) (value1.value) / (int) (value2.value), INT);
                 }
             }
@@ -310,7 +310,20 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
-            value3 = new Value((int) (value1.value) + (int) (value2.value), INT);
+            var operator = p.addop_;
+            if (operator instanceof OPlus) {
+                if (value1.isInt() && value2.isInt()) {
+                    value3 = new Value((int) (value1.value) + (int) (value2.value), INT);
+                } else if (value1.isDouble() && value2.isDouble()) {
+                    value3 = new Value((double) (value1.value) + (double) (value2.value), DOUBLE);
+                }
+            } else if (operator instanceof OMinus) {
+                if (value1.isInt() && value2.isInt()) {
+                    value3 = new Value((int) (value1.value) - (int) (value2.value), INT);
+                } else if (value1.isDouble() && value2.isDouble()) {
+                    value3 = new Value((double) (value1.value) - (double) (value2.value), DOUBLE);
+                }
+            }
             return value3;
         }
 
