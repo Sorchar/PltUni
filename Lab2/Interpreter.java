@@ -188,7 +188,13 @@ public class Interpreter {
 
         @Override
         public Value visit(EBool p, Void arg) {
-					return new Value(p.boollit_, BOOL);
+            var lit = p.boollit_;
+            if (lit instanceof LTrue){
+                return new Value(true, BOOL);
+            }else {
+                return new Value(false, BOOL);
+            }
+
         }
 
         @Override
@@ -392,23 +398,24 @@ public class Interpreter {
 
         @Override
         public Value visit(EAnd p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
-
-            return null;
+            Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+            if (!(boolean) (value1.value))
+                return new Value(false, BOOL);
+            Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+            if (!(boolean) (value2.value))
+                return new Value(false, BOOL);
+            return new Value(true, BOOL);
         }
 
         @Override
         public Value visit(EOr p, Void arg) {
-						Value value1 = p.exp_1.accept(new ExpVisitor(),arg);
-						Value value2 = p.exp_2.accept(new ExpVisitor(),arg);
-						if((boolean)(value1.value))
-							return new Value(true, BOOL);
-						if((boolean)(value2.value))
-							return new Value(true, BOOL);
-						return new Value(false, BOOL);
-						// var t1 = p.exp_1.accept(new ExpVisitor(), arg);
+            Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+            if ((boolean) (value1.value))
+                return new Value(true, BOOL);
+            Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+            if ((boolean) (value2.value))
+                return new Value(true, BOOL);
+            return new Value(false, BOOL);
         }
 
         @Override
