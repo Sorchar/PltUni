@@ -129,9 +129,7 @@ public class Interpreter {
 
         @Override
         public Value visit(SDecls p, Void arg) {
-            if (true)
-                throw new RuntimeException(
-                        "Not yet implemented " + p.getClass().toString() + " -> " + PrettyPrinter.print(p));
+						p.listid_.forEach(id -> addVar(id, new Value(null, p.type_)));
             return null;
         }
 
