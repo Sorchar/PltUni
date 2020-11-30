@@ -132,7 +132,12 @@ public class TypeChecker {
         @Override
         public Void visit(SInit p, Void arg) {
             var type = p.exp_.accept(new ExpVisitor(), arg);
-            isTypeEquals(p.type_, type, "d");
+            if (isNumbericType(type)) {
+                var superType = getSuperType(type, p.type_);
+                isTypeEquals(p.type_, superType);
+            } else {
+                isTypeEquals(p.type_, type);
+            }
             addVar(p.id_, p.type_);
             return null;
         }
@@ -142,9 +147,9 @@ public class TypeChecker {
             var type = p.exp_.accept(new ExpVisitor(), arg);
             if (isNumbericType(type)) {
                 var superType = getSuperType(type, returnType);
-                isTypeEquals(returnType, superType, "c");
+                isTypeEquals(returnType, superType);
             } else {
-                isTypeEquals(returnType, type, "b");
+                isTypeEquals(returnType, type);
             }
 
             return null;
@@ -162,9 +167,7 @@ public class TypeChecker {
 
         @Override
         public Void visit(SBlock p, Void arg) {
-            pushBlock();
             p.liststm_.forEach(s -> s.accept(new StmVisitor(), arg));
-            popBlock();
             return null;
         }
 
@@ -301,7 +304,12 @@ public class TypeChecker {
         public Type visit(EAss p, Void arg) {
             var idType = lookupVar(p.id_);
             var type = p.exp_.accept(new ExpVisitor(), arg);
-            isTypeEquals(idType, type);
+            if (isNumbericType(type)) {
+                var superType = getSuperType(idType, type);
+                isTypeEquals(idType, superType);
+            } else {
+                isTypeEquals(idType, type);
+            }
             return idType;
         }
 
