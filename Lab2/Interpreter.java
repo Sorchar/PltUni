@@ -162,7 +162,9 @@ public class Interpreter {
 
         @Override
         public Value visit(SBlock p, Void arg) {
+            pushBlock();
             p.liststm_.forEach(s -> s.accept(new StmVisitor(), arg));
+            popBlock();
             return null;
         }
 
