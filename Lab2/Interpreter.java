@@ -293,6 +293,11 @@ public class Interpreter {
                     value3 = new Value((int) (value1.value) * (int) (value2.value), INT);
                 }
             } else if (operator instanceof ODiv){
+                if (value2.isDouble() && (double) value2.value == 0){
+                    throw new RuntimeException("Can not divide by 0");
+                } else if (value2.isInt() && (int) value2.value == 0){
+                    throw new RuntimeException("Can not divide by 0");
+                }
                 if (value1.isDouble() && value2.isDouble()){
                     value3 = new Value((double) (value1.value) / (double) (value2.value), INT);
                 } else if ( value1.isInt() && value2.isInt()){
