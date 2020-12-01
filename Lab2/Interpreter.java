@@ -62,21 +62,21 @@ public class Interpreter {
             if (type == null) {
                 return false;
             }
-            return type == INT;
+            return type.equals(INT);
         }
 
         public boolean isDouble() {
             if (type == null) {
                 return false;
             }
-            return type == DOUBLE;
+            return type.equals(DOUBLE);
         }
 
         public boolean isBool() {
             if (type == null) {
                 return false;
             }
-            return type == BOOL;
+            return type.equals(BOOL);
         }
     }
 
@@ -135,7 +135,8 @@ public class Interpreter {
 
         @Override
         public Value visit(SInit p, Void arg) {
-            addVar(p.id_, p.exp_.accept(new ExpVisitor(), arg));
+            var c = p.exp_.accept(new ExpVisitor(), arg).value;
+            addVar(p.id_, new Value(c, p.type_));
             return null;
         }
 
@@ -287,23 +288,29 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
+            var superType = getSuperType(value1, value2);
+            value1 = castToSuperType(value1, superType);
+            value2 = castToSuperType(value2, superType);
+
+
+            
             var operator = p.mulop_;
             if (operator instanceof OTimes) {
                 if (value1.isDouble() && value2.isDouble()) {
-                    value3 = new Value((double) (value1.value) * (double) (value2.value), INT);
+                    value3 = new Value((double) ((Object)value1.value) * (double) ((Object)value2.value), DOUBLE);
                 } else if (value1.isInt() && value2.isInt()) {
-                    value3 = new Value((int) (value1.value) * (int) (value2.value), INT);
+                    value3 = new Value((int) ((Object)value1.value) * (int) ((Object)value2.value), INT);
                 }
             } else if (operator instanceof ODiv) {
-                if (value2.isDouble() && (double) value2.value == 0) {
+                if (value2.isDouble() && value2.value.equals(0)) {
                     throw new RuntimeException("Can not divide by 0");
-                } else if (value2.isInt() && (int) value2.value == 0) {
+                } else if (value2.isInt() && value2.value.equals(0)) {
                     throw new RuntimeException("Can not divide by 0");
                 }
                 if (value1.isDouble() && value2.isDouble()) {
-                    value3 = new Value((double) (value1.value) / (double) (value2.value), INT);
+                    value3 = new Value((double) ((Object)value1.value) / (double) ((Object)value2.value), DOUBLE);
                 } else if (value1.isInt() && value2.isInt()) {
-                    value3 = new Value((int) (value1.value) / (int) (value2.value), INT);
+                    value3 = new Value((int) ((Object)value1.value) / (int) ((Object)value2.value), INT);
                 }
             }
             return value3;
@@ -437,7 +444,7 @@ public class Interpreter {
                 return value;
             }
         }
-        throw new TypeException("Unbound variable " + x);
+        throw new RuntimeException("Unbound variable found in the interpreter " + x);
     }
     // Operators //////////////////////////////////////////////////////////
 
@@ -510,5 +517,22 @@ public class Interpreter {
                 break;
             }
         }
+    }
+
+    public Type getSuperType(Value v1, Value v2){
+        return v1.type.equals(DOUBLE)? v1.type : v2.type;
+    }
+    public Value castToSuperType( Value value, Type type){
+        if(type.equals(DOUBLE)){
+            if(value.isInt()){
+                value.type = type;
+                value.value = ((double)((int)value.value));
+            } else if (value.isDouble()){
+                if(value.value instanceof Integer){
+                    value.value = ((double)((int)value.value));
+                }
+            }
+        }
+        return value;
     }
 }
