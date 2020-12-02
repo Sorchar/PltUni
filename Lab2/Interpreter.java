@@ -175,7 +175,6 @@ public class Interpreter {
                     return value;
                 }
                 condition = p.exp_.accept(new ExpVisitor(), arg);
-                // p.stm_.accept(new StmVisitor(), arg);
             }
             return null;
         }
@@ -183,7 +182,15 @@ public class Interpreter {
         @Override
         public Value visit(SBlock p, Void arg) {
             pushBlock();
-            p.liststm_.forEach(s -> s.accept(new StmVisitor(), arg));
+        //    p.liststm_.forEach(s -> s.accept(new StmVisitor(), arg));
+            Value value = null;
+            for(Stm s: p.liststm_){
+              value = s.accept(new StmVisitor(), arg);
+              if(value != null){
+                popBlock();
+                return value;
+            }
+          }
             popBlock();
             return null;
         }
