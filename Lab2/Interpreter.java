@@ -36,16 +36,14 @@ public class Interpreter {
             function = new Func();
             addFunction("readDouble", function);
 
-            pushBlock();
+    
             for (Def def : p.listdef_) {
                 def.accept(new FunctionVisitor(), arg);
             }
-            popBlock();
+   
 
             pushBlock();
-            for (Def def : p.listdef_) {
-                def.accept(new DefVisitor(), arg);
-            }
+            findFunction("main").func.accept(new DefVisitor(), arg);
             popBlock();
             return null;
         }
@@ -123,14 +121,12 @@ public class Interpreter {
 
             @Override
             public Void visit(DFun p, Void arg) {
-                if(!p.id_.equals("main")){
                     Func function = new Func(p);
                     p.listarg_.forEach(argument -> {
                         ADecl a = (ADecl)argument;
                         function.addArg(a.id_);
                     });
                     addFunction(p.id_, function);
-                }
                 return null;
             }
 
@@ -141,7 +137,7 @@ public class Interpreter {
     public class StmVisitor implements Stm.Visitor<Value, Void> { // is this supposed to be a value?
 
         @Override
-        public Value visit(SExp p, Void arg) { // could this be a void?
+        public Value visit(SExp p, Void arg) {
             p.exp_.accept(new ExpVisitor(), arg);
             return null;
         }
