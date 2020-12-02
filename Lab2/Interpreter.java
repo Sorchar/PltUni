@@ -36,9 +36,12 @@ public class Interpreter {
             function = new Func();
             addFunction("readDouble", function);
 
+            pushBlock();
             for (Def def : p.listdef_) {
-                // def.accept(new FunctionVisitor(), arg);
+                def.accept(new FunctionVisitor(), arg);
             }
+            popBlock();
+
             pushBlock();
             for (Def def : p.listdef_) {
                 def.accept(new DefVisitor(), arg);
@@ -114,8 +117,24 @@ public class Interpreter {
 
             return val;
         }
-
     }
+
+        public class FunctionVisitor implements Def.Visitor<Void, Void> {
+
+            @Override
+            public Void visit(DFun p, Void arg) {
+                if(!p.id_.equals("main")){
+                    Func function = new Func(p);
+                    p.listarg_.forEach(argument -> {
+                        ADecl a = (ADecl)argument;
+                        function.addArg(a.id_);
+                    });
+                    addFunction(p.id_, function);
+                }
+                return null;
+            }
+
+        }
 
     // Statement //////////////////////////////////////////////////////////
 
@@ -190,9 +209,9 @@ public class Interpreter {
         @Override
         public Value visit(EBool p, Void arg) {
             var lit = p.boollit_;
-            if (lit instanceof LTrue){
+            if (lit instanceof LTrue) {
                 return new Value(true, BOOL);
-            }else {
+            } else {
                 return new Value(false, BOOL);
             }
 
@@ -256,7 +275,7 @@ public class Interpreter {
                     value2 = new Value((double) (value1.value) - 1, DOUBLE);
                 }
             }
-            updateV(p.id_, value2);
+            updateVar(p.id_, value2);
             return value1;
         }
 
@@ -278,7 +297,7 @@ public class Interpreter {
                     value2 = new Value((double) (value1.value) - 1, DOUBLE);
                 }
             }
-            updateV(p.id_, value2);
+            updateVar(p.id_, value2);
             return value2;
         }
 
@@ -292,14 +311,12 @@ public class Interpreter {
             value1 = castToSuperType(value1, superType);
             value2 = castToSuperType(value2, superType);
 
-
-            
             var operator = p.mulop_;
             if (operator instanceof OTimes) {
                 if (value1.isDouble() && value2.isDouble()) {
-                    value3 = new Value((double) ((Object)value1.value) * (double) ((Object)value2.value), DOUBLE);
+                    value3 = new Value((double) ((Object) value1.value) * (double) ((Object) value2.value), DOUBLE);
                 } else if (value1.isInt() && value2.isInt()) {
-                    value3 = new Value((int) ((Object)value1.value) * (int) ((Object)value2.value), INT);
+                    value3 = new Value((int) ((Object) value1.value) * (int) ((Object) value2.value), INT);
                 }
             } else if (operator instanceof ODiv) {
                 if (value2.isDouble() && value2.value.equals(0)) {
@@ -308,9 +325,9 @@ public class Interpreter {
                     throw new RuntimeException("Can not divide by 0");
                 }
                 if (value1.isDouble() && value2.isDouble()) {
-                    value3 = new Value((double) ((Object)value1.value) / (double) ((Object)value2.value), DOUBLE);
+                    value3 = new Value((double) ((Object) value1.value) / (double) ((Object) value2.value), DOUBLE);
                 } else if (value1.isInt() && value2.isInt()) {
-                    value3 = new Value((int) ((Object)value1.value) / (int) ((Object)value2.value), INT);
+                    value3 = new Value((int) ((Object) value1.value) / (int) ((Object) value2.value), INT);
                 }
             }
             return value3;
@@ -428,7 +445,7 @@ public class Interpreter {
         @Override
         public Value visit(EAss p, Void arg) {
             Value value = p.exp_.accept(new ExpVisitor(), arg);
-            updateV(p.id_, value);
+            updateVar(p.id_, value);
             return value;
         }
 
@@ -510,7 +527,7 @@ public class Interpreter {
         context.get(0).put(id, val);
     }
 
-    public void updateV(String id, Value value) {
+    public void updateVar(String id, Value value) {
         for (HashMap<String, Value> m : context) {
             if (m.containsKey(id)) {
                 m.put(id, value);
@@ -519,17 +536,18 @@ public class Interpreter {
         }
     }
 
-    public Type getSuperType(Value v1, Value v2){
-        return v1.type.equals(DOUBLE)? v1.type : v2.type;
+    public Type getSuperType(Value v1, Value v2) {
+        return v1.type.equals(DOUBLE) ? v1.type : v2.type;
     }
-    public Value castToSuperType( Value value, Type type){
-        if(type.equals(DOUBLE)){
-            if(value.isInt()){
+
+    public Value castToSuperType(Value value, Type type) {
+        if (type.equals(DOUBLE)) {
+            if (value.isInt()) {
                 value.type = type;
-                value.value = ((double)((int)value.value));
-            } else if (value.isDouble()){
-                if(value.value instanceof Integer){
-                    value.value = ((double)((int)value.value));
+                value.value = ((double) ((int) value.value));
+            } else if (value.isDouble()) {
+                if (value.value instanceof Integer) {
+                    value.value = ((double) ((int) value.value));
                 }
             }
         }
