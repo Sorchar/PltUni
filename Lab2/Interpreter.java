@@ -248,9 +248,7 @@ public class Interpreter {
             if (p.id_.equals("printInt")) {
                 System.out.println(lookupVar(function.argumentNames.get(0)).value);
             } else if (p.id_.equals("printDouble")) {
-                Value d = lookupVar(function.argumentNames.get(0));
-                d = castToSuperType(d, DOUBLE);
-                System.out.println(d.value);
+                System.out.println(lookupVar(function.argumentNames.get(0)).value);
             } else if (p.id_.equals("readInt")) {
                 val = new Value(scanner.nextInt(), INT);
             } else if (p.id_.equals("readDouble")) {
@@ -329,10 +327,10 @@ public class Interpreter {
                 } else if (value2.isInt() && value2.value.equals(0)) {
                     throw new RuntimeException("Can not divide by 0");
                 }
-                value1 = castToSuperType(value1, DOUBLE);
-                value2 = castToSuperType(value2, DOUBLE);
                 if (value1.isDouble() && value2.isDouble()) {
                     value3 = new Value((double) ((Object) value1.value) / (double) ((Object) value2.value), DOUBLE);
+                } else if (value1.isInt() && value2.isInt()) {
+                    value3 = new Value((int) ((Object) value1.value) / (int) ((Object) value2.value), INT);
                 }
             }
             return value3;
@@ -343,9 +341,6 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
-            var superType = getSuperType(value1, value2);
-            value1 = castToSuperType(value1, superType);
-            value2 = castToSuperType(value2, superType);
             var operator = p.addop_;
             if (operator instanceof OPlus) {
                 if (value1.isInt() && value2.isInt()) {
@@ -367,9 +362,6 @@ public class Interpreter {
         public Value visit(ECmp p, Void arg) {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
-            var superType = getSuperType(value1, value2);
-            value1 = castToSuperType(value1, superType);
-            value2 = castToSuperType(value2, superType);
             CmpOp operator = p.cmpop_;
             if (operator instanceof OLt) {
                 if (value1.isInt() && (int) value1.value < (int) value2.value) {
