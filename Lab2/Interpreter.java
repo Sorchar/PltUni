@@ -483,47 +483,8 @@ public class Interpreter {
         }
         throw new RuntimeException("Unbound variable found in the interpreter " + x);
     }
-    // Operators //////////////////////////////////////////////////////////
 
-    public class OperatorVisito implements CmpOp.Visitor<Type, Void> {
-
-        @Override
-        public Type visit(OLt p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Type visit(OGt p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Type visit(OLtEq p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Type visit(OGtEq p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Type visit(OEq p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Type visit(ONEq p, Void arg) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-    }
+    
 
     // Context handlers //////////////////////////////////////////////////////////
 
