@@ -362,6 +362,9 @@ public class Interpreter {
         public Value visit(ECmp p, Void arg) {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+            var superType = getSuperType(value1, value2);
+            value1 = castToSuperType(value1, superType);
+            value2 = castToSuperType(value2, superType);
             CmpOp operator = p.cmpop_;
             if (operator instanceof OLt) {
                 if (value1.isInt() && (int) value1.value < (int) value2.value) {
