@@ -134,6 +134,7 @@ public class TypeChecker {
 
         @Override
         public Void visit(SInit p, Void arg) {
+            addVar(p.id_, p.type_);
             var type = p.exp_.accept(new ExpVisitor(), arg);
             if (isNumbericType(type)) {
                 var superType = getSuperType(type, p.type_);
@@ -141,7 +142,6 @@ public class TypeChecker {
             } else {
                 isTypeEquals(p.type_, type);
             }
-            addVar(p.id_, p.type_);
             return null;
         }
 
@@ -233,9 +233,9 @@ public class TypeChecker {
                 var type = param.accept(new ExpVisitor(), arg);
                 if (isNumbericType(type)) {
                     var superType = getSuperType(type, exceptedParam.type_);
-                    isTypeEquals(exceptedParam.type_, superType, "f");
+                    isTypeEquals(exceptedParam.type_, superType);
                 } else {
-                    isTypeEquals(exceptedParam.type_, type, "e");
+                    isTypeEquals(exceptedParam.type_, type);
                 }
             }
             return arity.returnType;
@@ -284,9 +284,9 @@ public class TypeChecker {
             }
             if (isNumbericType(t1)) {
                 var superType = getSuperType(t1, t2);
-                isTypeEquals(superType, superType, "a1");
+                isTypeEquals(superType, superType);
             } else {
-                isTypeEquals(t1, t2, "a");
+                isTypeEquals(t1, t2);
             }
             return BOOL;
         }
@@ -365,11 +365,6 @@ public class TypeChecker {
     public void isTypeEquals(Type t1, Type t2) {
         if (!t1.equals(t2))
             throw new TypeException("Expected type " + t2 + " but found type " + t1);
-    }
-
-    public void isTypeEquals(Type t1, Type t2, String a) {
-        if (!t1.equals(t2))
-            throw new TypeException("Expected type " + t2 + " but found type " + t1 + a);
     }
 
     public Type getNumbericType(Type t) {
