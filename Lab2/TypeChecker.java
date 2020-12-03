@@ -274,7 +274,11 @@ public class TypeChecker {
         public Type visit(ECmp p, Void arg) {
             var t1 = p.exp_1.accept(new ExpVisitor(), arg);
             var t2 = p.exp_2.accept(new ExpVisitor(), arg);
+            var op = p.cmpop_;
             notVoid(t1);
+            if ((isBoolean(t1) || isBoolean(t2) && (op instanceof OLt || op instanceof OGt))){
+                throw new TypeException("Invalid operator for boolean");
+            }
             if (isNumbericType(t1)) {
                 var superType = getSuperType(t1, t2);
                 isTypeEquals(superType, superType, "a1");
@@ -373,6 +377,9 @@ public class TypeChecker {
 
     public Boolean isNumbericType(Type t) {
         return (t.equals(INT) || t.equals(DOUBLE));
+    }
+    public Boolean isBoolean(Type t) {
+        return (t.equals(BOOL));
     }
 
     public void notVoid(Type t) {
