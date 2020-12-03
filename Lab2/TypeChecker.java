@@ -107,6 +107,9 @@ public class TypeChecker {
 
     public class ArgVisitor implements Arg.Visitor<Void, Void> {
         public Void visit(cmm.Absyn.ADecl p, Void arg) {
+            if (p.type_.equals(VOID)){
+                throw new TypeException("Void arg not allowed");
+            }
             addVar(p.id_, p.type_);
             return null;
         }
@@ -276,7 +279,7 @@ public class TypeChecker {
             var t2 = p.exp_2.accept(new ExpVisitor(), arg);
             var op = p.cmpop_;
             notVoid(t1);
-            if ((isBoolean(t1) || isBoolean(t2) && (op instanceof OLt || op instanceof OGt))){
+            if ((isBoolean(t1) || isBoolean(t2)) && (op instanceof OLt || op instanceof OGt)){
                 throw new TypeException("Invalid operator for boolean");
             }
             if (isNumbericType(t1)) {
