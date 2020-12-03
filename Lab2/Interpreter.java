@@ -248,7 +248,11 @@ public class Interpreter {
             if (p.id_.equals("printInt")) {
                 System.out.println(lookupVar(function.argumentNames.get(0)).value);
             } else if (p.id_.equals("printDouble")) {
-                System.out.println(lookupVar(function.argumentNames.get(0)).value);
+                // Exp exp = p.listexp_.get(0);
+                // Value d = exp.accept(new ExpVisitor(), arg);
+                Value d = lookupVar(function.argumentNames.get(0));
+                d = castToSuperType(d, DOUBLE);
+                System.out.println(d.value);
             } else if (p.id_.equals("readInt")) {
                 val = new Value(scanner.nextInt(), INT);
             } else if (p.id_.equals("readDouble")) {
@@ -341,6 +345,10 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
+            var superType = getSuperType(value1, value2);
+            value1 = castToSuperType(value1, superType);
+            value2 = castToSuperType(value2, superType);
+
             var operator = p.addop_;
             if (operator instanceof OPlus) {
                 if (value1.isInt() && value2.isInt()) {
