@@ -11,6 +11,7 @@ public class Interpreter {
     Scanner scanner = new Scanner(System.in);
     HashMap<String, Func> signature = new HashMap<String, Func>();
     ArrayList<HashMap<String, Value>> context = new ArrayList<HashMap<String, Value>>();
+    Type returnType;
 
     public final Type BOOL = new Type_bool();
     public final Type INT = new Type_int();
@@ -26,10 +27,10 @@ public class Interpreter {
         @Override
         public Void visit(PDefs p, Void arg) {
             Func function = new Func();
-            function.addArg("x");
+            function.addArg(new ADecl(INT, "x"));
             addFunction("printInt", function);
             function = new Func();
-            function.addArg("x");
+            function.addArg(new ADecl(DOUBLE, "x"));
             addFunction("printDouble", function);
             function = new Func();
             addFunction("readInt", function);
@@ -84,19 +85,19 @@ public class Interpreter {
     // Function //////////////////////////////////////////////////////////
 
     public class Func {
-        ArrayList<String> argumentNames;
+        ArrayList<ADecl> argumentNames;
         DFun func;
 
         public Func() {
-            this.argumentNames = new ArrayList<String>();
+            this.argumentNames = new ArrayList<ADecl>();
         }
 
         public Func(DFun func) {
-            this.argumentNames = new ArrayList<String>();
+            this.argumentNames = new ArrayList<ADecl>();
             this.func = func;
         }
 
-        public void addArg(String arg) {
+        public void addArg(ADecl arg) {
             argumentNames.add(arg);
         }
     }
@@ -106,6 +107,7 @@ public class Interpreter {
         @Override
         public Value visit(DFun p, Void arg) {
             Value val = null;
+            returnType = p.type_;
             for (Stm stm : p.liststm_) {
                 val = stm.accept(new StmVisitor(), arg);
                 if (val != null) {
@@ -124,7 +126,7 @@ public class Interpreter {
                     Func function = new Func(p);
                     p.listarg_.forEach(argument -> {
                         ADecl a = (ADecl)argument;
-                        function.addArg(a.id_);
+                        function.addArg(a);
                     });
                     addFunction(p.id_, function);
                 return null;
@@ -157,7 +159,9 @@ public class Interpreter {
 
         @Override
         public Value visit(SReturn p, Void arg) {
-            return (p.exp_.accept(new ExpVisitor(), arg));
+            Value value = p.exp_.accept(new ExpVisitor(), arg);
+            Value result = new Value(value.value, returnType);
+            return result;
         }
 
         @Override
@@ -241,16 +245,21 @@ public class Interpreter {
             Func function = findFunction(p.id_);
             Value val = new Value(null, null);
             ArrayList<Value> argumentValues = new ArrayList<>();
-            p.listexp_.forEach(exp -> argumentValues.add(exp.accept(new ExpVisitor(), arg)));
+            // p.listexp_.forEach(exp -> argumentValues.add(exp.accept(new ExpVisitor(), arg)));
+            for (int i = 0; i < p.listexp_.size(); i++){
+                Value value = p.listexp_.get(i).accept(new ExpVisitor(), arg);
+                argumentValues.add(new Value(value.value, function.argumentNames.get(i).type_));
+            }
+
             for (int i = 0; i < p.listexp_.size(); ++i) {
-                addVar(function.argumentNames.get(i), argumentValues.get(i));
+                addVar(function.argumentNames.get(i).id_, argumentValues.get(i));
             }
             if (p.id_.equals("printInt")) {
-                System.out.println(lookupVar(function.argumentNames.get(0)).value);
+                System.out.println(lookupVar(function.argumentNames.get(0).id_).value);
             } else if (p.id_.equals("printDouble")) {
                 // Exp exp = p.listexp_.get(0);
                 // Value d = exp.accept(new ExpVisitor(), arg);
-                Value d = lookupVar(function.argumentNames.get(0));
+                Value d = lookupVar(function.argumentNames.get(0).id_);
                 d = castToSuperType(d, DOUBLE);
                 System.out.println(d.value);
             } else if (p.id_.equals("readInt")) {
@@ -314,6 +323,9 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
+            // System.out.println(value1.value + " - " + value1.type);
+            // System.out.println(value2.value + " - " + value2.type);
+
             var superType = getSuperType(value1, value2);
             value1 = castToSuperType(value1, superType);
             value2 = castToSuperType(value2, superType);
