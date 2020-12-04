@@ -294,7 +294,7 @@ public class TypeChecker {
         @Override
         public Type visit(EAnd p, Void arg) {
             var t1 = p.exp_1.accept(new ExpVisitor(), arg);
-            var t2 = p.exp_1.accept(new ExpVisitor(), arg);
+            var t2 = p.exp_2.accept(new ExpVisitor(), arg);
             isTypeEquals(t1, BOOL);
             isTypeEquals(t2, BOOL);
             return p.setType(BOOL);
@@ -303,7 +303,7 @@ public class TypeChecker {
         @Override
         public Type visit(EOr p, Void arg) {
             var t1 = p.exp_1.accept(new ExpVisitor(), arg);
-            var t2 = p.exp_1.accept(new ExpVisitor(), arg);
+            var t2 = p.exp_2.accept(new ExpVisitor(), arg);
             isTypeEquals(t1, BOOL);
             isTypeEquals(t2, BOOL);
             return p.setType(BOOL);
