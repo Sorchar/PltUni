@@ -196,22 +196,22 @@ public class TypeChecker {
 
         @Override
         public Type visit(EBool p, Void arg) {
-            return BOOL;
+            return p.setType(BOOL);
         }
 
         @Override
         public Type visit(EInt p, Void arg) {
-            return INT;
+            return p.setType(INT);
         }
 
         @Override
         public Type visit(EDouble p, Void arg) {
-            return DOUBLE;
+            return p.setType(DOUBLE);
         }
 
         @Override
         public Type visit(EId p, Void arg) {
-            return lookupVar(p.id_);
+            return p.setType(lookupVar(p.id_));
         }
 
         @Override
@@ -238,19 +238,19 @@ public class TypeChecker {
                     isTypeEquals(exceptedParam.type_, type);
                 }
             }
-            return arity.returnType;
+            return p.setType(arity.returnType);
         }
 
         @Override
         public Type visit(EPost p, Void arg) {
             var type = lookupVar(p.id_);
-            return getNumbericType(type);
+            return p.setType(getNumbericType(type));
         }
 
         @Override
         public Type visit(EPre p, Void arg) {
             var type = lookupVar(p.id_);
-            return getNumbericType(type);
+            return p.setType(getNumbericType(type));
         }
 
         @Override
@@ -260,7 +260,7 @@ public class TypeChecker {
             notVoid(t1);
             getNumbericType(t1);
             getNumbericType(t2);
-            return getSuperType(t1, t2);
+            return p.setType(getSuperType(t1, t2));
         }
 
         @Override
@@ -270,7 +270,7 @@ public class TypeChecker {
             notVoid(t1);
             getNumbericType(t1);
             getNumbericType(t2);
-            return getSuperType(t1, t2);
+            return p.setType(getSuperType(t1, t2));
         }
 
         @Override
@@ -288,7 +288,7 @@ public class TypeChecker {
             } else {
                 isTypeEquals(t1, t2);
             }
-            return BOOL;
+            return p.setType(BOOL);
         }
 
         @Override
@@ -297,7 +297,7 @@ public class TypeChecker {
             var t2 = p.exp_1.accept(new ExpVisitor(), arg);
             isTypeEquals(t1, BOOL);
             isTypeEquals(t2, BOOL);
-            return BOOL;
+            return p.setType(BOOL);
         }
 
         @Override
@@ -306,7 +306,7 @@ public class TypeChecker {
             var t2 = p.exp_1.accept(new ExpVisitor(), arg);
             isTypeEquals(t1, BOOL);
             isTypeEquals(t2, BOOL);
-            return BOOL;
+            return p.setType(BOOL);
         }
 
         @Override
@@ -319,7 +319,7 @@ public class TypeChecker {
             } else {
                 isTypeEquals(idType, type);
             }
-            return idType;
+            return p.setType(idType);
         }
 
     }

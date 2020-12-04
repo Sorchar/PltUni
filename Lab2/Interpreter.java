@@ -27,10 +27,10 @@ public class Interpreter {
         @Override
         public Void visit(PDefs p, Void arg) {
             Func function = new Func();
-            function.addArg(new ADecl(INT, "x"));
+            function.addArg("x");
             addFunction("printInt", function);
             function = new Func();
-            function.addArg(new ADecl(DOUBLE, "x"));
+            function.addArg( "x");
             addFunction("printDouble", function);
             function = new Func();
             addFunction("readInt", function);
@@ -85,19 +85,19 @@ public class Interpreter {
     // Function //////////////////////////////////////////////////////////
 
     public class Func {
-        ArrayList<ADecl> argumentNames;
+        ArrayList<String> argumentNames;
         DFun func;
 
         public Func() {
-            this.argumentNames = new ArrayList<ADecl>();
+            this.argumentNames = new ArrayList<String>();
         }
 
         public Func(DFun func) {
-            this.argumentNames = new ArrayList<ADecl>();
+            this.argumentNames = new ArrayList<String>();
             this.func = func;
         }
 
-        public void addArg(ADecl arg) {
+        public void addArg(String arg) {
             argumentNames.add(arg);
         }
     }
@@ -126,7 +126,7 @@ public class Interpreter {
                     Func function = new Func(p);
                     p.listarg_.forEach(argument -> {
                         ADecl a = (ADecl)argument;
-                        function.addArg(a);
+                        function.addArg(a.id_);
                     });
                     addFunction(p.id_, function);
                 return null;
@@ -247,17 +247,18 @@ public class Interpreter {
             ArrayList<Value> argumentValues = new ArrayList<>();
             for (int i = 0; i < p.listexp_.size(); i++){
                 Value value = p.listexp_.get(i).accept(new ExpVisitor(), arg);
-                argumentValues.add(new Value(value.value, function.argumentNames.get(i).type_));
+                // System.out.println(p.listexp_.get(i).getType());
+                argumentValues.add(new Value(value.value, p.listexp_.get(i).getType()));
             }
 
             for (int i = 0; i < p.listexp_.size(); ++i) {
-                addVar(function.argumentNames.get(i).id_, argumentValues.get(i));
+                addVar(function.argumentNames.get(i), argumentValues.get(i));
             }
             if (p.id_.equals("printInt")) {
-                System.out.println(lookupVar(function.argumentNames.get(0).id_).value);
+                System.out.println(lookupVar(function.argumentNames.get(0)).value);
             } else if (p.id_.equals("printDouble")) {
 
-                Value d = lookupVar(function.argumentNames.get(0).id_);
+                Value d = lookupVar(function.argumentNames.get(0));
                 d = castToSuperType(d, DOUBLE);
                 System.out.println(d.value);
             } else if (p.id_.equals("readInt")) {
@@ -320,7 +321,8 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
-            var superType = getSuperType(value1, value2);
+            var superType = getSuperTypeFromValue(value1, value2);
+            superType = getSuperType(superType, returnType);
             value1 = castToSuperType(value1, superType);
             value2 = castToSuperType(value2, superType);
 
@@ -351,7 +353,7 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
-            var superType = getSuperType(value1, value2);
+            var superType = getSuperTypeFromValue(value1, value2);
             value1 = castToSuperType(value1, superType);
             value2 = castToSuperType(value2, superType);
 
@@ -376,7 +378,7 @@ public class Interpreter {
         public Value visit(ECmp p, Void arg) {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
-            var superType = getSuperType(value1, value2);
+            var superType = getSuperTypeFromValue(value1, value2);
             value1 = castToSuperType(value1, superType);
             value2 = castToSuperType(value2, superType);
             CmpOp operator = p.cmpop_;
@@ -472,6 +474,7 @@ public class Interpreter {
     }
 
     public Value lookupVar(String x) {
+        // System.out.println(x);
         for (HashMap<String, Value> m : context) {
             Value value = m.get(x);
             if (value != null && value.value == null) {
@@ -505,6 +508,7 @@ public class Interpreter {
     }
 
     public void addVar(String id, Value val) {
+        // System.out.println("Added: " + val.type + " " + id + " = " + val.value );
         context.get(0).put(id, val);
     }
 
@@ -517,9 +521,13 @@ public class Interpreter {
         }
     }
 
-    public Type getSuperType(Value v1, Value v2) {
+    public Type getSuperTypeFromValue(Value v1, Value v2) {
         return v1.type.equals(DOUBLE) ? v1.type : v2.type;
     }
+      public Type getSuperType(Type v1, Type v2) {
+        return v1.equals(DOUBLE) ? v1 : v2;
+    }
+    
 
     public Value castToSuperType(Value value, Type type) {
         if (type.equals(DOUBLE)) {
