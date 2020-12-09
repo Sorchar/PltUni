@@ -154,6 +154,7 @@ public class Interpreter {
         public Value visit(SInit p, Void arg) {
             var c = p.exp_.accept(new ExpVisitor(), arg).value;
             addVar(p.id_, new Value(c, p.type_));
+
             return null;
         }
 
@@ -247,7 +248,6 @@ public class Interpreter {
             ArrayList<Value> argumentValues = new ArrayList<>();
             for (int i = 0; i < p.listexp_.size(); i++){
                 Value value = p.listexp_.get(i).accept(new ExpVisitor(), arg);
-                // System.out.println(p.listexp_.get(i).getType());
                 argumentValues.add(new Value(value.value, p.listexp_.get(i).getType()));
             }
 
@@ -303,6 +303,7 @@ public class Interpreter {
                 if (value1.isInt()) {
                     value2 = new Value((int) (value1.value) + 1, INT);
                 } else if (value1.isDouble()) {
+                    value1 = castToSuperType(value1, DOUBLE);
                     value2 = new Value((double) (value1.value) + 1, DOUBLE);
                 }
             } else if (operator instanceof ODec) {
@@ -321,6 +322,7 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
+
             var superType = getSuperTypeFromValue(value1, value2);
             superType = getSuperType(superType, returnType);
             value1 = castToSuperType(value1, superType);
@@ -353,6 +355,7 @@ public class Interpreter {
             Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
             Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
             Value value3 = null;
+    
             var superType = getSuperTypeFromValue(value1, value2);
             value1 = castToSuperType(value1, superType);
             value2 = castToSuperType(value2, superType);
@@ -467,14 +470,13 @@ public class Interpreter {
         @Override
         public Value visit(EAss p, Void arg) {
             Value value = p.exp_.accept(new ExpVisitor(), arg);
-            updateVar(p.id_, value);
+            updateVar(p.id_, new Value(value.value, p.getType()));
             return value;
         }
 
     }
 
     public Value lookupVar(String x) {
-        // System.out.println(x);
         for (HashMap<String, Value> m : context) {
             Value value = m.get(x);
             if (value != null && value.value == null) {
@@ -508,7 +510,6 @@ public class Interpreter {
     }
 
     public void addVar(String id, Value val) {
-        // System.out.println("Added: " + val.type + " " + id + " = " + val.value );
         context.get(0).put(id, val);
     }
 
