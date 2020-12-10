@@ -8,10 +8,10 @@ public class Compiler
   LinkedList<String> output;
 
   //signature mapping function names to their JVM name and type
-  Map<String, Fun> sign; // hashmap instead?
+  HashMap<String, Fun> signature;
 
   // context mapping variable identifiers to their type and adresses
-  List<Map<String, CtxEntry>> ctx;
+  List<Map<String, ContextEntry>> context;
   // next free adress for local variable
   int nextLocal = 0;
 
@@ -30,10 +30,10 @@ public class Compiler
   // the return type of the currently compiled function
   cmm.Absyn.Type returnType;
   // type and adress
-  public class CtxEntry {
+  public class ContextEntry {
     final Type type;
-    final Integer addr;
-    CtxEntry(Type t, Integer a){type = t; addr = a;}
+    final Integer address;
+    ContextEntry(Type t, Integer a){type = t; address = a;}
   }
 
   public class Fun{
@@ -82,7 +82,7 @@ public class Compiler
     output.add("\n");
 
     // TODO: compile AST, appending to output.
-    sign = new TreeMap();
+    signature = new HashMap<>();
 
     // add built-in functions
     // runs Compiler
@@ -116,8 +116,8 @@ public class Compiler
   public class DefVisitor implements Def.Visitor<Void, Void>{
     public Void visit(cmm.Absyn.DFun p, Void arg){
       //reset state for new funcs
-      ctx = new LinkedList();
-      ctx.add(new TreeMap());
+      context = new LinkedList();
+      context.add(new TreeMap());
       nextLocal = 0;
       limitLocals = 0;
       limitStack = 0;
@@ -284,26 +284,26 @@ public class Compiler
 
   int newVar(String x, Type t){
     int addr = nextLocal;
-    ctx.get(0).put(x, new CtxEntry(t, addr));
+    context.get(0).put(x, new ContextEntry(t, addr));
   //  nextLocal += t.accept(new Size(), null); // lacks type visitor?
     if(nextLocal > limitLocals) limitLocals = nextLocal;
     return addr;
   }
 
-  CtxEntry lookupVar(String x){
-    for(Map<String,CtxEntry>b:ctx){
-      CtxEntry ce = b.get(x);
+  ContextEntry lookupVar(String x){
+    for(Map<String,ContextEntry>b:context){
+      ContextEntry ce = b.get(x);
       if(ce  != null) return ce;
     }
     throw new RuntimeException("Impossible: unbound variable " + x);
   }
 
   void newBlock(){
-    ctx.add(0, new TreeMap());
+    context.add(0, new TreeMap());
   }
 
   void popblock(){
-    ctx.remove(0);
+    context.remove(0);
   }
 
   // stack funcs
