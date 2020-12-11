@@ -135,8 +135,8 @@ public class Compiler
         x.accept(new ArgVisitor(), null);
 
       // compule func body
-    /*  for(Stm s: p.liststm_)
-        s.accept(new StmVisitor(), null);*/
+      for(Stm s: p.liststm_)
+        s.accept(new StmVisitor(), null);
 
       // add new output to old Output
       LinkedList<String> newOutput = output;
@@ -184,8 +184,8 @@ public class Compiler
       return null;
     }
     public Void visit(cmm.Absyn.SReturn p, Void arg){
-      // compare types
-      if(true) throw new RuntimeException("not yet implemented compile statement" + cmm.PrettyPrinter.print(p));
+      p.exp_.accept(new ExpVisitor(), null);
+      output.add("ireturn");
       return null;
     }
     public Void visit(cmm.Absyn.SWhile p, Void arg){
@@ -204,20 +204,25 @@ public class Compiler
 
   public class ExpVisitor implements Exp.Visitor<Void, Void>{
     public Void visit(cmm.Absyn.EBool p, Void arg){
-      if(true) throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
-      return null;
+      var ebool = p.boollit_;
+      if (ebool instanceof LTrue) return null; //output.add("iconst"); whatever true iselse
+        else return null; // output.add("iconst"); whatever false is, 1/0?
+      // not 100% sure what the direct translation is of true/false
+      // TODO add for bool
+      //return null;
     }
 
     @Override
     public Void visit(EInt p, Void arg) {
-      // he used a "emit" func here? dont remember what it did
-      if(true) throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      if(p.integer_>=0) output.add("iconst_" + p.integer_.toString());
+      else output.add("iconst_m" + p.integer_.toString());
       return null;
     }
 
     @Override
     public Void visit(EDouble p, Void arg) {
-      if(true) throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      if(p.double_>=0) output.add("dconst_" + p.double_.toString()); // slides dont mention negative doubles, assume same as int?
+      else output.add("dconst_m" + p.double_.toString());
       return null;
     }
 
@@ -230,6 +235,17 @@ public class Compiler
     @Override
     public Void visit(EApp p, Void arg) {
       if(true) throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      //   newBlock();
+      /*
+      psuedo code ish not sure
+      if p.id == "readInt" -> output.add("invokeStatic Runtime/readInt()I");
+      else if p.id == "printINt" -> output.add("invokeStatic RUntime/printInt() something is missing here i think
+
+      else if p.id =="readDouble" -> output.add("invokeStatic Runtime/readDouble()D");
+      else if p.id =="printDouble" -> output.add("invokeStatic Runtime/printDouble()D); // something is missing
+      else rest of the cases
+      popblock();
+       */
       return null;
     }
 
@@ -247,13 +263,24 @@ public class Compiler
 
     @Override
     public Void visit(EMul p, Void arg) {
-      if(true) throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      p.exp_1.accept(new ExpVisitor(), arg);
+      p.exp_2.accept(new ExpVisitor(), arg);
+      var operator = p.mulop_;
+      if(operator instanceof OTimes) output.add("imul");
+      else if (operator instanceof ODiv) output.add("idiv");
+      // somethings missing, working progress
       return null;
     }
 
     @Override
     public Void visit(EAdd p, Void arg) {
-      if(true) throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      p.exp_1.accept(new ExpVisitor(), arg);
+      p.exp_2.accept(new ExpVisitor(), arg);
+      var operator = p.addop_;
+      if (operator instanceof OPlus) output.add("iadd");
+      else if (operator instanceof  OMinus) output.add("isub"); // im assuming its sub, didnt find on slides
+      // not perfect will work more on it tomorrow
+
       return null;
     }
 
@@ -306,8 +333,8 @@ public class Compiler
     context.remove(0);
   }
 
+  // TODO add id func?
   // stack funcs
   // adjust stack visitor?
   //
-
 }
