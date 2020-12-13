@@ -8,7 +8,7 @@ int main () {
         mx = readInt () ;
 
        	printInt(lo) ;
-	while (hi < mx) {
+	while (lo<mx) { // original is lo<mx
 	    printInt(hi) ;
 	    hi = lo + hi ;
 	    lo = hi - lo ;

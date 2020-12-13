@@ -200,9 +200,10 @@ public class Compiler {
     }
 
     public Void visit(cmm.Absyn.SDecls p, Void arg) {
-      if (true)
-        throw new RuntimeException(
-            "not yet implemented compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
+    //  if (true)
+      //  throw new RuntimeException(
+        //    "not yet implemented compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
+      p.listid_.forEach(id -> addVar(id, p.type_));
       return null;
     }
 
@@ -252,12 +253,10 @@ public class Compiler {
     public Void visit(cmm.Absyn.EBool p, Void arg) {
       var ebool = p.boollit_;
       if (ebool instanceof LTrue)
-        return null; // output.add("iconst"); whatever true iselse
+        output.add("iconst_1");
       else
-        return null; // output.add("iconst"); whatever false is, 1/0?
-      // not 100% sure what the direct translation is of true/false
-      // TODO add for bool
-      // return null;
+        output.add("iconst_0");
+      return null;
     }
 
     @Override
@@ -289,16 +288,16 @@ public class Compiler {
     public Void visit(EApp p, Void arg) {
 
       pushBlock();
-      if (p.id_ == "readInt") {
+      if (p.id_.equals("readInt")) {
         output.add("invokestatic Runtime/readInt()I");
-      } else if (p.id_ == "printInt") {
+      } else if (p.id_.equals("printInt")) {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
         output.add("invokestatic Runtime/printInt(I)V");
-      } else if (p.id_ == "readDouble") {
+      } else if (p.id_.equals("readDouble")) {
         output.add("invokestatic Runtime/readDouble()D");
-      } else if (p.id_ == "printDouble") {
+      } else if (p.id_.equals("printDouble")) {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
@@ -374,14 +373,63 @@ public class Compiler {
       p.exp_2.accept(new ExpVisitor(), arg);
 
       if (op instanceof OLt) {
-        // String label1 = getLabel();
-        // String label2 = getLabel();
+         //String label1 = getLabel();
+         //String label2 = getLabel();
         output.add("if_icmplt true" + scopeDepth);
+        System.out.println(scopeDepth);
         output.add("iconst_0");
         output.add("goto false" + scopeDepth);
         output.add("true" + scopeDepth + ":");
         output.add("iconst_1");
         output.add("false" + scopeDepth + ":");
+      }
+      if(op instanceof  OGt){
+        output.add("if_icmpgt true" + scopeDepth);
+        output.add("iconst_0");
+        output.add("goto false" + scopeDepth + ":");
+        output.add("true" + scopeDepth + ":");
+        output.add("iconst_1");
+        output.add("false" + scopeDepth+":");
+      }
+      if(op instanceof  OLtEq){
+        output.add("if_icmple true" + scopeDepth);
+        System.out.println(scopeDepth);
+        output.add("iconst_0");
+        output.add("goto false" + scopeDepth + ":");
+        System.out.println(scopeDepth);
+        output.add("true" + scopeDepth + ":");
+        output.add("iconst_1");
+        output.add("false" + scopeDepth+":");
+      }
+      if(op instanceof  OGtEq){
+        output.add("if_icmpge true" + scopeDepth);
+        System.out.println(scopeDepth);
+        output.add("iconst_0");
+        output.add("goto false" + scopeDepth + ":");
+        System.out.println(scopeDepth);
+        output.add("true" + scopeDepth + ":");
+        output.add("iconst_1");
+        output.add("false" + scopeDepth+":");
+      }
+      if(op instanceof  OEq){
+        output.add("if_icmpeq true" + scopeDepth);
+        System.out.println(scopeDepth);
+        output.add("iconst_0");
+        output.add("goto false" + scopeDepth + ":");
+        System.out.println(scopeDepth);
+        output.add("true" + scopeDepth + ":");
+        output.add("iconst_1");
+        output.add("false" + scopeDepth+":");
+      }
+      if(op instanceof  ONEq){
+        output.add("if_icmpne true" + scopeDepth);
+        System.out.println(scopeDepth);
+        output.add("iconst_0");
+        output.add("goto false" + scopeDepth + ":");
+        System.out.println(scopeDepth);
+        output.add("true" + scopeDepth + ":");
+        output.add("iconst_1");
+        output.add("false" + scopeDepth+":");
       }
       return null;
     }
