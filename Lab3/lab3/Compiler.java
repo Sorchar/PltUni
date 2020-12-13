@@ -38,6 +38,11 @@ public class Compiler {
       type = t;
       address = a;
     }
+
+    public Integer getAddress(){
+      return this.address;
+    }
+
   }
 
   public class Fun {
@@ -73,7 +78,7 @@ public class Compiler {
     // Output boilerplate
     output.add(".class public " + name);
     output.add(".super java/lang/Object");
-    output.add("\n");
+    output.add("");
     output.add(".method public <init>()V");
     output.add("  .limit locals 1");
     output.add("");
@@ -188,18 +193,23 @@ public class Compiler {
 
     public Void visit(cmm.Absyn.SExp p, Void arg) {
       p.exp_.accept(new ExpVisitor(), arg);
+      if (output.getLast().charAt(output.getLast().length() - 1) != 'V'){
+        output.add("pop");
+      }
       return null;
     }
 
     public Void visit(cmm.Absyn.SDecls p, Void arg) {
       if (true)
-        throw new RuntimeException("not yet implemented compile statement" + cmm.PrettyPrinter.print(p));
+        throw new RuntimeException(
+            "not yet implemented compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
       return null;
     }
 
     public Void visit(cmm.Absyn.SInit p, Void arg) {
-      if (true)
-        throw new RuntimeException("not yet implemented compile statement" + cmm.PrettyPrinter.print(p));
+      addVar(p.id_, p.type_);
+      p.exp_.accept(new ExpVisitor(), arg);
+      output.add("istore " + getVariable(p.id_).getAddress());
       return null;
     }
 
@@ -210,20 +220,30 @@ public class Compiler {
     }
 
     public Void visit(cmm.Absyn.SWhile p, Void arg) {
-      if (true)
-        throw new RuntimeException("not yet implemented compile statement" + cmm.PrettyPrinter.print(p));
+      int scopeDepth = context.size();
+      output.add("while" + scopeDepth + ":");
+      p.exp_.accept(new ExpVisitor(), arg);
+      output.add("iconst_1");
+      output.add("if_icmpne done" + scopeDepth);
+      pushBlock();
+      p.stm_.accept(new StmVisitor(), arg);
+      popBlock();
+      output.add("goto while" + scopeDepth);
+      output.add("done" + scopeDepth + ":");
       return null;
     }
 
     public Void visit(cmm.Absyn.SBlock p, Void arg) {
-      if (true)
-        throw new RuntimeException("not yet implemented compile statement" + cmm.PrettyPrinter.print(p));
+      pushBlock();
+      p.liststm_.forEach(stm -> stm.accept(new StmVisitor(), arg));
+      popBlock();
       return null;
     }
 
     public Void visit(cmm.Absyn.SIfElse p, Void arg) {
       if (true)
-        throw new RuntimeException("not yet implemented compile statement" + cmm.PrettyPrinter.print(p));
+        throw new RuntimeException(
+            "not yet implemented compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
       return null;
     }
   }
@@ -260,8 +280,8 @@ public class Compiler {
 
     @Override
     public Void visit(EId p, Void arg) {
-      if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      var variableLocation = getVariable(p.id_).getAddress();
+      output.add("iload " + variableLocation);
       return null;
     }
 
@@ -296,14 +316,26 @@ public class Compiler {
     @Override
     public Void visit(EPost p, Void arg) {
       if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+        throw new RuntimeException(
+            "Not yet implemented: compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
       return null;
     }
 
     @Override
     public Void visit(EPre p, Void arg) {
-      if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      Integer variableLocation = getVariable(p.id_).getAddress();
+      String operation = "";
+      if (p.incdecop_ instanceof ODec) {
+        operation = "isub";
+      } else if (p.incdecop_ instanceof OInc) {
+        operation = "iadd";
+      }
+
+      output.add("iload " + variableLocation);
+      output.add("iconst_1");
+      output.add(operation);
+      output.add("istore " + variableLocation);
+      output.add("iload " + variableLocation);
       return null;
     }
 
@@ -336,29 +368,46 @@ public class Compiler {
 
     @Override
     public Void visit(ECmp p, Void arg) {
-      if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      var scopeDepth = context.size();
+      var op = p.cmpop_;
+      p.exp_1.accept(new ExpVisitor(), arg);
+      p.exp_2.accept(new ExpVisitor(), arg);
+
+      if (op instanceof OLt) {
+        // String label1 = getLabel();
+        // String label2 = getLabel();
+        output.add("if_icmplt true" + scopeDepth);
+        output.add("iconst_0");
+        output.add("goto false" + scopeDepth);
+        output.add("true" + scopeDepth + ":");
+        output.add("iconst_1");
+        output.add("false" + scopeDepth + ":");
+      }
       return null;
     }
 
     @Override
     public Void visit(EAnd p, Void arg) {
       if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+        throw new RuntimeException(
+            "Not yet implemented: compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
       return null;
     }
 
     @Override
     public Void visit(EOr p, Void arg) {
       if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+        throw new RuntimeException(
+            "Not yet implemented: compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
       return null;
     }
 
     @Override
     public Void visit(EAss p, Void arg) {
-      if (true)
-        throw new RuntimeException("Not yet implemented: compile expression" + cmm.PrettyPrinter.print(p));
+      Integer variableLocation = getVariable(p.id_).getAddress();
+      p.exp_.accept(new ExpVisitor(), arg);
+      output.add("istore " + variableLocation);
+      output.add("iload " + variableLocation);
       return null;
     }
   }
@@ -373,7 +422,7 @@ public class Compiler {
     return counter;
   }
 
-  ContextEntry lookupVar(String x) {
+  ContextEntry getVariable(String x) {
     for (Map<String, ContextEntry> b : context) {
       ContextEntry ce = b.get(x);
       if (ce != null)
