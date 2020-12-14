@@ -176,6 +176,7 @@ public class Compiler {
       for (String s : newOutput) {
         output.add("\t" + s);
       }
+      output.add("nop");
       output.add(".end method");
 
       return null;
