@@ -27,6 +27,7 @@ public class Compiler {
   int nextLabel = 0;
 
   int labelCounter = 0;
+  String functionName = "";
 
   // the return type of the currently compiled function
   cmm.Absyn.Type returnType;
@@ -76,6 +77,7 @@ public class Compiler {
   public String compile(String name, cmm.Absyn.Program p) {
     // Initialize output
     output = new LinkedList();
+    functionName = name;
 
     // Output boilerplate
     output.add(".class public " + name);
@@ -174,7 +176,7 @@ public class Compiler {
       for (String s : newOutput) {
         output.add("\t" + s);
       }
-      output.add("\n.end method\n");
+      output.add(".end method");
 
       return null;
     }
@@ -324,6 +326,7 @@ public class Compiler {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
+        output.add("invokestatic " + functionName + "/" + p.id_ + signature.get(p.id_));
       }
       popBlock();
       return null;
