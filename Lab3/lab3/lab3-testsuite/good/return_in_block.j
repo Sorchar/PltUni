@@ -27,6 +27,7 @@
 	ireturn
 	iconst_1
 	invokestatic Runtime/printInt(I)V
+nop
 .end method
 .method public static main()I
 .limit locals 101
@@ -37,4 +38,5 @@
 	ireturn
 	iconst_2
 	invokestatic Runtime/printInt(I)V
+nop
 .end method

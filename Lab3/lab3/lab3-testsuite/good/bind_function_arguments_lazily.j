@@ -25,6 +25,7 @@
 .limit stack 101
 	iload 1
 	ireturn
+nop
 .end method
 .method public static main()I
 .limit locals 101
@@ -39,4 +40,5 @@
 	invokestatic Runtime/printInt(I)V
 	iload 1
 	ireturn
+nop
 .end method

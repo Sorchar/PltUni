@@ -25,10 +25,12 @@
 .limit stack 101
 	invokestatic return_fun_val/test()I
 	ireturn
+nop
 .end method
 .method public static test()I
 .limit locals 101
 .limit stack 101
 	ldc 32
 	ireturn
+nop
 .end method

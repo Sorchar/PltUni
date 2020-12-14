@@ -40,4 +40,5 @@
 	L1:
 	iconst_0
 	ireturn
+nop
 .end method

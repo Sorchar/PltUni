@@ -27,4 +27,5 @@
 	istore 0
 	iload 0
 	ireturn
+nop
 .end method

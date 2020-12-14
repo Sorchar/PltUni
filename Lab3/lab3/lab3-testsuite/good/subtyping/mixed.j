@@ -31,4 +31,5 @@
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn
+nop
 .end method

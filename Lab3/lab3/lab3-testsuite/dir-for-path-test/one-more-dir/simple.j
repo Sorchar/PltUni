@@ -25,4 +25,5 @@
 .limit stack 101
 	iconst_0
 	ireturn
+nop
 .end method

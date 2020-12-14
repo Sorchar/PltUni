@@ -317,13 +317,22 @@ public class Compiler {
         }
         output.add("invokestatic Runtime/printInt(I)V");
       } else if (p.id_.equals("readDouble")) {
-        output.add("invokestatic Runtime/readDouble()D");
+         output.add("invokestatic Runtime/readDouble()D");
       } else if (p.id_.equals("printDouble")) {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
         output.add("invokestatic Runtime/printDouble(D)V");
-      } else {
+
+      } else if(p.id_.equals("readBool")){
+          output.add("invokestatic Runtime/readBool()Z");
+      } else if(p.id_.equals("printBool")){
+        for (Exp exp : p.listexp_) {
+          exp.accept(new ExpVisitor(), arg);
+        }
+        output.add("invokestatic Runtime/printBool(Z)V");
+      }
+      else {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }

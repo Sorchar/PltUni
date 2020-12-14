@@ -27,6 +27,7 @@
 	iconst_2
 	idiv
 	ireturn
+nop
 .end method
 .method public static main()I
 .limit locals 101
@@ -36,4 +37,5 @@
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn
+nop
 .end method

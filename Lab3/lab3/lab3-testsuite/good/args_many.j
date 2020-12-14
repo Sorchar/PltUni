@@ -223,6 +223,7 @@
 	iload 99
 	iadd
 	ireturn
+nop
 .end method
 .method public static main()I
 .limit locals 101
@@ -335,4 +336,5 @@
 	invokestatic Runtime/printInt(I)V
 	iload 0
 	ireturn
+nop
 .end method

@@ -34,4 +34,5 @@
 	pop
 	iconst_0
 	ireturn
+nop
 .end method

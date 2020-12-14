@@ -25,6 +25,7 @@
 .limit stack 101
 	iconst_0
 	ireturn
+nop
 .end method
 .method public static main()I
 .limit locals 101
@@ -33,4 +34,5 @@
 	iconst_0
 	invokestatic fun_app_two_parameters/abc(ZI)I
 	ireturn
+nop
 .end method

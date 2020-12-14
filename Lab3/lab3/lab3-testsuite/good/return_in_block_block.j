@@ -29,6 +29,7 @@
 	invokestatic Runtime/printInt(I)V
 	iconst_1
 	invokestatic Runtime/printInt(I)V
+nop
 .end method
 .method public static main()I
 .limit locals 101
@@ -41,4 +42,5 @@
 	invokestatic Runtime/printInt(I)V
 	iconst_4
 	invokestatic Runtime/printInt(I)V
+nop
 .end method

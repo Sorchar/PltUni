@@ -60,4 +60,5 @@
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
+nop
 .end method

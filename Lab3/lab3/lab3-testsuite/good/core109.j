@@ -29,4 +29,5 @@
 	invokestatic Runtime/printInt(I)V
 	iload 0
 	ireturn
+nop
 .end method

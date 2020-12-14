@@ -29,4 +29,5 @@
 	istore 1
 	iconst_0
 	ireturn
+nop
 .end method
