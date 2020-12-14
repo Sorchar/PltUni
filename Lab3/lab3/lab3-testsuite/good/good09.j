@@ -28,6 +28,7 @@
 	iload 0
 	invokestatic Runtime/printInt(I)V
 	iload 0
+	iload 0
 	iconst_1
 	iadd
 	istore 0
@@ -44,6 +45,4 @@
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-

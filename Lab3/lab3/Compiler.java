@@ -342,7 +342,7 @@ public class Compiler {
       } else if (p.incdecop_ instanceof OInc) {
         operation = "iadd";
       }
-      //output.add("iload " + variableLocation);
+      output.add("iload " + variableLocation);
       output.add("iload " + variableLocation);
       output.add("iconst_1");
       output.add(operation);
