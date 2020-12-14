@@ -425,10 +425,17 @@ public class Compiler {
     }
 
     @Override
-    public Void visit(EAnd p, Void arg) {
-      if (true)
-        throw new RuntimeException(
-            "Not yet implemented: compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
+    public Void visit(EAnd p, Void arg) { // update with labels like cmp
+      String falseLabel = getUniqueLabel();
+   //   String trueLabel  = getUniqueLabel();
+      output.add("iconst_0");
+      p.exp_1.accept(new ExpVisitor(), arg);
+      output.add("ifeq " + falseLabel);
+      p.exp_2.accept(new ExpVisitor(), arg);
+      output.add("ifeq " + falseLabel);
+      output.add("pop");
+      output.add("iconst_1");
+      output.add(falseLabel + ":");
       return null;
     }
 
