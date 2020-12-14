@@ -1,4 +1,5 @@
 *.class
+*.j
 .idea/
 /Lab2/cmm/
 /Lab3/lab3/cmm/

@@ -27,7 +27,7 @@ public class Compiler {
   int nextLabel = 0;
 
   int labelCounter = 0;
-  String functionName = "";
+  String className = "";
 
   // the return type of the currently compiled function
   cmm.Absyn.Type returnType;
@@ -77,7 +77,7 @@ public class Compiler {
   public String compile(String name, cmm.Absyn.Program p) {
     // Initialize output
     output = new LinkedList();
-    functionName = name;
+    className = name;
 
     // Output boilerplate
     output.add(".class public " + name);
@@ -176,6 +176,9 @@ public class Compiler {
       for (String s : newOutput) {
         output.add("\t" + s);
       }
+      if (p.type_ instanceof Type_void) {
+        output.add("return");
+       }
       output.add("nop");
       output.add(".end method");
 
@@ -218,7 +221,12 @@ public class Compiler {
 
     public Void visit(cmm.Absyn.SReturn p, Void arg) {
       p.exp_.accept(new ExpVisitor(), null);
-      output.add("ireturn");
+      
+      if (returnType instanceof Type_void){
+        // output.add("return");
+      } else {
+        output.add("ireturn");
+      }
       return null;
     }
 
@@ -277,13 +285,13 @@ public class Compiler {
 
     @Override
     public Void visit(EInt p, Void arg) {
-      if (p.integer_ >= 0){
+      if (p.integer_ >= 0) {
         if (p.integer_ <= 5) {
           output.add("iconst_" + p.integer_.toString());
-         } else {
+        } else {
           output.add("ldc " + p.integer_.toString());
-         }
-      }else{
+        }
+      } else {
         output.add("iconst_m" + p.integer_.toString());
       }
       return null;
@@ -317,26 +325,18 @@ public class Compiler {
         }
         output.add("invokestatic Runtime/printInt(I)V");
       } else if (p.id_.equals("readDouble")) {
-         output.add("invokestatic Runtime/readDouble()D");
+        output.add("invokestatic Runtime/readDouble()D");
       } else if (p.id_.equals("printDouble")) {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
         output.add("invokestatic Runtime/printDouble(D)V");
 
-      } else if(p.id_.equals("readBool")){
-          output.add("invokestatic Runtime/readBool()Z");
-      } else if(p.id_.equals("printBool")){
+      } else {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
-        output.add("invokestatic Runtime/printBool(Z)V");
-      }
-      else {
-        for (Exp exp : p.listexp_) {
-          exp.accept(new ExpVisitor(), arg);
-        }
-        output.add("invokestatic " + functionName + "/" + p.id_ + signature.get(p.id_));
+        output.add("invokestatic " + className + "/" + p.id_ + signature.get(p.id_));
       }
       popBlock();
       return null;
@@ -359,7 +359,8 @@ public class Compiler {
       output.add("istore " + variableLocation);
       return null;
     }
-// x++ ++x
+
+    // x++ ++x
     @Override
     public Void visit(EPre p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
@@ -435,7 +436,7 @@ public class Compiler {
     @Override
     public Void visit(EAnd p, Void arg) { // update with labels like cmp
       String falseLabel = getUniqueLabel();
-   //   String trueLabel  = getUniqueLabel();
+      // String trueLabel = getUniqueLabel();
       output.add("iconst_0");
       p.exp_1.accept(new ExpVisitor(), arg);
       output.add("ifeq " + falseLabel);
@@ -460,7 +461,6 @@ public class Compiler {
       output.add(trueLabel + ":");
       return null;
     }
-
 
     @Override
     public Void visit(EAss p, Void arg) {
@@ -526,7 +526,7 @@ public class Compiler {
 
   }
 
-  public String getUniqueLabel(){
+  public String getUniqueLabel() {
     String label = "L" + labelCounter;
     labelCounter++;
     return label;
