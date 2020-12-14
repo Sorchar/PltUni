@@ -23,13 +23,11 @@
 .method public static printint(I)V
 .limit locals 101
 .limit stack 101
-	iconst_100
+	ldc 100
 	iload 0
 	iadd
 	invokestatic Runtime/printInt(I)V
-
 .end method
-
 .method public static printdouble()V
 .limit locals 101
 .limit stack 101
@@ -37,36 +35,30 @@
 	iload 0
 	iadd
 	invokestatic Runtime/printDouble(D)V
-
 .end method
-
 .method public static readint()I
 .limit locals 101
 .limit stack 101
 	iconst_0
 	ireturn
-
 .end method
-
 .method public static readdouble()
 .limit locals 101
 .limit stack 101
 	dconst_1.0
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
+	invokestatic identifiers_case_sensitive/readint()I
 	istore 0
+	invokestatic identifiers_case_sensitive/readdouble()
 	istore 1
 	iload 0
-	pop
+	invokestatic identifiers_case_sensitive/printint(I)V
 	iload 1
-	pop
+	invokestatic identifiers_case_sensitive/printdouble()V
 	iconst_0
 	ireturn
-
 .end method
-

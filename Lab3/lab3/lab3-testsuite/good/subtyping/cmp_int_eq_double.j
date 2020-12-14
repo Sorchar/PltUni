@@ -25,9 +25,13 @@
 .limit stack 101
 	iconst_1
 	dconst_1.1
+	if_icmpeq L0
+	iconst_0
+	goto L1
+	L0:
+	iconst_1
+	L1:
 	pop
 	iconst_0
 	ireturn
-
 .end method
-

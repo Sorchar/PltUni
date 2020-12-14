@@ -25,21 +25,25 @@
 .limit stack 101
 	iconst_5
 	istore 0
-	while1:
+	L0:
 	iload 0
 	iconst_5
+	if_icmpeq L2
+	iconst_0
+	goto L3
+	L2:
 	iconst_1
-	if_icmpne done1
-	iconst_7
+	L3:
+	iconst_1
+	if_icmpne L1
+	ldc 7
 	istore 0
 	iload 0
 	pop
-	goto while1
-	done1:
+	goto L0
+	L1:
 	iload 0
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-

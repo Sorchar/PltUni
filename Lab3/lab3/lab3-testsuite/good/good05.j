@@ -37,17 +37,17 @@
 	pop
 	iload 0
 	invokestatic Runtime/printInt(I)V
-	while1:
-	iload 0
+	L0:
+	iload 1
 	iload 2
-	if_icmplt true1
+	if_icmplt L2
 	iconst_0
-	goto false1
-	true1:
+	goto L3
+	L2:
 	iconst_1
-	false1:
+	L3:
 	iconst_1
-	if_icmpne done1
+	if_icmpne L1
 	iload 1
 	invokestatic Runtime/printInt(I)V
 	iload 0
@@ -62,10 +62,8 @@
 	istore 0
 	iload 0
 	pop
-	goto while1
-	done1:
+	goto L0
+	L1:
 	iconst_0
 	ireturn
-
 .end method
-

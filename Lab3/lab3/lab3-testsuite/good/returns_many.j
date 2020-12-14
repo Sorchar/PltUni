@@ -23,23 +23,20 @@
 .method public static r()I
 .limit locals 101
 .limit stack 101
-	iconst_12
+	ldc 12
 	ireturn
 	iconst_2
 	ireturn
 	iconst_3
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
+	invokestatic returns_many/r()I
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
 	iconst_2
 	ireturn
-
 .end method
-

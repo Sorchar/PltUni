@@ -25,14 +25,12 @@
 .limit stack 101
 	iconst_0
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
+	iconst_1
 	iconst_0
+	invokestatic fun_app_two_parameters/abc(ZI)I
 	ireturn
-
 .end method
-

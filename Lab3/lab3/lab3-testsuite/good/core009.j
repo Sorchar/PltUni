@@ -23,19 +23,16 @@
 .method public static foo()I
 .limit locals 101
 .limit stack 101
-	iconst_10
+	ldc 10
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
+	invokestatic core009/foo()I
 	istore 0
 	iload 0
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-

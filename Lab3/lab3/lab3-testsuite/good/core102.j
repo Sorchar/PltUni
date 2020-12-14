@@ -23,29 +23,27 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	while1:
+	L0:
 	iconst_2
 	iconst_5
-	iconst_6
+	ldc 6
 	imul
 	iconst_5
 	idiv
 	iadd
-	iconst_67
+	ldc 67
 	isub
 	iconst_5
-	if_icmpgt true1
+	if_icmpgt L2
 	iconst_0
-	goto false1:
-	true1:
+	goto L3
+	L2:
 	iconst_1
-	false1:
+	L3:
 	iconst_1
-	if_icmpne done1
-	goto while1
-	done1:
+	if_icmpne L1
+	goto L0
+	L1:
 	iconst_0
 	ireturn
-
 .end method
-

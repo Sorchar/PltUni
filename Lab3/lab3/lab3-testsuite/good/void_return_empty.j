@@ -23,14 +23,10 @@
 .method public static empty()V
 .limit locals 101
 .limit stack 101
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
 	iconst_0
 	ireturn
-
 .end method
-

@@ -23,10 +23,8 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	iconst_1000
+	ldc 1000
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-
