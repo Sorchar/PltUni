@@ -26,6 +26,9 @@ public class Compiler {
   // global counter to get next label
   int nextLabel = 0;
 
+  int labelCounter = 0;
+  String functionName = "";
+
   // the return type of the currently compiled function
   cmm.Absyn.Type returnType;
 
@@ -39,7 +42,7 @@ public class Compiler {
       address = a;
     }
 
-    public Integer getAddress(){
+    public Integer getAddress() {
       return this.address;
     }
 
@@ -74,6 +77,7 @@ public class Compiler {
   public String compile(String name, cmm.Absyn.Program p) {
     // Initialize output
     output = new LinkedList();
+    functionName = name;
 
     // Output boilerplate
     output.add(".class public " + name);
@@ -172,7 +176,7 @@ public class Compiler {
       for (String s : newOutput) {
         output.add("\t" + s);
       }
-      output.add("\n.end method\n");
+      output.add(".end method");
 
       return null;
     }
@@ -193,16 +197,13 @@ public class Compiler {
 
     public Void visit(cmm.Absyn.SExp p, Void arg) {
       p.exp_.accept(new ExpVisitor(), arg);
-      if (output.getLast().charAt(output.getLast().length() - 1) != 'V'){
+      if (output.getLast().charAt(output.getLast().length() - 1) != 'V') {
         output.add("pop");
       }
       return null;
     }
 
     public Void visit(cmm.Absyn.SDecls p, Void arg) {
-    //  if (true)
-      //  throw new RuntimeException(
-        //    "not yet implemented compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
       p.listid_.forEach(id -> addVar(id, p.type_));
       return null;
     }
@@ -221,16 +222,18 @@ public class Compiler {
     }
 
     public Void visit(cmm.Absyn.SWhile p, Void arg) {
-      int scopeDepth = context.size();
-      output.add("while" + scopeDepth + ":");
+      String trueLabel = getUniqueLabel();
+      String falseLabel = getUniqueLabel();
+
+      output.add(trueLabel + ":");
       p.exp_.accept(new ExpVisitor(), arg);
       output.add("iconst_1");
-      output.add("if_icmpne done" + scopeDepth);
+      output.add("if_icmpne " + falseLabel);
       pushBlock();
       p.stm_.accept(new StmVisitor(), arg);
       popBlock();
-      output.add("goto while" + scopeDepth);
-      output.add("done" + scopeDepth + ":");
+      output.add("goto " + trueLabel);
+      output.add(falseLabel + ":");
       return null;
     }
 
@@ -242,9 +245,21 @@ public class Compiler {
     }
 
     public Void visit(cmm.Absyn.SIfElse p, Void arg) {
-      if (true)
-        throw new RuntimeException(
-            "not yet implemented compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
+      String trueLabel = getUniqueLabel();
+      String falseLabel = getUniqueLabel();
+      p.exp_.accept(new ExpVisitor(), arg);
+
+      output.add("iconst_1");
+      output.add("if_icmpeq " + trueLabel);
+      pushBlock();
+      p.stm_2.accept(new StmVisitor(), arg);
+      popBlock();
+      output.add("goto " + falseLabel);
+      output.add(trueLabel + ":");
+      pushBlock();
+      p.stm_1.accept(new StmVisitor(), arg);
+      popBlock();
+      output.add(falseLabel + ":");
       return null;
     }
   }
@@ -261,10 +276,15 @@ public class Compiler {
 
     @Override
     public Void visit(EInt p, Void arg) {
-      if (p.integer_ >= 0)
-        output.add("iconst_" + p.integer_.toString());
-      else
+      if (p.integer_ >= 0){
+        if (p.integer_ <= 5) {
+          output.add("iconst_" + p.integer_.toString());
+         } else {
+          output.add("ldc " + p.integer_.toString());
+         }
+      }else{
         output.add("iconst_m" + p.integer_.toString());
+      }
       return null;
     }
 
@@ -306,6 +326,7 @@ public class Compiler {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
+        output.add("invokestatic " + functionName + "/" + p.id_ + signature.get(p.id_));
       }
       popBlock();
       return null;
@@ -376,70 +397,30 @@ public class Compiler {
 
     @Override
     public Void visit(ECmp p, Void arg) {
-      var scopeDepth = context.size();
+      String trueLabel = getUniqueLabel();
+      String falseLabel = getUniqueLabel();
       var op = p.cmpop_;
       p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
 
       if (op instanceof OLt) {
-         //String label1 = getLabel();
-         //String label2 = getLabel();
-        output.add("if_icmplt true" + scopeDepth);
-        System.out.println(scopeDepth);
-        output.add("iconst_0");
-        output.add("goto false" + scopeDepth);
-        output.add("true" + scopeDepth + ":");
-        output.add("iconst_1");
-        output.add("false" + scopeDepth + ":");
+        output.add("if_icmplt " + trueLabel);
+      } else if (op instanceof OGt) {
+        output.add("if_icmpgt " + trueLabel);
+      } else if (op instanceof OLtEq) {
+        output.add("if_icmple " + trueLabel);
+      } else if (op instanceof OGtEq) {
+        output.add("if_icmpge " + trueLabel);
+      } else if (op instanceof OEq) {
+        output.add("if_icmpeq " + trueLabel);
+      } else if (op instanceof ONEq) {
+        output.add("if_icmpne " + trueLabel);
       }
-      if(op instanceof  OGt){
-        output.add("if_icmpgt true" + scopeDepth);
-        output.add("iconst_0");
-        output.add("goto false" + scopeDepth + ":");
-        output.add("true" + scopeDepth + ":");
-        output.add("iconst_1");
-        output.add("false" + scopeDepth+":");
-      }
-      if(op instanceof  OLtEq){
-        output.add("if_icmple true" + scopeDepth);
-        System.out.println(scopeDepth);
-        output.add("iconst_0");
-        output.add("goto false" + scopeDepth + ":");
-        System.out.println(scopeDepth);
-        output.add("true" + scopeDepth + ":");
-        output.add("iconst_1");
-        output.add("false" + scopeDepth+":");
-      }
-      if(op instanceof  OGtEq){
-        output.add("if_icmpge true" + scopeDepth);
-        System.out.println(scopeDepth);
-        output.add("iconst_0");
-        output.add("goto false" + scopeDepth + ":");
-        System.out.println(scopeDepth);
-        output.add("true" + scopeDepth + ":");
-        output.add("iconst_1");
-        output.add("false" + scopeDepth+":");
-      }
-      if(op instanceof  OEq){
-        output.add("if_icmpeq true" + scopeDepth);
-        System.out.println(scopeDepth);
-        output.add("iconst_0");
-        output.add("goto false" + scopeDepth + ":");
-        System.out.println(scopeDepth);
-        output.add("true" + scopeDepth + ":");
-        output.add("iconst_1");
-        output.add("false" + scopeDepth+":");
-      }
-      if(op instanceof  ONEq){
-        output.add("if_icmpne true" + scopeDepth);
-        System.out.println(scopeDepth);
-        output.add("iconst_0");
-        output.add("goto false" + scopeDepth + ":");
-        System.out.println(scopeDepth);
-        output.add("true" + scopeDepth + ":");
-        output.add("iconst_1");
-        output.add("false" + scopeDepth+":");
-      }
+      output.add("iconst_0");
+      output.add("goto " + falseLabel);
+      output.add(trueLabel + ":");
+      output.add("iconst_1");
+      output.add(falseLabel + ":");
       return null;
     }
 
@@ -521,6 +502,12 @@ public class Compiler {
     }
     signature.put(function.id_, type);
 
+  }
+
+  public String getUniqueLabel(){
+    String label = "L" + labelCounter;
+    labelCounter++;
+    return label;
   }
 
   // TODO add id func?
