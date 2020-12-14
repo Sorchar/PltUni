@@ -314,12 +314,21 @@ public class Compiler {
 
     @Override
     public Void visit(EPost p, Void arg) {
-      if (true)
-        throw new RuntimeException(
-            "Not yet implemented: compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
+      Integer variableLocation = getVariable(p.id_).getAddress();
+      String operation = "";
+      if (p.incdecop_ instanceof ODec) {
+        operation = "isub";
+      } else if (p.incdecop_ instanceof OInc) {
+        operation = "iadd";
+      }
+      //output.add("iload " + variableLocation);
+      output.add("iload " + variableLocation);
+      output.add("iconst_1");
+      output.add(operation);
+      output.add("istore " + variableLocation);
       return null;
     }
-
+// x++ ++x
     @Override
     public Void visit(EPre p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
