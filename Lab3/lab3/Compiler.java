@@ -178,7 +178,7 @@ public class Compiler {
       }
       if (p.type_ instanceof Type_void) {
         output.add("return");
-       }
+      }
       output.add("nop");
       output.add(".end method");
 
@@ -221,8 +221,8 @@ public class Compiler {
 
     public Void visit(cmm.Absyn.SReturn p, Void arg) {
       p.exp_.accept(new ExpVisitor(), null);
-      
-      if (returnType instanceof Type_void){
+
+      if (returnType instanceof Type_void) {
         // output.add("return");
       } else {
         output.add("ireturn");
@@ -299,10 +299,11 @@ public class Compiler {
 
     @Override
     public Void visit(EDouble p, Void arg) {
-      if (p.double_ >= 0)
-        output.add("dconst_" + p.double_.toString()); // slides dont mention negative doubles, assume same as int?
-      else
+      if (p.double_ >= 0) {
+        output.add("ldc2_w " + p.double_.toString());
+      } else {
         output.add("dconst_m" + p.double_.toString());
+      }
       return null;
     }
 
@@ -470,6 +471,7 @@ public class Compiler {
       output.add("iload " + variableLocation);
       return null;
     }
+
   }
 
   int addVar(String x, Type t) {
