@@ -377,7 +377,6 @@ public class Compiler {
         output.add("imul");
       else if (operator instanceof ODiv)
         output.add("idiv");
-      // somethings missing, working progress
       return null;
     }
 
@@ -389,8 +388,7 @@ public class Compiler {
       if (operator instanceof OPlus)
         output.add("iadd");
       else if (operator instanceof OMinus)
-        output.add("isub"); // im assuming its sub, didnt find on slides
-      // not perfect will work more on it tomorrow
+        output.add("isub");
 
       return null;
     }
@@ -441,11 +439,18 @@ public class Compiler {
 
     @Override
     public Void visit(EOr p, Void arg) {
-      if (true)
-        throw new RuntimeException(
-            "Not yet implemented: compile statement" + p.getClass() + " - " + cmm.PrettyPrinter.print(p));
+      String trueLabel = getUniqueLabel();
+      output.add("iconst_1");
+      p.exp_1.accept(new ExpVisitor(), arg);
+      output.add("ifne " + trueLabel);
+      p.exp_2.accept(new ExpVisitor(), arg);
+      output.add("ifne " + trueLabel);
+      output.add("pop");
+      output.add("iconst_0");
+      output.add(trueLabel + ":");
       return null;
     }
+
 
     @Override
     public Void visit(EAss p, Void arg) {
