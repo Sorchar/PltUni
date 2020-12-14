@@ -23,18 +23,17 @@
 .method public static niam()I
 .limit locals 101
 .limit stack 101
-	iconst_99
+	ldc 99
 	ireturn
 	iconst_2
 	invokestatic Runtime/printInt(I)V
 	iconst_1
 	invokestatic Runtime/printInt(I)V
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
+	invokestatic return_in_block_block/niam()I
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
@@ -42,6 +41,4 @@
 	invokestatic Runtime/printInt(I)V
 	iconst_4
 	invokestatic Runtime/printInt(I)V
-
 .end method
-

@@ -23,9 +23,9 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	iconst_56
+	ldc 56
 	istore 0
-	iconst_23
+	ldc 23
 	istore 1
 	iload 0
 	iload 1
@@ -39,12 +39,10 @@
 	iload 1
 	imul
 	invokestatic Runtime/printInt(I)V
-	iconst_45
+	ldc 45
 	iconst_2
 	idiv
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-

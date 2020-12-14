@@ -29,6 +29,4 @@
 	pop
 	iconst_0
 	ireturn
-
 .end method
-

@@ -23,15 +23,19 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	while1:
+	L0:
 	iconst_3
 	dconst_3.1
+	if_icmpeq L2
+	iconst_0
+	goto L3
+	L2:
 	iconst_1
-	if_icmpne done1
-	goto while1
-	done1:
+	L3:
+	iconst_1
+	if_icmpne L1
+	goto L0
+	L1:
 	iconst_0
 	ireturn
-
 .end method
-

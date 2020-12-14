@@ -29,19 +29,19 @@
 	istore 1
 	iconst_1
 	istore 2
-	while1:
+	L0:
 	iload 2
 	iload 0
 	iconst_1
 	iadd
-	if_icmplt true1
+	if_icmplt L2
 	iconst_0
-	goto false1
-	true1:
+	goto L3
+	L2:
 	iconst_1
-	false1:
+	L3:
 	iconst_1
-	if_icmpne done1
+	if_icmpne L1
 	iload 2
 	iload 1
 	imul
@@ -54,12 +54,10 @@
 	istore 2
 	iload 2
 	pop
-	goto while1
-	done1:
+	goto L0
+	L1:
 	iload 1
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-

@@ -26,14 +26,10 @@
 	iconst_0
 	invokestatic Runtime/printInt(I)V
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
 	iconst_0
 	ireturn
-
 .end method
-

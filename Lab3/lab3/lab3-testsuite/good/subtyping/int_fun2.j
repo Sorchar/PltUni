@@ -27,17 +27,14 @@
 	iload 1
 	idiv
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
 	iconst_1
 	iconst_2
+	invokestatic int_fun2/have_an_int()
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn
-
 .end method
-

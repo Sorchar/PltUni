@@ -31,17 +31,17 @@
 	istore 2
 	iload 2
 	pop
-	while1:
+	L0:
 	iload 2
 	iconst_0
-	if_icmpgt true1
+	if_icmpgt L2
 	iconst_0
-	goto false1:
-	true1:
+	goto L3
+	L2:
 	iconst_1
-	false1:
+	L3:
 	iconst_1
-	if_icmpne done1
+	if_icmpne L1
 	iload 1
 	iload 2
 	imul
@@ -54,20 +54,17 @@
 	istore 2
 	iload 2
 	pop
-	goto while1
-	done1:
+	goto L0
+	L1:
 	iload 1
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
 	iconst_5
+	invokestatic small_program_fac/fac(I)I
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-

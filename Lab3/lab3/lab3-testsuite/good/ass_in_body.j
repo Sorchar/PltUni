@@ -23,22 +23,19 @@
 .method public static f(I)I
 .limit locals 101
 .limit stack 101
-	iconst_7
+	ldc 7
 	istore 0
 	iload 0
 	pop
 	iload 0
 	ireturn
-
 .end method
-
 .method public static main()I
 .limit locals 101
 .limit stack 101
 	iconst_5
+	invokestatic ass_in_body/f(I)I
 	invokestatic Runtime/printInt(I)V
 	iconst_0
 	ireturn
-
 .end method
-
