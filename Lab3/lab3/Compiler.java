@@ -215,16 +215,17 @@ public class Compiler {
     public Void visit(cmm.Absyn.SInit p, Void arg) {
       addVar(p.id_, p.type_);
       p.exp_.accept(new ExpVisitor(), arg);
-      output.add("istore " + getVariable(p.id_).getAddress());
+      String type = getTypeId(p.exp_.getType());
+      output.add(type + "store " + getVariable(p.id_).getAddress());
       return null;
     }
 
     public Void visit(cmm.Absyn.SReturn p, Void arg) {
       p.exp_.accept(new ExpVisitor(), null);
 
-      if (returnType instanceof Type_void) {
-        // output.add("return");
-      } else {
+      if (returnType instanceof Type_double) {
+        output.add("dreturn");
+      } else if (returnType instanceof Type_int || returnType instanceof Type_bool) {
         output.add("ireturn");
       }
       return null;
@@ -310,7 +311,9 @@ public class Compiler {
     @Override
     public Void visit(EId p, Void arg) {
       var variableLocation = getVariable(p.id_).getAddress();
-      output.add("iload " + variableLocation);
+      String type = getTypeId(p.getType());
+
+      output.add(type + "load " + variableLocation);
       return null;
     }
 
@@ -413,7 +416,12 @@ public class Compiler {
       p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
 
-      if (op instanceof OLt) {
+      ///////////////////////////////////////////////////////// WIP ///////////////////////////////////////////////////////
+      if (p.exp_1.getType() instanceof Type_double) {
+        output.add("dcmpl");
+      }
+      ///////////////////////////////////////////////////////// WIP ///////////////////////////////////////////////////////
+      else if (op instanceof OLt) {
         output.add("if_icmplt " + trueLabel);
       } else if (op instanceof OGt) {
         output.add("if_icmpgt " + trueLabel);
@@ -467,8 +475,10 @@ public class Compiler {
     public Void visit(EAss p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
       p.exp_.accept(new ExpVisitor(), arg);
-      output.add("istore " + variableLocation);
-      output.add("iload " + variableLocation);
+      String type = getTypeId(p.getType());
+
+      output.add(type + "store " + variableLocation);
+      output.add(type + "load " + variableLocation);
       return null;
     }
 
@@ -532,6 +542,16 @@ public class Compiler {
     String label = "L" + labelCounter;
     labelCounter++;
     return label;
+  }
+
+  public String getTypeId(Type type) {
+    String typeId = "";
+    if (type instanceof Type_double) {
+      typeId = "d";
+    } else {
+      typeId = "i";
+    }
+    return typeId;
   }
 
   // TODO add id func?
