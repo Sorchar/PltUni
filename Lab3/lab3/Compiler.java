@@ -202,7 +202,11 @@ public class Compiler {
     public Void visit(cmm.Absyn.SExp p, Void arg) {
       p.exp_.accept(new ExpVisitor(), arg);
       if (output.getLast().charAt(output.getLast().length() - 1) != 'V') {
-        output.add("pop");
+        if (p.exp_.getType() instanceof Type_double){
+          output.add("pop2");
+        } else {
+          output.add("pop");
+        }
       }
       return null;
     }
@@ -351,16 +355,30 @@ public class Compiler {
     public Void visit(EPost p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
       String operation = "";
-      if (p.incdecop_ instanceof ODec) {
-        operation = "isub";
-      } else if (p.incdecop_ instanceof OInc) {
-        operation = "iadd";
+
+      if (p.getType() instanceof Type_double){
+        if (p.incdecop_ instanceof ODec) {
+          operation = "dsub";
+        } else if (p.incdecop_ instanceof OInc) {
+          operation = "dadd";
+        }
+        output.add("dload " + variableLocation);
+        output.add("dload " + variableLocation);
+        output.add("dconst_1");
+        output.add(operation);
+        output.add("dstore " + variableLocation);
+      } else {
+        if (p.incdecop_ instanceof ODec) {
+          operation = "isub";
+        } else if (p.incdecop_ instanceof OInc) {
+          operation = "iadd";
+        }
+        output.add("iload " + variableLocation);
+        output.add("iload " + variableLocation);
+        output.add("iconst_1");
+        output.add(operation);
+        output.add("istore " + variableLocation);
       }
-      output.add("iload " + variableLocation);
-      output.add("iload " + variableLocation);
-      output.add("iconst_1");
-      output.add(operation);
-      output.add("istore " + variableLocation);
       return null;
     }
 
@@ -369,17 +387,33 @@ public class Compiler {
     public Void visit(EPre p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
       String operation = "";
-      if (p.incdecop_ instanceof ODec) {
-        operation = "isub";
-      } else if (p.incdecop_ instanceof OInc) {
-        operation = "iadd";
+      
+      if(p.getType() instanceof Type_double){
+        if (p.incdecop_ instanceof ODec) {
+          operation = "dsub";
+        } else if (p.incdecop_ instanceof OInc) {
+          operation = "dadd";
+        }
+  
+        output.add("dload " + variableLocation);
+        output.add("dconst_1");
+        output.add(operation);
+        output.add("dstore " + variableLocation);
+        output.add("dload " + variableLocation);
+      } else {
+        if (p.incdecop_ instanceof ODec) {
+          operation = "isub";
+        } else if (p.incdecop_ instanceof OInc) {
+          operation = "iadd";
+        }
+  
+        output.add("iload " + variableLocation);
+        output.add("iconst_1");
+        output.add(operation);
+        output.add("istore " + variableLocation);
+        output.add("iload " + variableLocation);
       }
 
-      output.add("iload " + variableLocation);
-      output.add("iconst_1");
-      output.add(operation);
-      output.add("istore " + variableLocation);
-      output.add("iload " + variableLocation);
       return null;
     }
 
@@ -388,10 +422,11 @@ public class Compiler {
       p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
       var operator = p.mulop_;
+      String type = getTypeId(p.getType());
       if (operator instanceof OTimes)
-        output.add("imul");
+        output.add(type + "mul");
       else if (operator instanceof ODiv)
-        output.add("idiv");
+        output.add(type + "div");
       return null;
     }
 
@@ -400,10 +435,11 @@ public class Compiler {
       p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
       var operator = p.addop_;
+      String type = getTypeId(p.getType());
       if (operator instanceof OPlus)
-        output.add("iadd");
+        output.add(type + "add");
       else if (operator instanceof OMinus)
-        output.add("isub");
+        output.add(type + "sub");
 
       return null;
     }
@@ -416,11 +452,13 @@ public class Compiler {
       p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
 
-      ///////////////////////////////////////////////////////// WIP ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////// WIP
+      ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
       if (p.exp_1.getType() instanceof Type_double) {
         output.add("dcmpl");
       }
-      ///////////////////////////////////////////////////////// WIP ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////// WIP
+      ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
       else if (op instanceof OLt) {
         output.add("if_icmplt " + trueLabel);
       } else if (op instanceof OGt) {
@@ -487,7 +525,11 @@ public class Compiler {
   int addVar(String x, Type t) {
     int counter = variableCounter;
     context.get(0).put(x, new ContextEntry(t, counter));
-    variableCounter++;
+    if (t instanceof Type_double){
+      variableCounter += 2;
+    } else {
+      variableCounter += 1;
+    }
     if (variableCounter > limitLocals) {
       limitLocals = variableCounter;
     }
