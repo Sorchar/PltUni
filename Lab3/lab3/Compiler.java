@@ -190,7 +190,7 @@ public class Compiler {
 
   public class ArgVisitor implements Arg.Visitor<Void, Void> {
     public Void visit(cmm.Absyn.ADecl p, Void arg) {
-      addVar(p.id_, p.type_); // computes next free adress for ID and stores adress/type
+      addVar(p.id_, p.type_); 
       return null;
     }
   }
@@ -202,7 +202,7 @@ public class Compiler {
     public Void visit(cmm.Absyn.SExp p, Void arg) {
       p.exp_.accept(new ExpVisitor(), arg);
       if (output.getLast().charAt(output.getLast().length() - 1) != 'V') {
-        if (p.exp_.getType() instanceof Type_double){
+        if (p.exp_.getType() instanceof Type_double) {
           output.add("pop2");
         } else {
           output.add("pop");
@@ -219,7 +219,10 @@ public class Compiler {
     public Void visit(cmm.Absyn.SInit p, Void arg) {
       addVar(p.id_, p.type_);
       p.exp_.accept(new ExpVisitor(), arg);
-      String type = getTypeId(p.exp_.getType());
+      if(p.type_.equals(DOUBLE)){
+        castToDouble();
+      }
+      String type = getTypeId(p.type_);
       output.add(type + "store " + getVariable(p.id_).getAddress());
       return null;
     }
@@ -228,6 +231,7 @@ public class Compiler {
       p.exp_.accept(new ExpVisitor(), null);
 
       if (returnType instanceof Type_double) {
+        castToDouble();
         output.add("dreturn");
       } else if (returnType instanceof Type_int || returnType instanceof Type_bool) {
         output.add("ireturn");
@@ -338,11 +342,15 @@ public class Compiler {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
         }
+        castToDouble();
         output.add("invokestatic Runtime/printDouble(D)V");
 
       } else {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
+          if (p.getType().equals(DOUBLE)){
+            castToDouble();
+          }
         }
         output.add("invokestatic " + className + "/" + p.id_ + signature.get(p.id_));
       }
@@ -356,7 +364,7 @@ public class Compiler {
       Integer variableLocation = getVariable(p.id_).getAddress();
       String operation = "";
 
-      if (p.getType() instanceof Type_double){
+      if (p.getType() instanceof Type_double) {
         if (p.incdecop_ instanceof ODec) {
           operation = "dsub";
         } else if (p.incdecop_ instanceof OInc) {
@@ -387,14 +395,14 @@ public class Compiler {
     public Void visit(EPre p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
       String operation = "";
-      
-      if(p.getType() instanceof Type_double){
+
+      if (p.getType() instanceof Type_double) {
         if (p.incdecop_ instanceof ODec) {
           operation = "dsub";
         } else if (p.incdecop_ instanceof OInc) {
           operation = "dadd";
         }
-  
+
         output.add("dload " + variableLocation);
         output.add("dconst_1");
         output.add(operation);
@@ -406,7 +414,7 @@ public class Compiler {
         } else if (p.incdecop_ instanceof OInc) {
           operation = "iadd";
         }
-  
+
         output.add("iload " + variableLocation);
         output.add("iconst_1");
         output.add(operation);
@@ -419,8 +427,15 @@ public class Compiler {
 
     @Override
     public Void visit(EMul p, Void arg) {
+      var superType = getSuperType(p.exp_1.getType(), p.exp_2.getType());
       p.exp_1.accept(new ExpVisitor(), arg);
+      if (superType.equals(DOUBLE) && p.exp_1.getType().equals(INT)) {
+        output.add("i2d");
+      }
       p.exp_2.accept(new ExpVisitor(), arg);
+      if (superType.equals(DOUBLE) && p.exp_2.getType().equals(INT)) {
+        output.add("i2d");
+      }
       var operator = p.mulop_;
       String type = getTypeId(p.getType());
       if (operator instanceof OTimes)
@@ -432,8 +447,15 @@ public class Compiler {
 
     @Override
     public Void visit(EAdd p, Void arg) {
+      var superType = getSuperType(p.exp_1.getType(), p.exp_2.getType());
       p.exp_1.accept(new ExpVisitor(), arg);
+      if (superType.equals(DOUBLE) && p.exp_1.getType().equals(INT)) {
+        output.add("i2d");
+      }
       p.exp_2.accept(new ExpVisitor(), arg);
+      if (superType.equals(DOUBLE) && p.exp_2.getType().equals(INT)) {
+        output.add("i2d");
+      }
       var operator = p.addop_;
       String type = getTypeId(p.getType());
       if (operator instanceof OPlus)
@@ -513,8 +535,10 @@ public class Compiler {
     public Void visit(EAss p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
       p.exp_.accept(new ExpVisitor(), arg);
+      if (p.getType().equals(DOUBLE)){
+        castToDouble();
+      }
       String type = getTypeId(p.getType());
-
       output.add(type + "store " + variableLocation);
       output.add(type + "load " + variableLocation);
       return null;
@@ -525,7 +549,7 @@ public class Compiler {
   int addVar(String x, Type t) {
     int counter = variableCounter;
     context.get(0).put(x, new ContextEntry(t, counter));
-    if (t instanceof Type_double){
+    if (t instanceof Type_double) {
       variableCounter += 2;
     } else {
       variableCounter += 1;
@@ -564,6 +588,8 @@ public class Compiler {
         type = type + "Z";
       } else if (agrument.type_ instanceof Type_void) {
         type = type + "V";
+      }else if (agrument.type_ instanceof Type_double) {
+        type = type + "D";
       }
 
     }
@@ -575,6 +601,8 @@ public class Compiler {
       type = type + "Z";
     } else if (function.type_ instanceof Type_void) {
       type = type + "V";
+    }else if (function.type_ instanceof Type_double) {
+      type = type + "D";
     }
     signature.put(function.id_, type);
 
@@ -596,6 +624,17 @@ public class Compiler {
     return typeId;
   }
 
+  public Type getSuperType(Type t1, Type t2) {
+    return t1.equals(DOUBLE) ? t1 : t2;
+  }
+
+  public void castToDouble() {
+    var lastLine = output.getLast();
+
+    if (lastLine.startsWith("iconst") || (!lastLine.startsWith("d") && lastLine.substring(lastLine.lastIndexOf(" ") + 1).matches("\\d+"))) {
+      output.add("i2d");
+    }
+  }
   // TODO add id func?
   // stack funcs
   // adjust stack visitor?
