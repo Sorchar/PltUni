@@ -24,11 +24,12 @@
 .limit locals 101
 .limit stack 101
 	iconst_2
-	dconst_3.14
-	imul
-	istore 0
-	iload 0
-	pop
+	i2d
+	ldc2_w 3.14
+	dmul
+	dstore 0
+	dload 0
+	pop2
 	iconst_0
 	ireturn
 nop

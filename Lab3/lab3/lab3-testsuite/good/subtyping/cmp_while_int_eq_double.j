@@ -25,7 +25,7 @@
 .limit stack 101
 	L0:
 	iconst_3
-	dconst_3.1
+	ldc2_w 3.1
 	if_icmpeq L2
 	iconst_0
 	goto L3

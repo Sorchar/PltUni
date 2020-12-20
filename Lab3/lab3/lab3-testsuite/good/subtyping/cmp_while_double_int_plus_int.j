@@ -24,7 +24,7 @@
 .limit locals 101
 .limit stack 101
 	L0:
-	dconst_5.324
+	ldc2_w 5.324
 	iconst_1
 	ldc 43
 	iadd

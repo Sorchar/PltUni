@@ -20,21 +20,23 @@
 
 .end method
 
-.method public static have_an_int()
+.method public static have_an_int(DD)D
 .limit locals 101
 .limit stack 101
-	iload 0
-	iload 1
-	idiv
-	ireturn
+	dload 0
+	dload 2
+	ddiv
+	dreturn
 nop
 .end method
 .method public static main()I
 .limit locals 101
 .limit stack 101
 	iconst_1
+	i2d
 	iconst_2
-	invokestatic int_fun2/have_an_int()
+	i2d
+	invokestatic int_fun2/have_an_int(DD)D
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn

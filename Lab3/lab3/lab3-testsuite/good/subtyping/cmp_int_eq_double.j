@@ -24,7 +24,7 @@
 .limit locals 101
 .limit stack 101
 	iconst_1
-	dconst_1.1
+	ldc2_w 1.1
 	if_icmpeq L0
 	iconst_0
 	goto L1

@@ -23,9 +23,10 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	dconst_1.0
+	ldc2_w 1.0
 	iconst_2
-	idiv
+	i2d
+	ddiv
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn

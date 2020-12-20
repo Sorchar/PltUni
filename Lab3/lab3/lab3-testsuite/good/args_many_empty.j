@@ -23,6 +23,7 @@
 .method public static foo(IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII)V
 .limit locals 101
 .limit stack 101
+return
 nop
 .end method
 .method public static main()I

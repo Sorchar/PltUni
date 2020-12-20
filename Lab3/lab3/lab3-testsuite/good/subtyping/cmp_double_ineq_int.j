@@ -23,7 +23,7 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	dconst_1.1
+	ldc2_w 1.1
 	iconst_1
 	if_icmpne L0
 	iconst_0

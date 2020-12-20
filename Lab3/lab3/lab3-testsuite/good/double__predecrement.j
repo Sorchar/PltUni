@@ -23,23 +23,23 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	dconst_22.5
-	istore 0
-	dconst_23.5
-	istore 1
-	iload 0
-	iconst_1
-	isub
-	istore 0
-	iload 0
-	pop
-	iload 0
+	ldc2_w 22.5
+	dstore 0
+	ldc2_w 23.5
+	dstore 2
+	dload 0
+	dconst_1
+	dsub
+	dstore 0
+	dload 0
+	pop2
+	dload 0
 	invokestatic Runtime/printDouble(D)V
-	iload 1
-	iconst_1
-	isub
-	istore 1
-	iload 1
+	dload 2
+	dconst_1
+	dsub
+	dstore 2
+	dload 2
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn

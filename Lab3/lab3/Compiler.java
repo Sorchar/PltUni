@@ -252,6 +252,7 @@ public class Compiler {
       popBlock();
       output.add("goto " + trueLabel);
       output.add(falseLabel + ":");
+
       return null;
     }
 
@@ -473,32 +474,50 @@ public class Compiler {
       var op = p.cmpop_;
       p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
-
+      // might use convert to double if one is int
       ///////////////////////////////////////////////////////// WIP
       ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
-      if (p.exp_1.getType() instanceof Type_double) {
-        output.add("dcmpl");
-      }
+        if (p.exp_1.getType() instanceof Type_double && p.exp_2.getType() instanceof Type_double) {
+          if (op instanceof OLt) {
+            output.add("dcmpl ");
+            output.add("iflt " + trueLabel);
+          } else if (op instanceof OGt) {
+            output.add("dcmpg ");
+            output.add("ifgt " + trueLabel);
+          } else if (op instanceof OLtEq) {
+            output.add("dcmpl");
+            output.add("ifle " + trueLabel);
+          } else if (op instanceof OGtEq) {
+            output.add("dcmpg");
+            output.add("ifge " + trueLabel);
+          } else if (op instanceof OEq) {
+            output.add("dcmpl");
+            output.add("ifeq " + trueLabel);
+          } else if (op instanceof ONEq) {
+            output.add("dcmpl");
+            output.add("ifne " + trueLabel);
+          }
+        }
       ///////////////////////////////////////////////////////// WIP
       ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
-      else if (op instanceof OLt) {
-        output.add("if_icmplt " + trueLabel);
-      } else if (op instanceof OGt) {
-        output.add("if_icmpgt " + trueLabel);
-      } else if (op instanceof OLtEq) {
-        output.add("if_icmple " + trueLabel);
-      } else if (op instanceof OGtEq) {
-        output.add("if_icmpge " + trueLabel);
-      } else if (op instanceof OEq) {
-        output.add("if_icmpeq " + trueLabel);
-      } else if (op instanceof ONEq) {
-        output.add("if_icmpne " + trueLabel);
-      }
-      output.add("iconst_0");
-      output.add("goto " + falseLabel);
-      output.add(trueLabel + ":");
-      output.add("iconst_1");
-      output.add(falseLabel + ":");
+       else if (op instanceof OLt) {
+          output.add("if_icmplt " + trueLabel);
+        } else if (op instanceof OGt) {
+          output.add("if_icmpgt " + trueLabel);
+        } else if (op instanceof OLtEq) {
+          output.add("if_icmple " + trueLabel);
+        } else if (op instanceof OGtEq) {
+          output.add("if_icmpge " + trueLabel);
+        } else if (op instanceof OEq) {
+          output.add("if_icmpeq " + trueLabel);
+        } else if (op instanceof ONEq) {
+          output.add("if_icmpne " + trueLabel);
+        }
+        output.add("iconst_0");
+        output.add("goto " + falseLabel);
+        output.add(trueLabel + ":");
+        output.add("iconst_1");
+        output.add(falseLabel + ":");
       return null;
     }
 

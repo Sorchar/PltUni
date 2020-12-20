@@ -23,12 +23,13 @@
 .method public static main()I
 .limit locals 101
 .limit stack 101
-	dconst_1.1
+	ldc2_w 1.1
 	iconst_1
-	imul
-	istore 0
-	iload 0
-	pop
+	i2d
+	dmul
+	dstore 0
+	dload 0
+	pop2
 	iconst_0
 	ireturn
 nop

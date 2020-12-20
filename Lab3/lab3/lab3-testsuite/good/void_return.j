@@ -25,7 +25,7 @@
 .limit stack 101
 	iconst_0
 	invokestatic Runtime/printInt(I)V
-	ireturn
+return
 nop
 .end method
 .method public static main()I

@@ -24,14 +24,16 @@
 .limit locals 101
 .limit stack 101
 	iconst_1
-	istore 0
-	iload 0
+	i2d
+	dstore 0
+	dload 0
 	iconst_2
-	idiv
-	istore 0
-	iload 0
-	pop
-	iload 0
+	i2d
+	ddiv
+	dstore 0
+	dload 0
+	pop2
+	dload 0
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn

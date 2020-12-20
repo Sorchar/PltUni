@@ -24,6 +24,7 @@
 .limit locals 101
 .limit stack 101
 	ldc 99
+	i2d
 	invokestatic Runtime/printDouble(D)V
 	iconst_0
 	ireturn
