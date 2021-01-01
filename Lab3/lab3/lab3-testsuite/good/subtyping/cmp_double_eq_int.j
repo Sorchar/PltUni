@@ -25,7 +25,7 @@
 .limit stack 101
 	ldc2_w 1.1
 	iconst_1
-	if_icmpeq L0
+	i2d
 	iconst_0
 	goto L1
 	L0:

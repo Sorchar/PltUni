@@ -28,14 +28,13 @@
 	iconst_1
 	ldc 43
 	iadd
-	if_icmpge L2
 	iconst_0
 	goto L3
 	L2:
 	iconst_1
 	L3:
-	iconst_1
-	if_icmpne L1
+	iconst_0
+	if_icmpeq L1
 	goto L0
 	L1:
 	iconst_0

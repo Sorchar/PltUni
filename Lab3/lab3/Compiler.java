@@ -3,6 +3,15 @@ import cmm.Absyn.*;
 import cmm.PrettyPrinter;
 
 public class Compiler {
+  public class FunType {
+    final Type returnType;
+    final ListArg args;
+
+    public FunType(Type t, ListArg l) {
+      returnType = t;
+      args = l;
+    }
+  }
   // The output of the compiler is a list of strings.
   LinkedList<String> output;
 
@@ -48,7 +57,7 @@ public class Compiler {
 
   }
 
-  public class Fun {
+  /*public class Fun {
     public String id;
     public TypeChecker.FunType funType; // fix funtype part i guess
 
@@ -57,7 +66,7 @@ public class Compiler {
       this.funType = funType; // fix
     }
     // add to jvm?
-  }
+  }*/
 
   private class FuncVisitor implements Def.Visitor<Void, Void> {
     public Void visit(DFun fun, Void arg) {
@@ -166,7 +175,7 @@ public class Compiler {
       output = savedOutput;
 
       // fun / funtype missing?
-      // Fun f = new Fun(p.id_, new FunType(p.type_, p.listarg_));
+      // FunType f = new FunType(p.type_,p.listarg_);
       // output.add("\n.method public static " + f.toJVM() + "\n"); // needs fun f to
       // work
       output.add(".method public static " + p.id_ + signature.get(p.id_));
@@ -229,30 +238,37 @@ public class Compiler {
 
     public Void visit(cmm.Absyn.SReturn p, Void arg) {
       p.exp_.accept(new ExpVisitor(), null);
-
-      if (returnType instanceof Type_double) {
+        if (returnType instanceof Type_double) {
         castToDouble();
         output.add("dreturn");
-      } else if (returnType instanceof Type_int || returnType instanceof Type_bool) {
+        }
+        else if (returnType instanceof Type_int || returnType instanceof Type_bool) {
         output.add("ireturn");
       }
       return null;
     }
 
     public Void visit(cmm.Absyn.SWhile p, Void arg) {
+      // incosistent stack height x != 0
       String trueLabel = getUniqueLabel();
       String falseLabel = getUniqueLabel();
-
       output.add(trueLabel + ":");
       p.exp_.accept(new ExpVisitor(), arg);
-      output.add("iconst_1");
-      output.add("if_icmpne " + falseLabel);
+      output.add("iconst_0");
+      if(p.exp_.getType() instanceof Type_double){
+        output.add("dcmpg");
+        output.add("ifeq " + falseLabel);
+      }else if(p.exp_.getType() instanceof Type_int) {
+        output.add("if_icmpeq " + falseLabel);
+      }
+      else if(p.exp_.getType() instanceof Type_bool){
+        output.add("if_icmpeq " + falseLabel);
+      }
       pushBlock();
       p.stm_.accept(new StmVisitor(), arg);
       popBlock();
       output.add("goto " + trueLabel);
       output.add(falseLabel + ":");
-
       return null;
     }
 
@@ -469,38 +485,65 @@ public class Compiler {
 
     @Override
     public Void visit(ECmp p, Void arg) {
+      var superType = getSuperType(p.exp_1.getType(), p.exp_2.getType());
+
       String trueLabel = getUniqueLabel();
       String falseLabel = getUniqueLabel();
       var op = p.cmpop_;
+      //p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_1.accept(new ExpVisitor(), arg);
+
+      if (superType.equals(DOUBLE) && p.exp_1.getType() instanceof Type_int) {
+        castToDouble();
+      }
+      //p.exp_2.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
-      // might use convert to double if one is int
+
+      if (superType.equals(DOUBLE) && p.exp_2.getType() instanceof Type_int) {
+        castToDouble();
+      }
       ///////////////////////////////////////////////////////// WIP
       ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
         if (p.exp_1.getType() instanceof Type_double && p.exp_2.getType() instanceof Type_double) {
           if (op instanceof OLt) {
-            output.add("dcmpl ");
-            output.add("iflt " + trueLabel);
+              output.add("dcmpl ");
+              output.add("iflt " + trueLabel);
           } else if (op instanceof OGt) {
-            output.add("dcmpg ");
-            output.add("ifgt " + trueLabel);
+              output.add("dcmpg ");
+              output.add("ifgt " + trueLabel);
           } else if (op instanceof OLtEq) {
-            output.add("dcmpl");
-            output.add("ifle " + trueLabel);
+              output.add("dcmpl");
+              output.add("ifle " + trueLabel);
           } else if (op instanceof OGtEq) {
-            output.add("dcmpg");
-            output.add("ifge " + trueLabel);
+              output.add("dcmpg");
+              output.add("ifge " + trueLabel);
           } else if (op instanceof OEq) {
-            output.add("dcmpl");
-            output.add("ifeq " + trueLabel);
+              output.add("dcmpg");
+              output.add("ifeq " + trueLabel);
           } else if (op instanceof ONEq) {
-            output.add("dcmpl");
-            output.add("ifne " + trueLabel);
+              output.add("dcmpg");
+              output.add("ifne " + trueLabel);
           }
         }
       ///////////////////////////////////////////////////////// WIP
       ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
-       else if (op instanceof OLt) {
+      if (p.exp_1.getType() instanceof Type_int && p.exp_2.getType() instanceof Type_int) {
+         if (op instanceof OLt) {
+            output.add("if_icmplt " + trueLabel);
+        } else if (op instanceof OGt) {
+            output.add("if_icmpgt " + trueLabel);
+        } else if (op instanceof OLtEq) {
+            output.add("if_icmple " + trueLabel);
+        } else if (op instanceof OGtEq) {
+            output.add("if_icmpge " + trueLabel);
+        } else if (op instanceof OEq) {
+            output.add("if_icmpeq " + trueLabel);
+        } else if (op instanceof ONEq) {
+            output.add("if_icmpne " + trueLabel);
+        }
+      }
+      if (p.exp_1.getType() instanceof Type_bool && p.exp_2.getType() instanceof Type_bool) {
+        if (op instanceof OLt) {
           output.add("if_icmplt " + trueLabel);
         } else if (op instanceof OGt) {
           output.add("if_icmpgt " + trueLabel);
@@ -513,6 +556,8 @@ public class Compiler {
         } else if (op instanceof ONEq) {
           output.add("if_icmpne " + trueLabel);
         }
+      }
+
         output.add("iconst_0");
         output.add("goto " + falseLabel);
         output.add(trueLabel + ":");
@@ -524,7 +569,6 @@ public class Compiler {
     @Override
     public Void visit(EAnd p, Void arg) { // update with labels like cmp
       String falseLabel = getUniqueLabel();
-      // String trueLabel = getUniqueLabel();
       output.add("iconst_0");
       p.exp_1.accept(new ExpVisitor(), arg);
       output.add("ifeq " + falseLabel);

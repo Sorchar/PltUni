@@ -38,8 +38,8 @@
 	L2:
 	iconst_1
 	L3:
-	iconst_1
-	if_icmpne L1
+	iconst_0
+	if_icmpeq L1
 	iload 0
 	iload 2
 	iadd
