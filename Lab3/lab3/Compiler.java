@@ -12,6 +12,7 @@ public class Compiler {
       args = l;
     }
   }
+
   // The output of the compiler is a list of strings.
   LinkedList<String> output;
 
@@ -57,16 +58,13 @@ public class Compiler {
 
   }
 
-  /*public class Fun {
-    public String id;
-    public TypeChecker.FunType funType; // fix funtype part i guess
-
-    public Fun(String id, TypeChecker.FunType FunType) {
-      this.id = id;
-      this.funType = funType; // fix
-    }
-    // add to jvm?
-  }*/
+  /*
+   * public class Fun { public String id; public TypeChecker.FunType funType; //
+   * fix funtype part i guess
+   * 
+   * public Fun(String id, TypeChecker.FunType FunType) { this.id = id;
+   * this.funType = funType; // fix } // add to jvm? }
+   */
 
   private class FuncVisitor implements Def.Visitor<Void, Void> {
     public Void visit(DFun fun, Void arg) {
@@ -199,7 +197,7 @@ public class Compiler {
 
   public class ArgVisitor implements Arg.Visitor<Void, Void> {
     public Void visit(cmm.Absyn.ADecl p, Void arg) {
-      addVar(p.id_, p.type_); 
+      addVar(p.id_, p.type_);
       return null;
     }
   }
@@ -228,7 +226,7 @@ public class Compiler {
     public Void visit(cmm.Absyn.SInit p, Void arg) {
       addVar(p.id_, p.type_);
       p.exp_.accept(new ExpVisitor(), arg);
-      if(p.type_.equals(DOUBLE)){
+      if (p.type_.equals(DOUBLE)) {
         castToDouble();
       }
       String type = getTypeId(p.type_);
@@ -238,11 +236,10 @@ public class Compiler {
 
     public Void visit(cmm.Absyn.SReturn p, Void arg) {
       p.exp_.accept(new ExpVisitor(), null);
-        if (returnType instanceof Type_double) {
+      if (returnType instanceof Type_double) {
         castToDouble();
         output.add("dreturn");
-        }
-        else if (returnType instanceof Type_int || returnType instanceof Type_bool) {
+      } else if (returnType instanceof Type_int || returnType instanceof Type_bool) {
         output.add("ireturn");
       }
       return null;
@@ -255,15 +252,7 @@ public class Compiler {
       output.add(trueLabel + ":");
       p.exp_.accept(new ExpVisitor(), arg);
       output.add("iconst_0");
-      if(p.exp_.getType() instanceof Type_double){
-        output.add("dcmpg");
-        output.add("ifeq " + falseLabel);
-      }else if(p.exp_.getType() instanceof Type_int) {
-        output.add("if_icmpeq " + falseLabel);
-      }
-      else if(p.exp_.getType() instanceof Type_bool){
-        output.add("if_icmpeq " + falseLabel);
-      }
+      output.add("if_icmpeq " + falseLabel);
       pushBlock();
       p.stm_.accept(new StmVisitor(), arg);
       popBlock();
@@ -365,7 +354,7 @@ public class Compiler {
       } else {
         for (Exp exp : p.listexp_) {
           exp.accept(new ExpVisitor(), arg);
-          if (p.getType().equals(DOUBLE)){
+          if (p.getType().equals(DOUBLE) && !signature.get(p.id_).contains("(I)")) {
             castToDouble();
           }
         }
@@ -490,56 +479,59 @@ public class Compiler {
       String trueLabel = getUniqueLabel();
       String falseLabel = getUniqueLabel();
       var op = p.cmpop_;
-      //p.exp_1.accept(new ExpVisitor(), arg);
+      // p.exp_1.accept(new ExpVisitor(), arg);
       p.exp_1.accept(new ExpVisitor(), arg);
 
       if (superType.equals(DOUBLE) && p.exp_1.getType() instanceof Type_int) {
         castToDouble();
+        p.exp_1.setType(DOUBLE);
       }
-      //p.exp_2.accept(new ExpVisitor(), arg);
+      // p.exp_2.accept(new ExpVisitor(), arg);
       p.exp_2.accept(new ExpVisitor(), arg);
-
+      // System.out.println(p.exp_2.getType());
       if (superType.equals(DOUBLE) && p.exp_2.getType() instanceof Type_int) {
         castToDouble();
+        p.exp_2.setType(DOUBLE);
+
       }
       ///////////////////////////////////////////////////////// WIP
       ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
-        if (p.exp_1.getType() instanceof Type_double && p.exp_2.getType() instanceof Type_double) {
-          if (op instanceof OLt) {
-              output.add("dcmpl ");
-              output.add("iflt " + trueLabel);
-          } else if (op instanceof OGt) {
-              output.add("dcmpg ");
-              output.add("ifgt " + trueLabel);
-          } else if (op instanceof OLtEq) {
-              output.add("dcmpl");
-              output.add("ifle " + trueLabel);
-          } else if (op instanceof OGtEq) {
-              output.add("dcmpg");
-              output.add("ifge " + trueLabel);
-          } else if (op instanceof OEq) {
-              output.add("dcmpg");
-              output.add("ifeq " + trueLabel);
-          } else if (op instanceof ONEq) {
-              output.add("dcmpg");
-              output.add("ifne " + trueLabel);
-          }
+      if (p.exp_1.getType() instanceof Type_double && p.exp_2.getType() instanceof Type_double) {
+        if (op instanceof OLt) {
+          output.add("dcmpl ");
+          output.add("iflt " + trueLabel);
+        } else if (op instanceof OGt) {
+          output.add("dcmpg ");
+          output.add("ifgt " + trueLabel);
+        } else if (op instanceof OLtEq) {
+          output.add("dcmpl");
+          output.add("ifle " + trueLabel);
+        } else if (op instanceof OGtEq) {
+          output.add("dcmpg");
+          output.add("ifge " + trueLabel);
+        } else if (op instanceof OEq) {
+          output.add("dcmpg");
+          output.add("ifeq " + trueLabel);
+        } else if (op instanceof ONEq) {
+          output.add("dcmpg");
+          output.add("ifne " + trueLabel);
         }
+      }
       ///////////////////////////////////////////////////////// WIP
       ///////////////////////////////////////////////////////// ///////////////////////////////////////////////////////
       if (p.exp_1.getType() instanceof Type_int && p.exp_2.getType() instanceof Type_int) {
-         if (op instanceof OLt) {
-            output.add("if_icmplt " + trueLabel);
+        if (op instanceof OLt) {
+          output.add("if_icmplt " + trueLabel);
         } else if (op instanceof OGt) {
-            output.add("if_icmpgt " + trueLabel);
+          output.add("if_icmpgt " + trueLabel);
         } else if (op instanceof OLtEq) {
-            output.add("if_icmple " + trueLabel);
+          output.add("if_icmple " + trueLabel);
         } else if (op instanceof OGtEq) {
-            output.add("if_icmpge " + trueLabel);
+          output.add("if_icmpge " + trueLabel);
         } else if (op instanceof OEq) {
-            output.add("if_icmpeq " + trueLabel);
+          output.add("if_icmpeq " + trueLabel);
         } else if (op instanceof ONEq) {
-            output.add("if_icmpne " + trueLabel);
+          output.add("if_icmpne " + trueLabel);
         }
       }
       if (p.exp_1.getType() instanceof Type_bool && p.exp_2.getType() instanceof Type_bool) {
@@ -558,11 +550,11 @@ public class Compiler {
         }
       }
 
-        output.add("iconst_0");
-        output.add("goto " + falseLabel);
-        output.add(trueLabel + ":");
-        output.add("iconst_1");
-        output.add(falseLabel + ":");
+      output.add("iconst_0");
+      output.add("goto " + falseLabel);
+      output.add(trueLabel + ":");
+      output.add("iconst_1");
+      output.add(falseLabel + ":");
       return null;
     }
 
@@ -598,7 +590,7 @@ public class Compiler {
     public Void visit(EAss p, Void arg) {
       Integer variableLocation = getVariable(p.id_).getAddress();
       p.exp_.accept(new ExpVisitor(), arg);
-      if (p.getType().equals(DOUBLE)){
+      if (p.getType().equals(DOUBLE)) {
         castToDouble();
       }
       String type = getTypeId(p.getType());
@@ -651,7 +643,7 @@ public class Compiler {
         type = type + "Z";
       } else if (agrument.type_ instanceof Type_void) {
         type = type + "V";
-      }else if (agrument.type_ instanceof Type_double) {
+      } else if (agrument.type_ instanceof Type_double) {
         type = type + "D";
       }
 
@@ -664,7 +656,7 @@ public class Compiler {
       type = type + "Z";
     } else if (function.type_ instanceof Type_void) {
       type = type + "V";
-    }else if (function.type_ instanceof Type_double) {
+    } else if (function.type_ instanceof Type_double) {
       type = type + "D";
     }
     signature.put(function.id_, type);
@@ -693,8 +685,8 @@ public class Compiler {
 
   public void castToDouble() {
     var lastLine = output.getLast();
-
-    if (lastLine.startsWith("iconst") || (!lastLine.startsWith("d") && lastLine.substring(lastLine.lastIndexOf(" ") + 1).matches("\\d+"))) {
+    if ((lastLine.startsWith("i") && !lastLine.startsWith("invoke"))
+        || (!lastLine.startsWith("d") && lastLine.substring(lastLine.lastIndexOf(" ") + 1).matches("\\d+"))) {
       output.add("i2d");
     }
   }
