@@ -63,7 +63,7 @@ lab4.class : lab4.java Strategy.class Interpreter.class $(LBNF)/Test.class
 
 # Create parser source via bnfc (dependency $(LBNF).cf needs to be first).
 $(LBNF)/Yylex $(CUPFILE) $(LBNF)/Test.java : $(LBNF).cf
-	bnfc --java $<
+	bnfc --java --jflex $<
 
 # Create parser and move it to the correct location.
 $(LBNF)/parser.java $(LBNF)/sym.java : $(CUPFILE)
@@ -72,7 +72,7 @@ $(LBNF)/parser.java $(LBNF)/sym.java : $(CUPFILE)
 
 # Create lexer.
 $(LBNF)/Yylex.java : $(LBNF)/Yylex
-	$(java) JLex.Main $<
+	jflex $<
 
 # Compile lexer.
 $(LBNF)/Yylex.class : $(LBNF)/Yylex.java $(LBNF)/sym.class
