@@ -5,6 +5,7 @@ import fun.Absyn.*;
 public class Interpreter {
 
   final Strategy strategy;
+  final Map < String, Exp > signature = new HashMap<>();
 
   public Interpreter(Strategy strategy) {
     this.strategy = strategy;
@@ -35,9 +36,17 @@ public class Interpreter {
 
     @Override
     public Void visit(DDef p, Void arg) {
-      // TODO Auto-generated method stub
-      if (true) throw new RuntimeException("Not implemented: " + this.getClass());
-
+      // System.out.println(p.listident_);
+      // System.out.println(p.exp_);
+      // System.out.println(p.ident_);
+      // System.out.println("-------");
+      var exp = p.exp_;
+      Collections.reverse(p.listident_);
+      for (var argument : p.listident_){
+        exp = new EAbs(argument, exp);
+      }
+      signature.put(p.ident_, exp);
+      
       return null;
     }
 
@@ -47,9 +56,16 @@ public class Interpreter {
 
     @Override
     public Value visit(EVar p, Environment arg) {
-      // TODO Auto-generated method stub
-      if (true) throw new RuntimeException("Not implemented: " + this.getClass());
-      return null;
+      Value value = arg.lookup(p.ident_);
+      if (value != null){
+        return value;
+      }else {
+        Exp exp = signature.get(p.ident_);
+        if (exp != null) {
+          return exp.accept(new ExpVisitor(), arg);
+        }
+      }
+      throw new RuntimeException("Variable not found: " + p.ident_);
     }
 
     @Override
@@ -59,8 +75,12 @@ public class Interpreter {
 
     @Override
     public Value visit(EApp p, Environment arg) {
-      if (true) throw new RuntimeException("Not implemented: " + this.getClass());
-      return null;
+      Entry entry = new ValueEntry(new IntValue(0));
+      if (strategy == Strategy.CallByValue){
+        entry = new ValueEntry(p.exp_2.accept(new ExpVisitor(), arg));
+      }
+      return p.exp_1.accept(new ExpVisitor(), arg).apply(entry);
+
     }
 
     @Override
