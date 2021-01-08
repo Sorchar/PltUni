@@ -36,6 +36,8 @@ public class Interpreter {
     @Override
     public Void visit(DDef p, Void arg) {
       // TODO Auto-generated method stub
+      if (true) throw new RuntimeException("Not implemented: " + this.getClass());
+
       return null;
     }
 
@@ -46,17 +48,18 @@ public class Interpreter {
     @Override
     public Value visit(EVar p, Environment arg) {
       // TODO Auto-generated method stub
+      if (true) throw new RuntimeException("Not implemented: " + this.getClass());
       return null;
     }
 
     @Override
     public Value visit(EInt p, Environment arg) {
-      return new intValue(p.integer_);
+      return new IntValue(p.integer_);
     }
 
     @Override
     public Value visit(EApp p, Environment arg) {
-      // TODO Auto-generated method stub
+      if (true) throw new RuntimeException("Not implemented: " + this.getClass());
       return null;
     }
 
@@ -64,34 +67,40 @@ public class Interpreter {
     public Value visit(EAdd p, Environment arg) {
       Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
       Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
-      return new intValue(value1.intValue() + value2.intValue());
+      return new IntValue(value1.intValue() + value2.intValue());
     }
 
     @Override
     public Value visit(ESub p, Environment arg) {
       Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
       Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
-      return new intValue(value1.intValue() - value2.intValue());    }
+      return new IntValue(value1.intValue() - value2.intValue());
+    }
 
     @Override
     public Value visit(ELt p, Environment arg) {
-      //Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
-      //Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
-      //return new intValue(value1.intValue() < value2.intValue()); //TODO fix
-      return null;
+      Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+      Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+      if (value1.intValue() < value2.intValue()) {
+        return new IntValue(1);
+      } else {
+        return new IntValue(0);
+      }
     }
 
     @Override
     public Value visit(EIf p, Environment arg) {
-      // TODO Auto-generated method stub
-      return null;
+      var exp = p.exp_1.accept(new ExpVisitor(), arg);
+      if (exp.intValue() == 1) {
+        return p.exp_2.accept(new ExpVisitor(), arg);
+      } else {
+        return p.exp_3.accept(new ExpVisitor(), arg);
+      }
     }
 
     @Override
     public Value visit(EAbs p, Environment arg) {
-      // TODO Auto-generated method stub
-      // TODO this is the one that requires funcValue
-      return null;
+      return new FuncValue(p.ident_, p.exp_, arg);
     }
 
   }
@@ -106,29 +115,34 @@ public class Interpreter {
     abstract public Value apply(Entry e);
   }
 
-  class intValue extends Value {
+  class IntValue extends Value {
 
     final int value;
-    public intValue (int i) { value = i; }
+
+    public IntValue(int i) {
+      value = i;
+    }
 
     public int intValue() {
       return value;
     }
-    public Value apply(Entry e){
-      throw new RuntimeException ("value is not a function");
+
+    public Value apply(Entry e) {
+      throw new RuntimeException("value is not a function");
     }
   }
 
-  class funcValue extends Value{
+  // lambda function
+  class FuncValue extends Value {
 
     final String x;
     final Exp body;
-    final Environment gamma;
+    final Environment enviroment;
 
-    funcValue(String x, Exp body, Environment gamma){
+    FuncValue(String x, Exp body, Environment env) {
       this.x = x;
       this.body = body;
-      this.gamma = gamma;
+      this.enviroment = env;
     }
 
     @Override
@@ -138,8 +152,7 @@ public class Interpreter {
 
     @Override
     public Value apply(Entry e) {
-      //TODO
-      return null;
+      return body.accept(new ExpVisitor(), new Extend(x, e, enviroment));
     }
   }
 
@@ -147,17 +160,42 @@ public class Interpreter {
     abstract Value value();
   }
 
-  class ValueEntry extends Entry{
-// TODO fix
+  class ValueEntry extends Entry {
+    final Value value;
+
+    ValueEntry(Value value) {
+      this.value = value;
+    }
+
     @Override
     Value value() {
-      return null;
+      return value;
     }
   }
 
   class Empty extends Environment {
     Value lookup(String x) {
       return null;
+    }
+  }
+
+  class Extend extends Environment {
+    final Environment enviroment;
+    final String y;
+    final Entry entry;
+
+    Extend(String y, Entry entry, Environment env) {
+      this.enviroment = env;
+      this.y = y;
+      this.entry = entry;
+    }
+
+    Value lookup(String x) {
+      if (x.equals(y)) {
+        return entry.value();
+      } else {
+        return enviroment.lookup(x);
+      }
     }
   }
 
