@@ -1,133 +1,47 @@
-# Makefile for PLT lab 4 in JAVA
+JAVAC=javac
+JAVAC_FLAGS=-sourcepath .
+JAVA=java
+JAVA_FLAGS=
+PARSER=${JAVA} ${JAVA_FLAGS} java_cup.Main
+PARSER_FLAGS=-nopositions -expect 100
+LEXER=jflex
+LEXER_FLAGS=
+all : test
 
-# Variables for file lists
-###########################################################################
+test : absyn fun/Yylex.class fun/PrettyPrinter.class fun/Test.class fun/VisitSkel.class fun/ComposVisitor.class fun/AbstractVisitor.class fun/FoldVisitor.class fun/AllVisitor.class fun/parser.class fun/sym.class fun/Test.class
 
-# Edit to add new java source files, if needed!
-LABSRC    = Strategy.java Interpreter.java lab4.java
-
-# No need to edit these:
-LBNF      = fun
-PARSERSRC = $(wildcard $(LBNF)/Absyn/*.java $(LBNF)/*.java)
-PARSEROBJ = $(PARSERSRC:.java=.class)
-LABOBJ    = $(LABSRC:.java=.class)
-# Inner classes:
-# LABINNOBJ = $(wildcard $(LABSRC:.java=$$*.class))
-
-# Variables for the programming environment (edit as needed)
-###########################################################################
-
-# Name of generated .cup file for bnfc 2.8.1
-CUPFILE = $(LBNF)/_cup.cup
-# Older BNFC versions may need:
-# CUPFILE = $(LBNF)/$(LBNF).cup
-
-JAVAC       = javac
-JAVAC_FLAGS = -sourcepath .
-JAVA        = java
-
-# No need to edit these:
-javac       = ${JAVAC} ${JAVAC_FLAGS}
-java        = ${JAVA}  ${JAVA_FLAGS}
-
-# Default rule
-###########################################################################
-
-# List of goals not corresponding to file names.
-.PHONY : default all clean distclean vclean
-
-# As the first goal is default goal, this goal needs to remain first.
-default : lab4.class lab4
-
-# Build and ship
-all : default sdist
-
-# Compiling the lab4 runner
-###########################################################################
-
-lab4 : lab4.hs
-	ghc --make -cpp $< -o $@
-
-# Rules for compiling lab4 classes (modify or add as needed)
-###########################################################################
-
-Interpreter.class : Interpreter.java Strategy.class $(LBNF)/Test.class
-	$(javac) $<
-
-lab4.class : lab4.java Strategy.class Interpreter.class $(LBNF)/Test.class
-	$(javac) $<
-
-
-# Rules for creating the parser
-###########################################################################
-
-# Create parser source via bnfc (dependency $(LBNF).cf needs to be first).
-$(LBNF)/Yylex $(CUPFILE) $(LBNF)/Test.java : $(LBNF).cf
-	bnfc --java --jflex $<
-
-# Create parser and move it to the correct location.
-$(LBNF)/parser.java $(LBNF)/sym.java : $(CUPFILE)
-	$(java) java_cup.Main -package $(LBNF) $<
-	mv parser.java sym.java $(LBNF)/
-
-# Create lexer.
-$(LBNF)/Yylex.java : $(LBNF)/Yylex
-	jflex $<
-
-# Compile lexer.
-$(LBNF)/Yylex.class : $(LBNF)/Yylex.java $(LBNF)/sym.class
-	$(javac) $<
-
-# Create parser test.
-$(LBNF)/Test.class : $(LBNF)/Test.java $(LBNF)/parser.class $(LBNF)/sym.class $(LBNF)/Yylex.class
-	$(javac) $<
-
-
-# Default rules
-###########################################################################
+.PHONY : absyn
 
 %.class : %.java
-	$(javac) $<
+	${JAVAC} ${JAVAC_FLAGS} $^
 
+absyn : fun/Absyn/Program.java fun/Absyn/Prog.java fun/Absyn/Main.java fun/Absyn/DMain.java fun/Absyn/Def.java fun/Absyn/DDef.java fun/Absyn/ListDef.java fun/Absyn/ListIdent.java fun/Absyn/Exp.java fun/Absyn/EVar.java fun/Absyn/EInt.java fun/Absyn/EApp.java fun/Absyn/EAdd.java fun/Absyn/ESub.java fun/Absyn/ELt.java fun/Absyn/EIf.java fun/Absyn/EAbs.java
+	${JAVAC} ${JAVAC_FLAGS} $^
 
-# Rules for shipping the solution
-###########################################################################
+fun/Yylex.java : fun/Yylex
+	${LEXER} ${LEXER_FLAGS} fun/Yylex
 
-sdist : lab4.tar.gz
+fun/parser.java fun/sym.java : fun/_cup.cup
+	${PARSER} ${PARSER_FLAGS} fun/_cup.cup
+	mv parser.java sym.java fun/
 
-tmpdir := $(shell mktemp -d)
-lab4.tar.gz : $(LBNF).cf Makefile lab4.hs lab4.sh lab4.bat $(LABSRC)
-	mkdir $(tmpdir)/lab4
-	cp $^ $(tmpdir)/lab4/
-	tar -C $(tmpdir) -czhf $@ lab4
+fun/Yylex.class : fun/Yylex.java fun/parser.java fun/sym.java
 
-# Rules for cleaning generated files
-###########################################################################
+fun/sym.class : fun/sym.java
+
+fun/parser.class : fun/parser.java fun/sym.java
+
+fun/PrettyPrinter.class : fun/PrettyPrinter.java
 
 clean :
-	-rm -f $(LBNF)/Absyn/*.class $(LBNF)/*.class
-	-rm -f $(LBNF).dvi $(LBNF).aux $(LBNF).log $(LBNF).ps
-	-rm -f $(LABOBJ) Interpreter*.class
-	-rm -f lab4.hi lab4.o lab4.exe lab4
-# Uncomment to also remove all .class files in current directory
-#	-rm -f *.class
-
-
-vclean : clean
-	-rm -f $(PARSERSRC)
-	-rm -f $(LBNF)/Absyn/*.bak $(LBNF)/*.bak
-	-rmdir $(LBNF)/Absyn/
-	-rm -f $(LBNF).tex
-	-rm -f $(LBNF)/Yylex $(CUPFILE)
-	-rmdir -p $(LBNF)/
+	rm -f fun/Absyn/*.class fun/*.class
 
 distclean : vclean
-	-rm -f lab4.tar.gz
 
-# Debugging the Makefile
-###########################################################################
-
-debug :
-	echo $(LABINNOBJ)
-
-# EOF
+vclean :
+	 rm -f fun/Absyn/Program.java fun/Absyn/Prog.java fun/Absyn/Main.java fun/Absyn/DMain.java fun/Absyn/Def.java fun/Absyn/DDef.java fun/Absyn/ListDef.java fun/Absyn/ListIdent.java fun/Absyn/Exp.java fun/Absyn/EVar.java fun/Absyn/EInt.java fun/Absyn/EApp.java fun/Absyn/EAdd.java fun/Absyn/ESub.java fun/Absyn/ELt.java fun/Absyn/EIf.java fun/Absyn/EAbs.java fun/Absyn/Program.class fun/Absyn/Prog.class fun/Absyn/Main.class fun/Absyn/DMain.class fun/Absyn/Def.class fun/Absyn/DDef.class fun/Absyn/ListDef.class fun/Absyn/ListIdent.class fun/Absyn/Exp.class fun/Absyn/EVar.class fun/Absyn/EInt.class fun/Absyn/EApp.class fun/Absyn/EAdd.class fun/Absyn/ESub.class fun/Absyn/ELt.class fun/Absyn/EIf.class fun/Absyn/EAbs.class
+	 rm -f fun/Absyn/*.class
+	 rmdir fun/Absyn/
+	 rm -f fun/Yylex fun/_cup.cup fun/Yylex.java fun/VisitSkel.java fun/ComposVisitor.java fun/AbstractVisitor.java fun/FoldVisitor.java fun/AllVisitor.java fun/PrettyPrinter.java fun/Skeleton.java fun/Test.java fun/parser.java fun/sym.java fun/*.class
+	 rm -f Makefile
+	 rmdir -p fun/

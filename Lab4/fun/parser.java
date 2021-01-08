@@ -210,11 +210,9 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 0: // $START ::= Program EOF 
             {
               Object RESULT =null;
-		int start_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int start_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		fun.Absyn.Program start_val = (fun.Absyn.Program)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		RESULT = start_val;
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("$START",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("$START",0, RESULT);
             }
           /* ACCEPT */
           CUP$parser$parser.done_parsing();
@@ -224,14 +222,10 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 1: // Program ::= ListDef Main 
             {
               fun.Absyn.Program RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		fun.Absyn.ListDef p_1 = (fun.Absyn.ListDef)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Main p_2 = (fun.Absyn.Main)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.Prog(p_1,p_2); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Program",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Program",0, RESULT);
             }
           return CUP$parser$result;
 
@@ -239,23 +233,13 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 2: // Main ::= _SYMB_11 _SYMB_0 _SYMB_12 Exp3 _SYMB_1 
             {
               fun.Absyn.Main RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
 		Object p_1 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Object p_2 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		Object p_3 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_4left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_4right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		fun.Absyn.Exp p_4 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_5left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_5right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object p_5 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.DMain(p_4); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Main",1, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Main",1, RESULT);
             }
           return CUP$parser$result;
 
@@ -263,20 +247,12 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 3: // Def ::= _IDENT_ ListIdent _SYMB_0 Exp 
             {
               fun.Absyn.Def RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		String p_1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		fun.Absyn.ListIdent p_2 = (fun.Absyn.ListIdent)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object p_3 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_4left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_4right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_4 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.DDef(p_1,p_2,p_4); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Def",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Def",2, RESULT);
             }
           return CUP$parser$result;
 
@@ -285,7 +261,7 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
             {
               fun.Absyn.ListDef RESULT =null;
 		 RESULT = new fun.Absyn.ListDef(); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListDef",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListDef",3, RESULT);
             }
           return CUP$parser$result;
 
@@ -293,17 +269,11 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 5: // ListDef ::= ListDef Def _SYMB_1 
             {
               fun.Absyn.ListDef RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		fun.Absyn.ListDef p_1 = (fun.Absyn.ListDef)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		fun.Absyn.Def p_2 = (fun.Absyn.Def)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object p_3 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = p_1; p_1.addLast(p_2); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListDef",3, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListDef",3, RESULT);
             }
           return CUP$parser$result;
 
@@ -312,7 +282,7 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
             {
               fun.Absyn.ListIdent RESULT =null;
 		 RESULT = new fun.Absyn.ListIdent(); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListIdent",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListIdent",4, RESULT);
             }
           return CUP$parser$result;
 
@@ -320,14 +290,10 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 7: // ListIdent ::= _IDENT_ ListIdent 
             {
               fun.Absyn.ListIdent RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String p_1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.ListIdent p_2 = (fun.Absyn.ListIdent)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = p_2; p_2.addFirst(p_1); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListIdent",4, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("ListIdent",4, RESULT);
             }
           return CUP$parser$result;
 
@@ -335,11 +301,9 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 8: // Exp3 ::= _IDENT_ 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String p_1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.EVar(p_1); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp3",5, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp3",5, RESULT);
             }
           return CUP$parser$result;
 
@@ -347,11 +311,9 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 9: // Exp3 ::= _INTEGER_ 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Integer p_1 = (Integer)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.EInt(p_1); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp3",5, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp3",5, RESULT);
             }
           return CUP$parser$result;
 
@@ -359,17 +321,11 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 10: // Exp3 ::= _SYMB_7 Exp _SYMB_8 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		Object p_1 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		fun.Absyn.Exp p_2 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object p_3 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = p_2; 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp3",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp3",5, RESULT);
             }
           return CUP$parser$result;
 
@@ -377,14 +333,10 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 11: // Exp2 ::= Exp2 Exp3 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_2 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.EApp(p_1,p_2); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp2",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp2",6, RESULT);
             }
           return CUP$parser$result;
 
@@ -392,11 +344,9 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 12: // Exp2 ::= Exp3 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = p_1; 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp2",6, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp2",6, RESULT);
             }
           return CUP$parser$result;
 
@@ -404,17 +354,11 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 13: // Exp1 ::= Exp1 _SYMB_2 Exp2 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object p_2 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_3 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.EAdd(p_1,p_3); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, RESULT);
             }
           return CUP$parser$result;
 
@@ -422,17 +366,11 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 14: // Exp1 ::= Exp1 _SYMB_3 Exp2 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object p_2 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_3 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.ESub(p_1,p_3); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, RESULT);
             }
           return CUP$parser$result;
 
@@ -440,17 +378,11 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 15: // Exp1 ::= Exp1 _SYMB_4 Exp2 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object p_2 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_3 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.ELt(p_1,p_3); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, RESULT);
             }
           return CUP$parser$result;
 
@@ -458,11 +390,9 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 16: // Exp1 ::= Exp2 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = p_1; 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp1",7, RESULT);
             }
           return CUP$parser$result;
 
@@ -470,26 +400,14 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 17: // Exp ::= _SYMB_10 Exp _SYMB_13 Exp _SYMB_9 Exp 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).right;
 		Object p_1 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-5)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
 		fun.Absyn.Exp p_2 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Object p_3 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
-		int p_4left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_4right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		fun.Absyn.Exp p_4 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_5left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_5right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object p_5 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_6left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_6right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_6 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.EIf(p_2,p_4,p_6); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp",8, RESULT);
             }
           return CUP$parser$result;
 
@@ -497,20 +415,12 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 18: // Exp ::= _SYMB_5 _IDENT_ _SYMB_6 Exp 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Object p_1 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
-		int p_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int p_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		String p_2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		int p_3left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int p_3right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object p_3 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int p_4left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_4right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_4 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = new fun.Absyn.EAbs(p_2,p_4); 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp",8, RESULT);
             }
           return CUP$parser$result;
 
@@ -518,11 +428,9 @@ public java_cup.runtime.ComplexSymbolFactory.Location getLeftLocation(
           case 19: // Exp ::= Exp1 
             {
               fun.Absyn.Exp RESULT =null;
-		int p_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int p_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		fun.Absyn.Exp p_1 = (fun.Absyn.Exp)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 RESULT = p_1; 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("Exp",8, RESULT);
             }
           return CUP$parser$result;
 

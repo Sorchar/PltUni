@@ -51,8 +51,7 @@ public class Interpreter {
 
     @Override
     public Value visit(EInt p, Environment arg) {
-      // TODO Auto-generated method stub
-      return null;
+      return new intValue(p.integer_);
     }
 
     @Override
@@ -63,19 +62,22 @@ public class Interpreter {
 
     @Override
     public Value visit(EAdd p, Environment arg) {
-      // TODO Auto-generated method stub
-      return null;
+      Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+      Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+      return new intValue(value1.intValue() + value2.intValue());
     }
 
     @Override
     public Value visit(ESub p, Environment arg) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+      Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+      Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+      return new intValue(value1.intValue() - value2.intValue());    }
 
     @Override
     public Value visit(ELt p, Environment arg) {
-      // TODO Auto-generated method stub
+      //Value value1 = p.exp_1.accept(new ExpVisitor(), arg);
+      //Value value2 = p.exp_2.accept(new ExpVisitor(), arg);
+      //return new intValue(value1.intValue() < value2.intValue()); //TODO fix
       return null;
     }
 
@@ -88,6 +90,7 @@ public class Interpreter {
     @Override
     public Value visit(EAbs p, Environment arg) {
       // TODO Auto-generated method stub
+      // TODO this is the one that requires funcValue
       return null;
     }
 
@@ -103,8 +106,53 @@ public class Interpreter {
     abstract public Value apply(Entry e);
   }
 
+  class intValue extends Value {
+
+    final int value;
+    public intValue (int i) { value = i; }
+
+    public int intValue() {
+      return value;
+    }
+    public Value apply(Entry e){
+      throw new RuntimeException ("value is not a function");
+    }
+  }
+
+  class funcValue extends Value{
+
+    final String x;
+    final Exp body;
+    final Environment gamma;
+
+    funcValue(String x, Exp body, Environment gamma){
+      this.x = x;
+      this.body = body;
+      this.gamma = gamma;
+    }
+
+    @Override
+    public int intValue() {
+      throw new RuntimeException("funcValue is not int");
+    }
+
+    @Override
+    public Value apply(Entry e) {
+      //TODO
+      return null;
+    }
+  }
+
   abstract class Entry {
     abstract Value value();
+  }
+
+  class ValueEntry extends Entry{
+// TODO fix
+    @Override
+    Value value() {
+      return null;
+    }
   }
 
   class Empty extends Environment {
