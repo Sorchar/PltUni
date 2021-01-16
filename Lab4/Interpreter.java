@@ -78,6 +78,8 @@ public class Interpreter {
       Entry entry = new ValueEntry(new IntValue(0));
       if (strategy == Strategy.CallByValue){
         entry = new ValueEntry(p.exp_2.accept(new ExpVisitor(), arg));
+      } else{
+        entry = new CloseEntry(p.exp_2, arg);
       }
       return p.exp_1.accept(new ExpVisitor(), arg).apply(entry);
 
@@ -216,6 +218,19 @@ public class Interpreter {
       } else {
         return enviroment.lookup(x);
       }
+    }
+  }
+
+  class CloseEntry extends Entry {
+    final Exp exp;
+    final Environment environment;
+
+    CloseEntry(Exp exp, Environment environment){
+      this.exp = exp;
+      this.environment = environment;
+    }
+    Value value(){
+      return exp.accept(new ExpVisitor(), environment);
     }
   }
 
