@@ -62,7 +62,7 @@ public class Interpreter {
       }else {
         Exp exp = signature.get(p.ident_);
         if (exp != null) {
-          return exp.accept(new ExpVisitor(), arg);
+          return exp.accept(new ExpVisitor(), new Empty());
         }
       }
       throw new RuntimeException("Variable not found: " + p.ident_);
